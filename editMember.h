@@ -5,7 +5,7 @@
 #include <QSqlQuery>
 #include<QSqlQueryModel>
 #include <QDir>
-#include <addMember.h>
+#include "addMember.h"
 #include <QObject>
 
 namespace Ui {

@@ -122,6 +122,23 @@ background:pink; color:#3498DB; font-size:20px ;font: 63 14pt &quot;georgia&quot
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt; font-weight:700; color:#55007f;&quot;&gt;Label de détails ::&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
+  <widget class="QPushButton" name="backButton">
+   <property name="geometry">
+    <rect>
+     <x>270</x>
+     <y>460</y>
+     <width>101</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">border-radius:20px;
+background:pink; color:#3498DB; font-size:20px ;font: 63 14pt &quot;georgia&quot;;</string>
+   </property>
+   <property name="text">
+    <string>Retourn</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

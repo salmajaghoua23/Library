@@ -8,6 +8,39 @@
 #include <QSqlError>
 #include <QtConcurrent/QtConcurrent>
 #include <QSqlQuery>
+// studentLibrary::studentLibrary(QWidget *parent, QSqlDatabase db) :
+//     QDialog(parent),
+//     ui(new Ui::studentLibrary),
+//     db(db),
+//     model(new QSqlQueryModel(this)),
+//     currentBookId(-1)
+// {
+//     ui->setupUi(this);
+//     QSqlQuery createTableQuery(db);
+//     QString createTableSQL = R"(
+//     CREATE TABLE IF NOT EXISTS cart (
+//         id INTEGER PRIMARY KEY AUTOINCREMENT,
+//         user_id INTEGER,
+//         book_id INTEGER,
+//         name TEXT,
+//         author TEXT,
+//         added_at DATETIME DEFAULT CURRENT_TIMESTAMP
+//     )
+//     )";
+//    // this->userId = userId;
+//     if (!createTableQuery.exec(createTableSQL)) {
+//         QMessageBox::critical(this, "Erreur BD", "Échec de la création de la table cart :\n" + createTableQuery.lastError().text());
+//     }
+
+//     // Cacher les boutons au départ
+//     ui->addToCartButton->setVisible(false);
+//     ui->borrowButton->setVisible(false);
+
+//     // Connecter les boutons
+//     connect(ui->searchButton, &QPushButton::clicked, this, &studentLibrary::on_searchButton_clicked);
+//     connect(ui->addToCartButton, &QPushButton::clicked, this, &studentLibrary::on_addToCartButton_clicked);
+//     connect(ui->borrowButton, &QPushButton::clicked, this, &studentLibrary::on_borrowButton_clicked);
+// }
 studentLibrary::studentLibrary(QWidget *parent, QSqlDatabase db) :
     QDialog(parent),
     ui(new Ui::studentLibrary),
@@ -16,6 +49,7 @@ studentLibrary::studentLibrary(QWidget *parent, QSqlDatabase db) :
     currentBookId(-1)
 {
     ui->setupUi(this);
+
     QSqlQuery createTableQuery(db);
     QString createTableSQL = R"(
     CREATE TABLE IF NOT EXISTS cart (
@@ -27,7 +61,7 @@ studentLibrary::studentLibrary(QWidget *parent, QSqlDatabase db) :
         added_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
     )";
-   // this->userId = userId;
+
     if (!createTableQuery.exec(createTableSQL)) {
         QMessageBox::critical(this, "Erreur BD", "Échec de la création de la table cart :\n" + createTableQuery.lastError().text());
     }
@@ -35,18 +69,33 @@ studentLibrary::studentLibrary(QWidget *parent, QSqlDatabase db) :
     // Cacher les boutons au départ
     ui->addToCartButton->setVisible(false);
     ui->borrowButton->setVisible(false);
+    ui->backButton->setVisible(false); // Cachez aussi le bouton retour initialement
 
     // Connecter les boutons
     connect(ui->searchButton, &QPushButton::clicked, this, &studentLibrary::on_searchButton_clicked);
     connect(ui->addToCartButton, &QPushButton::clicked, this, &studentLibrary::on_addToCartButton_clicked);
     connect(ui->borrowButton, &QPushButton::clicked, this, &studentLibrary::on_borrowButton_clicked);
+    connect(ui->backButton, &QPushButton::clicked, this, &studentLibrary::on_backButton_clicked); // Nouvelle connexion
 }
-
 studentLibrary::~studentLibrary()
 {
     delete ui;
 }
+void studentLibrary::on_backButton_clicked()
+{
+    // Réinitialise l'interface à son état initial
+    ui->searchLineEdit->clear();
+    ui->bookDetailsText->clear();
+    ui->addToCartButton->setVisible(false);
+    ui->borrowButton->setVisible(false);
+    ui->backButton->setVisible(false);
 
+    // Efface la sélection dans la liste
+    ui->bookListView->selectionModel()->clearSelection();
+
+    // Optionnel: efface le modèle si vous voulez vider la liste
+     model->clear();
+}
 void studentLibrary::on_searchButton_clicked()
 {
     QString searchTerm = ui->searchLineEdit->text();
@@ -74,8 +123,8 @@ void studentLibrary::on_bookListView_clicked(const QModelIndex &index)
     // Afficher les boutons
     ui->addToCartButton->setVisible(true);
     ui->borrowButton->setVisible(true);
+    ui->backButton->setVisible(true); // Affichez aussi le bouton retour
 }
-
 void studentLibrary::showBookDetails(int bookId)
 {
     QSqlQuery query(db);

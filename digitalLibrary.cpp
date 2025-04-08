@@ -1,17 +1,17 @@
 #include "digitalLibrary.h"
 #include "ui_digitalLibrary.h"
 #include "Login.h"
-#include"stats.h"
-#include <manageBooks.h>
-#include <ManageAuthors.h>
-#include <addMember.h>
-#include <editMember.h>
-#include <deleteMember.h>
-#include <membersList.h>
-#include <addBook.h>
-#include <editBook.h>
-#include <deletebook.h>
-#include <bookList.h>
+#include "statistic.h"
+#include "manageBooks.h"
+#include "ManageAuthors.h"
+#include "addMember.h"
+#include "editMember.h"
+#include "deleteMember.h"
+#include "membersList.h"
+#include "addBook.h"
+#include "editBook.h"
+#include "deletebook.h"
+#include "bookList.h"
 #include <QMessageBox>
 #include <QDebug>
 #include <QSqlError>
@@ -26,7 +26,8 @@ digitalLibrary::digitalLibrary(QWidget *parent) :
     connect(ui->statsButton, &QPushButton::clicked,
             this, &digitalLibrary::on_statsButton_clicked);
     setUsername(username);
-    connect(ui->testDataButton, &QPushButton::clicked, this, &digitalLibrary::on_testDataButton_clicked);
+    connect(ui->statsButton, &QPushButton::clicked, this, &digitalLibrary::on_statsButton_clicked);
+
     showBookNum();
     showMemberNum();
     showAuthorNum();
@@ -96,116 +97,16 @@ digitalLibrary::~digitalLibrary()
 {
     delete ui;
 }
-// void digitalLibrary::on_statsButton_clicked()
-// {
-//     // 1. Création et configuration de la fenêtre de stats
-//     Stats *statsWindow = new Stats(this);  // 'this' pour le parentage
-//     statsWindow->setWindowTitle("Statistiques de la Bibliothèque");
-//     statsWindow->setMinimumSize(800, 600);
 
-//     // Style CSS moderne
-//     statsWindow->setStyleSheet(
-//         "QWidget { background-color: #f8f9fa; }"
-//         "QLabel { font: 10pt 'Segoe UI'; color: #333; }"
-//         "QChartView { background-color: white; border-radius: 8px; border: 1px solid #dee2e6; }"
-//         );
-
-//     // 2. Récupération asynchrone des données
-//         QtConcurrent::run([this, statsWindow](){
-//         QMap<QString, int> bookPopularity;
-//         QMap<QString, int> quantityByCategory;
-//         bool success = true;
-//         QString errorMsg;
-
-//         try {
-//             // 2.1. Popularité des livres
-//             QSqlQuery popularityQuery(db);
-//             if (!popularityQuery.exec(
-//                     "SELECT b.name, COUNT(bs.Book) as borrow_count "
-//                     "FROM books b LEFT JOIN bookStatus bs ON b.ID = bs.Book "
-//                     "WHERE bs.Status = 'Borrowed' "
-//                     "GROUP BY b.ID ORDER BY borrow_count DESC LIMIT 5"))
-//             {
-//                 throw std::runtime_error(popularityQuery.lastError().text().toStdString());
-//             }
-
-//             while (popularityQuery.next()) {
-//                 bookPopularity[popularityQuery.value("name").toString()] =
-//                     popularityQuery.value("borrow_count").toInt();
-//             }
-
-//             // 2.2. Quantités par catégorie
-//             QSqlQuery quantityQuery(db);
-//             if (!quantityQuery.exec("SELECT genre, COUNT(*) as count FROM books GROUP BY genre")) {
-//                 throw std::runtime_error(quantityQuery.lastError().text().toStdString());
-//             }
-
-//             while (quantityQuery.next()) {
-//                 quantityByCategory[quantityQuery.value("genre").toString()] =
-//                     quantityQuery.value("count").toInt();
-//             }
-
-//         } catch (const std::exception &e) {
-//             success = false;
-//             errorMsg = e.what();
-//         }
-
-//         // 3. Mise à jour de l'UI dans le thread principal
-//         QMetaObject::invokeMethod(statsWindow, [=](){
-//             if (success) {
-//                 statsWindow->updateStats(bookPopularity, quantityByCategory);
-//                 statsWindow->show();
-//             } else {
-//                 QMessageBox::critical(statsWindow, "Erreur",
-//                                       "Impossible de charger les statistiques:\n" + errorMsg);
-//                 statsWindow->deleteLater();
-//             }
-//         });
-//     });
-// }
-// QMap<QString, int> digitalLibrary::getBookPopularityData()
-// {
-//     QMap<QString, int> popularity;
-
-//     // Exemple de requête - adaptez à votre schéma de base de données
-//     QSqlQuery query(db);
-//     query.prepare("SELECT b.name, COUNT(bs.Book) as borrow_count "
-//                   "FROM books b LEFT JOIN bookStatus bs ON b.ID = bs.Book "
-//                   "GROUP BY b.ID ORDER BY borrow_count DESC LIMIT 5");
-
-//     if (query.exec()) {
-//         while (query.next()) {
-//             popularity[query.value("name").toString()] = query.value("borrow_count").toInt();
-//         }
-//     } else {
-//         qDebug() << "Erreur lors de la récupération de la popularité:" << query.lastError();
-//     }
-
-//     return popularity;
-// }
-
-// QMap<QString, int> digitalLibrary::getQuantityByCategoryData()
-// {
-//     QMap<QString, int> quantities;
-
-//     // Exemple de requête - adaptez à votre schéma
-//     QSqlQuery query(db);
-//     query.prepare("SELECT genre, COUNT(*) as count FROM books GROUP BY genre");
-
-//     if (query.exec()) {
-//         while (query.next()) {
-//             quantities[query.value("genre").toString()] = query.value("count").toInt();
-//         }
-//     } else {
-//         qDebug() << "Erreur lors de la récupération des quantités:" << query.lastError();
-//     }
-
-//     return quantities;
-// }
-void digitalLibrary::on_statsButton_clicked()
-{
-    Stats stats(db); // db est votre connexion existante
-    stats.loadAndShowStats();
+void digitalLibrary::on_statsButton_clicked() {
+    if (!statWindow) {
+        statWindow = new Statistic(db, this); // 'this' pour parentage
+        connect(statWindow, &QObject::destroyed, [this]() {
+            statWindow = nullptr;
+        });
+    }
+    statWindow->loadAndShowStats(); // Charge et affiche
+    statWindow->show();
 }
 void digitalLibrary::on_manageGenre_clicked()
 {
@@ -233,8 +134,8 @@ void digitalLibrary::on_editMemberBtn_clicked()
 
 void digitalLibrary::on_deleteMemberBtn_clicked()
 {
-    //deleteMember delMember;
-   // delMember.exec();
+    deleteMember delMember;
+   delMember.exec();
 }
 
 void digitalLibrary::on_membersListBtn_clicked()

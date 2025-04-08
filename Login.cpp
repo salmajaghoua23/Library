@@ -2,9 +2,9 @@
 #include "ui_Login.h"
 #include"studentlibrary.h"
 #include <QMessageBox>
-#include <digitalLibrary.h>
-#include <signUp.h>
-#include <newPasswd.h>
+#include "digitalLibrary.h"
+#include "signUp.h"
+#include "newPasswd.h"
 #include <QDebug>
 #include  <QRegularExpression>
 #include <QRegularExpressionValidator>

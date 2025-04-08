@@ -1,7 +1,7 @@
 #include "newPasswd.h"
 #include "ui_newPasswd.h"
-#include <digitalLibrary.h>
-#include <Login.h>
+#include "digitalLibrary.h"
+#include "Login.h"
 #include <QDebug>
 #include <QMessageBox>
 #include <QRegularExpression>

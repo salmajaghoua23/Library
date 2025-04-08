@@ -16,7 +16,7 @@ class studentLibrary : public QDialog
 
 public:
     explicit studentLibrary(QWidget *parent = nullptr, QSqlDatabase db = QSqlDatabase());
-    ~studentLibrary()override;
+    ~studentLibrary();
 
 private slots:
     void on_searchButton_clicked();
@@ -24,6 +24,7 @@ private slots:
     void on_addToCartButton_clicked();
     void on_borrowButton_clicked();
     void showCart();
+    void on_backButton_clicked();
 private:
     void showBookDetails(int bookId);
    // Cart userCart;

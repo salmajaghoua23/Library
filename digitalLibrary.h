@@ -1,6 +1,6 @@
 #ifndef DIGITALLIBRARY_H
 #define DIGITALLIBRARY_H
-
+#include "statistic.h"
 #include <QDialog>
 #include <QtSql/QSqlDatabase>
 #include <QSqlQuery>
@@ -64,6 +64,8 @@ private:
     QString filename = QDir::homePath()+ "/libraryDB.sqlite";
 
     QString username;
+private:
+    Statistic* statWindow = nullptr;
 };
 
 #endif // DIGITALLIBRARY_H

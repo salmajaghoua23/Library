@@ -1,12 +1,12 @@
 #include "addBook.h"
 #include "ui_addBook.h"
 #include "genreList.h"
-#include <digitalLibrary.h>
+#include "digitalLibrary.h"
 #include <QMessageBox>
 #include <QFile>
 #include <QFileDialog>
 #include <QDebug>
-#include <authorsList.h>
+#include "authorsList.h"
 #include <QRegularExpression>
 #include <QRegularExpressionValidator>
 addBook::addBook(QWidget *parent) :

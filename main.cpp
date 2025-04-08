@@ -7,7 +7,7 @@
 #include "editMember.h"
 #include "membersList.h"
 #include "addBook.h"
-#include "stats.h"
+// #include "stats.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])

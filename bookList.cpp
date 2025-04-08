@@ -1,7 +1,7 @@
 #include "bookList.h"
 #include "ui_bookList.h"
 #include "digitalLibrary.h"
-#include <addBook.h>
+#include "addBook.h"
 #include <QDebug>
 #include <QSqlQuery>
 bookList::bookList(QWidget *parent) :

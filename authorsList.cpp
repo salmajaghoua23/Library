@@ -1,6 +1,6 @@
 #include "authorsList.h"
 #include "ui_authorsList.h"
-#include <ManageAuthors.h>
+#include "ManageAuthors.h"
 #include "digitalLibrary.h"
 #include <QSqlQueryModel>
 #include <QDebug>

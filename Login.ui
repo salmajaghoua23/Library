@@ -14,7 +14,13 @@
    <string>Dialog</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color:#e9f5db;</string>
+   <string notr="true">QDialog {
+    background-color: #f0fff4; /* vert très doux, positif */
+    font-family: &quot;Segoe UI&quot;, sans-serif;
+    font-size: 16px;
+    color: #2f4f4f;
+}
+</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -63,7 +69,7 @@
       <string notr="true">font: 16pt &quot;georgia&quot;;
 border-color: #007200;
 color: black;
-background-color:#e9f5db;</string>
+background-color:#f0fff4;</string>
      </property>
      <property name="title">
       <string>Login</string>
@@ -72,7 +78,12 @@ background-color:#e9f5db;</string>
       <item row="2" column="0">
        <widget class="QLabel" name="label_6">
         <property name="styleSheet">
-         <string notr="true">font: 14pt &quot;georgia&quot;;</string>
+         <string notr="true">QLabel {
+    font-family: &quot;Segoe UI&quot;, sans-serif;
+    font-size: 16px;
+    color: #2f4f4f;
+}
+</string>
         </property>
         <property name="text">
          <string>Password</string>
@@ -82,12 +93,25 @@ background-color:#e9f5db;</string>
       <item row="2" column="1" colspan="2">
        <widget class="QLineEdit" name="password">
         <property name="styleSheet">
-         <string notr="true">QLineEdit{
-	background-color: rgb(255, 255, 255);
-	 border: 2px  solid;
-     border-radius: 4px;
-	font:24px
-}</string>
+         <string notr="true">QLineEdit {
+    background-color: #ffffff;
+    border: 2px solid #b2f2bb;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 16px;
+    color: #2f4f4f;
+    transition: all 0.3s ease-in-out;
+}
+QLineEdit:hover {
+    border: 2px solid #51cf66;
+    background-color: #f8f9fa;
+}
+QLineEdit:focus {
+    border: 2px solid #38d9a9;
+    background-color: #ffffff;
+    color: #1b4332;
+}
+</string>
         </property>
         <property name="echoMode">
          <enum>QLineEdit::EchoMode::Password</enum>
@@ -100,33 +124,23 @@ background-color:#e9f5db;</string>
          <bool>true</bool>
         </property>
         <property name="styleSheet">
-         <string notr="true">QPushButton{
-border-radius:15px;
-
-padding : 0 4px;
-background: #90a955;
-border -radius:15px;
-color: rgb(255, 255, 255);
-font: 24px;
+         <string notr="true">QPushButton {
+    background-color: #38b000;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 18px;
+    font-weight: bold;
 }
-QPushButton:hover:!pressed
-
-{
-background:#57cc99;
+QPushButton:hover {
+    background-color: #70e000;
 }
-QToolButton
-{
-
-border-radius:10px;
-bacground:red;
-color:red;
+QPushButton:pressed {
+    background-color: #008000;
+    font-size: 17px;
 }
-
-QPushButton:pressed
-{
-              font-size: 19px;
-              transition: 0.9s; 
-}</string>
+</string>
         </property>
         <property name="text">
          <string>Login</string>
@@ -142,33 +156,23 @@ QPushButton:pressed
       <item row="3" column="2">
        <widget class="QPushButton" name="signUpButton">
         <property name="styleSheet">
-         <string notr="true">QPushButton{
-border-radius:15px;
-
-padding : 0 4px;
-background: #90a955;
-border -radius:15px;
-color: rgb(255, 255, 255);
-font: 24px;
+         <string notr="true">QPushButton {
+    background-color: #38b000;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 18px;
+    font-weight: bold;
 }
-QPushButton:hover:!pressed
-
-{
-background:#57cc99;
+QPushButton:hover {
+    background-color: #70e000;
 }
-QToolButton
-{
-
-border-radius:10px;
-bacground:red;
-color:red;
+QPushButton:pressed {
+    background-color: #008000;
+    font-size: 17px;
 }
-
-QPushButton:pressed
-{
-              font-size: 19px;
-              transition: 0.9s; 
-}</string>
+</string>
         </property>
         <property name="text">
          <string>Sign Up</string>
@@ -181,33 +185,13 @@ QPushButton:pressed
          <enum>Qt::FocusPolicy::ClickFocus</enum>
         </property>
         <property name="styleSheet">
-         <string notr="true">QPushButton{
-border-radius:15px;
-
-padding : 0 4px;
-background:red;
-border -radius:15px;
-color: rgb(255, 255, 255);
-font: 24px;
+         <string notr="true">#forgetPasswdBtn {
+    background-color: #f8961e;
 }
-QPushButton:hover:!pressed
-
-{
-background:#57cc99;
+#forgetPasswdBtn:hover {
+    background-color: red;
 }
-QToolButton
-{
-
-border-radius:10px;
-bacground:red;
-color:red;
-}
-
-QPushButton:pressed
-{
-              font-size: 19px;
-              transition: 0.9s; 
-}</string>
+</string>
         </property>
         <property name="text">
          <string>Forget Password</string>
@@ -217,7 +201,12 @@ QPushButton:pressed
       <item row="1" column="0">
        <widget class="QLabel" name="label_7">
         <property name="styleSheet">
-         <string notr="true">font: 14pt &quot;georgia&quot;;</string>
+         <string notr="true">QLabel {
+    font-family: &quot;Segoe UI&quot;, sans-serif;
+    font-size: 16px;
+    color: #2f4f4f;
+}
+</string>
         </property>
         <property name="text">
          <string>Username</string>
@@ -227,12 +216,25 @@ QPushButton:pressed
       <item row="1" column="1" colspan="2">
        <widget class="QLineEdit" name="username">
         <property name="styleSheet">
-         <string notr="true">QLineEdit{
-	background-color: rgb(255, 255, 255);
-	 border: 2px  solid;
-     border-radius: 4px;
-	font: 24px
-}</string>
+         <string notr="true">QLineEdit {
+    background-color: #ffffff;
+    border: 2px solid #b2f2bb;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 16px;
+    color: #2f4f4f;
+    transition: all 0.3s ease-in-out;
+}
+QLineEdit:hover {
+    border: 2px solid #51cf66;
+    background-color: #f8f9fa;
+}
+QLineEdit:focus {
+    border: 2px solid #38d9a9;
+    background-color: #ffffff;
+    color: #1b4332;
+}
+</string>
         </property>
        </widget>
       </item>
