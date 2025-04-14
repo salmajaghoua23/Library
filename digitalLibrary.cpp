@@ -23,8 +23,7 @@ digitalLibrary::digitalLibrary(QWidget *parent) :
 {
     ui->setupUi(this);
     connectDB();
-    connect(ui->statsButton, &QPushButton::clicked,
-            this, &digitalLibrary::on_statsButton_clicked);
+    connect(ui->statsButton, &QPushButton::clicked, this, &digitalLibrary::on_statsButton_clicked);
     setUsername(username);
     connect(ui->statsButton, &QPushButton::clicked, this, &digitalLibrary::on_statsButton_clicked);
 
@@ -340,3 +339,7 @@ void digitalLibrary::on_testDataButton_clicked()
         insertTestData();
     }
 }
+
+
+
+

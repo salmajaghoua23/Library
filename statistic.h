@@ -23,13 +23,18 @@ public:
     void loadAndShowStats();
     void updateStats(const QMap<QString, int>& bookPopularity,
                      const QMap<QString, int>& quantityByCategory);
+    void createAnotherChart(const QMap<QString, int>& data);
+    void createMembersChart(const QMap<QString, int>& data);
+
 
 private:
     void setupUI();
     void createPopularityChart(const QMap<QString, int>& data);
     void createQuantityChart(const QMap<QString, int>& data);
     void on_statsButton_clicked();
-
+    QWidget *bookStatsWindow;
+    QWidget *memberStatsWindow;
+    QChartView *membersChartView;
     QSqlDatabase m_db;
     QChartView *popularityChartView;
     QChartView *quantityChartView;

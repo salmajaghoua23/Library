@@ -52,36 +52,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout">
              <item>
-              <widget class="QLabel" name="label_3">
-               <property name="styleSheet">
-                <string notr="true"/>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="pixmap">
-                <pixmap resource="icons.qrc">:/logo.png</pixmap>
-               </property>
-              </widget>
-             </item>
-             <item>
               <layout class="QVBoxLayout" name="verticalLayout_2">
-               <item>
-                <spacer name="verticalSpacer_2">
-                 <property name="orientation">
-                  <enum>Qt::Orientation::Vertical</enum>
-                 </property>
-                 <property name="sizeType">
-                  <enum>QSizePolicy::Policy::Fixed</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>20</width>
-                   <height>13</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
                <item>
                 <widget class="QFrame" name="frame_2">
                  <property name="styleSheet">
@@ -94,36 +65,22 @@ border-radius: 10px;</string>
                  <property name="frameShadow">
                   <enum>QFrame::Shadow::Raised</enum>
                  </property>
-                 <layout class="QVBoxLayout" name="verticalLayout_15"/>
+                 <layout class="QVBoxLayout" name="verticalLayout_15">
+                  <item>
+                   <widget class="QLabel" name="label_3">
+                    <property name="styleSheet">
+                     <string notr="true"/>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                    <property name="pixmap">
+                     <pixmap resource="icons.qrc">:/login-book.png</pixmap>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="label_4">
-                 <property name="styleSheet">
-                  <string notr="true">font: 63 18pt &quot;Comic Sans MS&quot;;
-color: rgb(255, 255, 255);
-font-weight: bold;</string>
-                 </property>
-                 <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#e0777d;font-family:georgia;&quot;&gt;Froggy&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer name="verticalSpacer">
-                 <property name="orientation">
-                  <enum>Qt::Orientation::Vertical</enum>
-                 </property>
-                 <property name="sizeType">
-                  <enum>QSizePolicy::Policy::Fixed</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>20</width>
-                   <height>13</height>
-                  </size>
-                 </property>
-                </spacer>
                </item>
               </layout>
              </item>
@@ -132,22 +89,23 @@ font-weight: bold;</string>
            <item>
             <widget class="QLabel" name="label">
              <property name="styleSheet">
-              <string notr="true">color: rgb(0, 0, 0);
-font: 10pt &quot;georgia&quot;;</string>
+              <string notr="true">font: italic 18pt &quot;Georgia&quot;;
+color: #4B0082;  /* Violet foncé */
+text-shadow: 1px 1px 2px #FFD70033;  /* Ombre dorée subtile */</string>
              </property>
              <property name="text">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;&lt;span style=&quot; font-size:16pt; font-weight:700;&quot;&gt;                                                Welcome Back&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;&lt;span style=&quot; font-size:22pt; font-weight:700;&quot;&gt;Welcome Back&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
             </widget>
            </item>
            <item>
             <widget class="QLabel" name="username">
              <property name="styleSheet">
-              <string notr="true">color: #90a955;
-font: 20pt &quot;georgia&quot;;</string>
+              <string notr="true">font: bold italic 24pt &quot;Georgia&quot;;
+color: #D4AF37;  /* Or métallique */</string>
              </property>
              <property name="text">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:24pt; font-weight:700; font-style:italic; color:#bc4749;&quot;&gt;[+username]&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#d4af37;&quot;&gt;[+username]&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
             </widget>
            </item>
@@ -160,7 +118,7 @@ font: 20pt &quot;georgia&quot;;</string>
          <item>
           <widget class="QFrame" name="frame_9">
            <property name="styleSheet">
-            <string notr="true">background-color: #e0777d;
+            <string notr="true">background-color: #7A28A5;
 border-radius: 10px;</string>
            </property>
            <property name="frameShape">
@@ -190,9 +148,9 @@ font-weight: bold;</string>
               <item>
                <widget class="QLabel" name="bookNum">
                 <property name="styleSheet">
-                 <string notr="true">color: rgb(255, 255, 255);
-font: 63 24pt &quot;georgia&quot;;
-</string>
+                 <string notr="true">font: bold 24pt &quot;Georgia&quot;;
+color: white;
+text-shadow: 0 0 5px #FFD700;  /* Lueur dorée */</string>
                 </property>
                 <property name="text">
                  <string>50</string>
@@ -226,7 +184,7 @@ font: 63 24pt &quot;georgia&quot;;
          <item>
           <widget class="QFrame" name="frame_8">
            <property name="styleSheet">
-            <string notr="true">background-color: #e0777d;
+            <string notr="true">background-color:#7A28A5;
 border-radius: 8px;</string>
            </property>
            <property name="frameShape">
@@ -256,9 +214,9 @@ font-weight: bold;</string>
               <item>
                <widget class="QLabel" name="memberNum">
                 <property name="styleSheet">
-                 <string notr="true">color: rgb(255, 255, 255);
-font: 63 24pt &quot;georgia&quot;;
-</string>
+                 <string notr="true">font: bold 24pt &quot;Georgia&quot;;
+color: white;
+text-shadow: 0 0 5px #FFD700;  /* Lueur dorée */</string>
                 </property>
                 <property name="text">
                  <string>22</string>
@@ -292,7 +250,7 @@ font: 63 24pt &quot;georgia&quot;;
          <item>
           <widget class="QFrame" name="frame_6">
            <property name="styleSheet">
-            <string notr="true">background-color: #e0777d;
+            <string notr="true">background-color: #7A28A5;
 border-radius: 8px;</string>
            </property>
            <property name="frameShape">
@@ -322,9 +280,9 @@ font-weight: bold;</string>
               <item>
                <widget class="QLabel" name="authorNum">
                 <property name="styleSheet">
-                 <string notr="true">color: rgb(255, 255, 255);
-font: 63 24pt &quot;georgia&quot;;
-</string>
+                 <string notr="true">font: bold 24pt &quot;Georgia&quot;;
+color: white;
+text-shadow: 0 0 5px #FFD700;  /* Lueur dorée */</string>
                 </property>
                 <property name="text">
                  <string>7</string>
@@ -347,14 +305,15 @@ font: 63 24pt &quot;georgia&quot;;
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>0</y>
+        <y>20</y>
         <width>221</width>
-        <height>581</height>
+        <height>621</height>
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">background-color: #c1fba4;
-border-radius:8px</string>
+       <string notr="true">background-color: #7A28A5; /* ou une autre couleur */
+border-radius: 8px;
+</string>
       </property>
       <property name="frameShape">
        <enum>QFrame::Shape::StyledPanel</enum>
@@ -384,11 +343,15 @@ border-radius:8px</string>
          <item>
           <widget class="QLabel" name="label_5">
            <property name="styleSheet">
-            <string notr="true">font: 63 20 pt &quot;georgia&quot;;
-color:#bc4749;</string>
+            <string notr="true">background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #6A0DAD, stop:1 #4B0082); /* Dégradé violet */
+border-radius: 10px;
+border: 1px solid #FFD700; /* Bordure or plus fine */
+box-shadow: 0 4px 8px rgba(106, 13, 173, 0.3); /* Ombre violette */
+
+</string>
            </property>
            <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:16pt; font-weight:700; font-style:italic; color:#bc4749;&quot;&gt;Genres&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:16pt; font-weight:700; font-style:italic; color:#ffd700;&quot;&gt;Genres&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
           </widget>
          </item>
@@ -417,13 +380,13 @@ color:#bc4749;</string>
            <property name="styleSheet">
             <string notr="true">QPushButton{
 font: 63 14pt &quot;georgia&quot;;
-color: #e0777d;
+color: white;
 padding : 0 8px;
 
 }
 QPushButton:hover:!pressed
 {
-background:#036666;
+background:#FFD700;
 border-radius:5px;
 }</string>
            </property>
@@ -464,11 +427,15 @@ border-radius:5px;
          <item>
           <widget class="QLabel" name="label_6">
            <property name="styleSheet">
-            <string notr="true">font: 63 14pt &quot;georgia&quot;;
-color: #e0777d;</string>
+            <string notr="true">background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #6A0DAD, stop:1 #4B0082); /* Dégradé violet */
+border-radius: 10px;
+border: 1px solid #FFD700; /* Bordure or plus fine */
+box-shadow: 0 4px 8px rgba(106, 13, 173, 0.3); /* Ombre violette */
+
+</string>
            </property>
            <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:16pt; font-weight:700; font-style:italic; color:#bc4749;&quot;&gt;Authors&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:16pt; font-weight:700; font-style:italic; color:#ffd700;&quot;&gt;Authors&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
           </widget>
          </item>
@@ -497,15 +464,16 @@ color: #e0777d;</string>
            <property name="styleSheet">
             <string notr="true">QPushButton{
 font: 63 14pt &quot;georgia&quot;;
-color: #e0777d;
+color: white;
 padding : 0 8px;
 
 }
 QPushButton:hover:!pressed
 {
-background:#036666;
+background:#FFD700#FFD700;
 border-radius:5px;
-}</string>
+}
+</string>
            </property>
            <property name="text">
             <string>Manage Authors</string>
@@ -544,11 +512,15 @@ border-radius:5px;
          <item>
           <widget class="QLabel" name="label_7">
            <property name="styleSheet">
-            <string notr="true">font: 63 12pt &quot;georgia&quot;;
-color: #e0777d;</string>
+            <string notr="true">background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #6A0DAD, stop:1 #4B0082); /* Dégradé violet */
+border-radius: 10px;
+border: 1px solid #FFD700; /* Bordure or plus fine */
+box-shadow: 0 4px 8px rgba(106, 13, 173, 0.3); /* Ombre violette */
+
+</string>
            </property>
            <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:16pt; font-weight:700; font-style:italic; color:#bc4749;&quot;&gt;Members&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:16pt; font-weight:700; font-style:italic; color:#ffd700;&quot;&gt;Members&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
           </widget>
          </item>
@@ -577,13 +549,13 @@ color: #e0777d;</string>
            <property name="styleSheet">
             <string notr="true">QPushButton{
 font: 63 14pt &quot;georgia&quot;;
-color: #e0777d;
+color: white;
 padding : 0 8px;
 
 }
 QPushButton:hover:!pressed
 {
-background:#036666;
+background:#FFD700;
 border-radius:5px;
 }</string>
            </property>
@@ -626,13 +598,13 @@ border-radius:5px;
            <property name="styleSheet">
             <string notr="true">QPushButton{
 font: 63 14pt &quot;georgia&quot;;
-color: #e0777d;
+color:white;
 padding : 0 8px;
 
 }
 QPushButton:hover:!pressed
 {
-background:#036666;
+background:#FFD700;
 border-radius:5px;
 }</string>
            </property>
@@ -675,12 +647,13 @@ border-radius:5px;
            <property name="styleSheet">
             <string notr="true">QPushButton{
 font: 63 14pt &quot;georgia&quot;;
-color: #e0777d;
+color:white;
 padding : 0 8px;
+
 }
 QPushButton:hover:!pressed
 {
-background:#036666;
+background:#FFD700;
 border-radius:5px;
 }</string>
            </property>
@@ -723,13 +696,13 @@ border-radius:5px;
            <property name="styleSheet">
             <string notr="true">QPushButton{
 font: 63 14pt &quot;georgia&quot;;
-color: #e0777d;
+color:white;
 padding : 0 8px;
 
 }
 QPushButton:hover:!pressed
 {
-background:#036666;
+background:#FFD700;
 border-radius:5px;
 }</string>
            </property>
@@ -770,11 +743,15 @@ border-radius:5px;
          <item>
           <widget class="QLabel" name="label_8">
            <property name="styleSheet">
-            <string notr="true">font: 63 12pt &quot;georgia&quot;;
-color: rgb(255, 255, 255);</string>
+            <string notr="true">background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #6A0DAD, stop:1 #4B0082); /* Dégradé violet */
+border-radius: 10px;
+border: 1px solid #FFD700; /* Bordure or plus fine */
+box-shadow: 0 4px 8px rgba(106, 13, 173, 0.3); /* Ombre violette */
+
+</string>
            </property>
            <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:16pt; font-weight:700; font-style:italic; color:#bc4749;&quot;&gt;Books&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:16pt; font-weight:700; font-style:italic; color:#ffd700;&quot;&gt;Books&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
           </widget>
          </item>
@@ -803,13 +780,13 @@ color: rgb(255, 255, 255);</string>
            <property name="styleSheet">
             <string notr="true">QPushButton{
 font: 63 14pt &quot;georgia&quot;;
-color: #e0777d;
+color:white;
 padding : 0 8px;
 
 }
 QPushButton:hover:!pressed
 {
-background:#036666;
+background:#FFD700;
 border-radius:5px;
 }</string>
            </property>
@@ -852,13 +829,13 @@ border-radius:5px;
            <property name="styleSheet">
             <string notr="true">QPushButton{
 font: 63 14pt &quot;georgia&quot;;
-color: #e0777d;
+color:white;
 padding : 0 8px;
 
 }
 QPushButton:hover:!pressed
 {
-background:#036666;
+background:#FFD700;
 border-radius:5px;
 }</string>
            </property>
@@ -901,13 +878,13 @@ border-radius:5px;
            <property name="styleSheet">
             <string notr="true">QPushButton{
 font: 63 14pt &quot;georgia&quot;;
-color: #e0777d;
+color:white;
 padding : 0 8px;
 
 }
 QPushButton:hover:!pressed
 {
-background:#036666;
+background:#FFD700;
 border-radius:5px;
 }</string>
            </property>
@@ -928,6 +905,77 @@ border-radius:5px;
         </layout>
        </item>
        <item>
+        <widget class="QFrame" name="statsButton_2">
+         <property name="styleSheet">
+          <string notr="true">background-color: #7A28A5;
+border-radius:8px</string>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Shape::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Shadow::Raised</enum>
+         </property>
+         <widget class="QWidget" name="layoutWidget">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>211</width>
+            <height>41</height>
+           </rect>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_15">
+           <item>
+            <spacer name="horizontalSpacer_15">
+             <property name="orientation">
+              <enum>Qt::Orientation::Horizontal</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Policy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>28</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="booksListBtn">
+             <property name="styleSheet">
+              <string notr="true">QPushButton{
+font: 63 14pt &quot;georgia&quot;;
+color:white;
+padding : 0 8px;
+
+}
+QPushButton:hover:!pressed
+{
+background:#FFD700;
+border-radius:5px;
+}</string>
+             </property>
+             <property name="text">
+              <string>Books List</string>
+             </property>
+             <property name="autoDefault">
+              <bool>false</bool>
+             </property>
+             <property name="default">
+              <bool>false</bool>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+       <item>
         <layout class="QHBoxLayout" name="horizontalLayout_14">
          <item>
           <spacer name="horizontalSpacer_13">
@@ -946,22 +994,22 @@ border-radius:5px;
           </spacer>
          </item>
          <item>
-          <widget class="QPushButton" name="booksListBtn">
+          <widget class="QPushButton" name="statsButton">
            <property name="styleSheet">
             <string notr="true">QPushButton{
 font: 63 14pt &quot;georgia&quot;;
-color: #e0777d;
+color:white;
 padding : 0 8px;
 
 }
 QPushButton:hover:!pressed
 {
-background:#036666;
+background:#FFD700;
 border-radius:5px;
 }</string>
            </property>
            <property name="text">
-            <string>Books List</string>
+            <string>Statistic</string>
            </property>
            <property name="autoDefault">
             <bool>false</bool>
@@ -977,116 +1025,6 @@ border-radius:5px;
         </layout>
        </item>
       </layout>
-     </widget>
-     <widget class="QFrame" name="frame_5">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>580</y>
-        <width>221</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background-color: #c1fba4;
-border-radius:8px</string>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::Shape::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Shadow::Raised</enum>
-      </property>
-      <widget class="QPushButton" name="statsButton">
-       <property name="geometry">
-        <rect>
-         <x>30</x>
-         <y>10</y>
-         <width>175</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton{
-font: 63 14pt &quot;georgia&quot;;
-color: #e0777d;
-padding : 0 8px;
-
-}
-QPushButton:hover:!pressed
-{
-background:#036666;
-border-radius:5px;
-}</string>
-       </property>
-       <property name="text">
-        <string>Statistic</string>
-       </property>
-       <property name="autoDefault">
-        <bool>false</bool>
-       </property>
-       <property name="default">
-        <bool>false</bool>
-       </property>
-       <property name="flat">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QFrame" name="frame_7">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>30</y>
-         <width>221</width>
-         <height>41</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: #c1fba4;
-border-radius:8px</string>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::Shape::StyledPanel</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Shadow::Raised</enum>
-       </property>
-       <widget class="QPushButton" name="statsButton_2">
-        <property name="geometry">
-         <rect>
-          <x>30</x>
-          <y>10</y>
-          <width>175</width>
-          <height>16</height>
-         </rect>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">QPushButton{
-font: 63 14pt &quot;georgia&quot;;
-color: #e0777d;
-padding : 0 8px;
-
-}
-QPushButton:hover:!pressed
-{
-background:#036666;
-border-radius:5px;
-}</string>
-        </property>
-        <property name="text">
-         <string>Statistic</string>
-        </property>
-        <property name="autoDefault">
-         <bool>false</bool>
-        </property>
-        <property name="default">
-         <bool>false</bool>
-        </property>
-        <property name="flat">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </widget>
      </widget>
     </widget>
    </item>

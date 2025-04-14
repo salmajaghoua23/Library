@@ -60,6 +60,14 @@ void Login::on_loginButton_clicked()
 
             if (count == 1) {
                 lib.setUsername(username);
+                // ✅ Enregistrer la date/heure de connexion dans un fichier
+                QFile file("historique_connexions.txt");
+                if (file.open(QIODevice::Append | QIODevice::Text)) {
+                    QTextStream out(&file);
+                    QString date = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
+                    out << date << "\n";
+                    file.close();
+                }
 
                 // Hide the current window
                 this->hide();
@@ -74,7 +82,7 @@ void Login::on_loginButton_clicked()
                     // studentWindow.exec();
                     studentLibrary *studentPage = new studentLibrary(this, db);
                     studentPage->show();
-                    // this->close();
+
                     qDebug() << "Welcome Student!";
                 }
             } else {

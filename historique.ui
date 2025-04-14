@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>statistic</class>
- <widget class="QWidget" name="statistic">
+ <class>historique</class>
+ <widget class="QWidget" name="historique">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>670</width>
+    <width>612</width>
     <height>467</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">color:black;</string>
   </property>
  </widget>
  <resources/>

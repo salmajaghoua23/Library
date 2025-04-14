@@ -9,9 +9,10 @@ set(CMAKE_AUTOUIC ON)
 
 # 🔍 Important : Assure que Qt6Charts est bien détecté
 set(Qt6Charts_DIR "C:/Qt/6.9.0/mingw_64/lib/cmake/Qt6Charts")
-
+#file(COPY resources/html/map.html DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Sql Widgets Charts)
 
+#qt_add_resources(RESOURCE_FILES html.qrc)
 set(SOURCES
     addbook.cpp
     addmember.cpp
@@ -28,10 +29,12 @@ set(SOURCES
     manageauthors.cpp
     managebooks.cpp
     memberslist.cpp
+    mapviewer.cpp
     newpasswd.cpp
     signup.cpp
    # stats.cpp
     studentlibrary.cpp
+    ${RESOURCE_FILES}
 )
 
 set(HEADERS
@@ -49,10 +52,12 @@ set(HEADERS
     manageauthors.h
     managebooks.h
     memberslist.h
+    mapviewer.h
     newpasswd.h
     signup.h
    # stats.h
     studentlibrary.h
+    ${RESOURCE_FILES}
 )
 
 set(UIS
@@ -70,6 +75,7 @@ set(UIS
     manageauthors.ui
     managebooks.ui
     memberslist.ui
+    mapviewer.ui
     newpasswd.ui
     signup.ui
     studentlibrary.ui
@@ -78,6 +84,7 @@ set(UIS
 
 set(RESOURCES
     icons.qrc
+    html.qrc
 )
 
 add_executable(${PROJECT_NAME}
@@ -86,7 +93,9 @@ add_executable(${PROJECT_NAME}
     ${UIS}
     ${RESOURCES}
     statistic.h statistic.cpp statistic.ui
-
+    mapviewer.h mapviewer.cpp mapviewer.ui
+    historique.h historique.cpp historique.ui
+    cart.h cart.cpp cart.ui
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -95,4 +104,5 @@ target_link_libraries(${PROJECT_NAME}
     Qt6::Sql
     Qt6::Widgets
     Qt6::Charts
+  #  Qt6::WebEngineWidgets
 )

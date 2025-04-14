@@ -15,16 +15,19 @@ class studentLibrary : public QDialog
     Q_OBJECT
 
 public:
-    explicit studentLibrary(QWidget *parent = nullptr, QSqlDatabase db = QSqlDatabase());
+    explicit studentLibrary(QWidget *parent = nullptr, QSqlDatabase database = QSqlDatabase());
     ~studentLibrary();
+
 
 private slots:
     void on_searchButton_clicked();
     void on_bookListView_clicked(const QModelIndex &index);
     void on_addToCartButton_clicked();
-    void on_borrowButton_clicked();
-    void showCart();
+    //void showCart();
     void on_backButton_clicked();
+    void on_btnHistorique_clicked();
+    void on_btnVoirPanier_clicked();
+    void on_btnCart_clicked();
 private:
     void showBookDetails(int bookId);
    // Cart userCart;
@@ -32,6 +35,7 @@ private:
     QSqlDatabase db;
     QSqlQueryModel *model;
     int currentBookId;
+    int getUserId();
 };
 
 #endif // STUDENTLIBRARY_H

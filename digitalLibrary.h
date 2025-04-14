@@ -58,6 +58,8 @@ private slots:
     void on_statsButton_clicked();
     void on_returnBookBtn_clicked();
 
+
+
 private:
     Ui::digitalLibrary *ui;
 

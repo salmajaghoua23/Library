@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Carte des bibliothèques</title>
+  <style>
+    #map { height: 100%; width: 100%; }
+    html, body { height: 100%; margin: 0; }
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+<body>
+  <div id="map"></div>
+  <script>
+    var map = L.map('map').setView([34.020882, -6.841650], 12); // Position initiale
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+    }).addTo(map);
+
+    let libraries = [];
+
+    function addLibraries(libList) {
+      libraries = JSON.parse(libList);
+      libraries.forEach(lib => {
+        L.marker([lib.lat, lib.lng]).addTo(map)
+          .bindPopup(lib.name);
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,5 +1,9 @@
 #include "studentlibrary.h"
 #include "ui_studentlibrary.h"
+#include "digitalLibrary.h"
+#include "mapviewer.h"
+#include "cart.h"
+#include "historique.h"
 #include <QMessageBox>
 #include <QSqlQuery>
 #include <QSqlQueryModel>
@@ -8,39 +12,12 @@
 #include <QSqlError>
 #include <QtConcurrent/QtConcurrent>
 #include <QSqlQuery>
-// studentLibrary::studentLibrary(QWidget *parent, QSqlDatabase db) :
-//     QDialog(parent),
-//     ui(new Ui::studentLibrary),
-//     db(db),
-//     model(new QSqlQueryModel(this)),
-//     currentBookId(-1)
-// {
-//     ui->setupUi(this);
-//     QSqlQuery createTableQuery(db);
-//     QString createTableSQL = R"(
-//     CREATE TABLE IF NOT EXISTS cart (
-//         id INTEGER PRIMARY KEY AUTOINCREMENT,
-//         user_id INTEGER,
-//         book_id INTEGER,
-//         name TEXT,
-//         author TEXT,
-//         added_at DATETIME DEFAULT CURRENT_TIMESTAMP
-//     )
-//     )";
-//    // this->userId = userId;
-//     if (!createTableQuery.exec(createTableSQL)) {
-//         QMessageBox::critical(this, "Erreur BD", "Échec de la création de la table cart :\n" + createTableQuery.lastError().text());
-//     }
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlError>
+#include <QMessageBox>
+#include <QDebug>
 
-//     // Cacher les boutons au départ
-//     ui->addToCartButton->setVisible(false);
-//     ui->borrowButton->setVisible(false);
-
-//     // Connecter les boutons
-//     connect(ui->searchButton, &QPushButton::clicked, this, &studentLibrary::on_searchButton_clicked);
-//     connect(ui->addToCartButton, &QPushButton::clicked, this, &studentLibrary::on_addToCartButton_clicked);
-//     connect(ui->borrowButton, &QPushButton::clicked, this, &studentLibrary::on_borrowButton_clicked);
-// }
 studentLibrary::studentLibrary(QWidget *parent, QSqlDatabase db) :
     QDialog(parent),
     ui(new Ui::studentLibrary),
@@ -48,8 +25,9 @@ studentLibrary::studentLibrary(QWidget *parent, QSqlDatabase db) :
     model(new QSqlQueryModel(this)),
     currentBookId(-1)
 {
-    ui->setupUi(this);
 
+    ui->setupUi(this);
+   // connectDB();
     QSqlQuery createTableQuery(db);
     QString createTableSQL = R"(
     CREATE TABLE IF NOT EXISTS cart (
@@ -74,12 +52,24 @@ studentLibrary::studentLibrary(QWidget *parent, QSqlDatabase db) :
     // Connecter les boutons
     connect(ui->searchButton, &QPushButton::clicked, this, &studentLibrary::on_searchButton_clicked);
     connect(ui->addToCartButton, &QPushButton::clicked, this, &studentLibrary::on_addToCartButton_clicked);
-    connect(ui->borrowButton, &QPushButton::clicked, this, &studentLibrary::on_borrowButton_clicked);
+   // connect(ui->borrowButton, &QPushButton::clicked, this, &studentLibrary::on_borrowButton_clicked);
     connect(ui->backButton, &QPushButton::clicked, this, &studentLibrary::on_backButton_clicked); // Nouvelle connexion
 }
 studentLibrary::~studentLibrary()
 {
     delete ui;
+}
+
+// Dans le constructeur ou une méthode
+void studentLibrary::on_btnHistorique_clicked() {
+    Historique *h = new Historique(this);
+    h->exec();
+}
+
+int studentLibrary::getUserId()
+{
+    // Exemple statique, tu devras adapter selon ton système d'authentification
+    return 1;  // ID fictif de l'utilisateur
 }
 void studentLibrary::on_backButton_clicked()
 {
@@ -87,7 +77,6 @@ void studentLibrary::on_backButton_clicked()
     ui->searchLineEdit->clear();
     ui->bookDetailsText->clear();
     ui->addToCartButton->setVisible(false);
-    ui->borrowButton->setVisible(false);
     ui->backButton->setVisible(false);
 
     // Efface la sélection dans la liste
@@ -99,19 +88,25 @@ void studentLibrary::on_backButton_clicked()
 void studentLibrary::on_searchButton_clicked()
 {
     QString searchTerm = ui->searchLineEdit->text();
+    if (searchTerm.isEmpty()) {
+        QMessageBox::information(this, "Attention", "Veuillez entrer un terme de recherche.");
+        return;
+    }
 
     QSqlQuery query(db);
     query.prepare("SELECT ID, name, author, genre, price FROM books "
-                  "WHERE name LIKE :searchTerm OR author LIKE :searchTerm OR genre LIKE :searchTerm");
+                  "WHERE name LIKE :searchTerm OR author LIKE :searchTerm OR genre LIKE :searchTerm OR ID = :idSearchTerm");
     query.bindValue(":searchTerm", "%" + searchTerm + "%");
+    query.bindValue(":idSearchTerm", searchTerm.toInt());  // Convertir la recherche à un entier pour ID
 
     if (query.exec()) {
         model->setQuery(query);
         ui->bookListView->setModel(model);
     } else {
-        QMessageBox::critical(this, "Error", "Failed to retrieve book data");
+        QMessageBox::critical(this, "Erreur", "Échec de la récupération des données.");
     }
 }
+
 
 void studentLibrary::on_bookListView_clicked(const QModelIndex &index)
 {
@@ -122,7 +117,7 @@ void studentLibrary::on_bookListView_clicked(const QModelIndex &index)
 
     // Afficher les boutons
     ui->addToCartButton->setVisible(true);
-    ui->borrowButton->setVisible(true);
+  //  ui->borrowButton->setVisible(true);
     ui->backButton->setVisible(true); // Affichez aussi le bouton retour
 }
 void studentLibrary::showBookDetails(int bookId)
@@ -181,31 +176,88 @@ void studentLibrary::on_addToCartButton_clicked()
         }
     }
 }
+// void studentLibrary::on_voirMonPanierButton_clicked()
+// {
+//     // Affiche le panier
+//     showCart();
+
+//     // Masque le bouton "Voir mon panier" après l'avoir cliqué
+//     ui->voirMonPanierButton->setVisible(false);
+// }
 
 // void studentLibrary::showCart()
 // {
 //     QSqlQuery query(db);
 //     query.prepare("SELECT name, author, added_at FROM cart WHERE user_id = :user_id");
-//     query.bindValue(":user_id", 1); // ou utilisateur connecté
+
+//     int userId = getUserId();
+//     query.bindValue(":user_id", userId);
 
 //     if (query.exec()) {
 //         QSqlQueryModel *cartModel = new QSqlQueryModel(this);
 //         cartModel->setQuery(query);
-//         ui->cartTableView->setModel(cartModel); // un QTableView que tu ajoutes à ton UI
+
+//         cartModel->setHeaderData(0, Qt::Horizontal, "Titre");
+//         cartModel->setHeaderData(1, Qt::Horizontal, "Auteur");
+//         cartModel->setHeaderData(2, Qt::Horizontal, "Date ajoutée");
+
+//         ui->cartTableView->setModel(cartModel);
+
+//         // Masquer les autres boutons
+//         ui->searchButton->setVisible(false);
+
+//         // Afficher le bouton retour
+//         ui->backButton->setVisible(true);
 //     } else {
-//         QMessageBox::warning(this, "Erreur", "Impossible d’afficher le panier.");
+//         QMessageBox::warning(this, "Erreur", "Impossible d'afficher le panier.");
+//     }
+// }
+void studentLibrary::on_btnCart_clicked()
+{
+    int userId = getUserId();  // Assure-toi que cette fonction retourne le bon ID
+    Cart *cart = new Cart(this);
+    cart->setDatabase(db); // <-- transmet la connexion vivante
+    cart->setUserId(userId); // si tu as ça
+    cart->show();
+
+
+
+}
+// void studentLibrary::removeBookFromCart(int rowIndex)
+// {
+//     int bookId = ui->cartTableView->model()->data(ui->cartTableView->model()->index(rowIndex, 0)).toInt();
+//     QSqlQuery query(db);
+//     query.prepare("DELETE FROM cart WHERE user_id = :user_id AND book_id = :book_id");
+//     query.bindValue(":user_id", getUserId());
+//     query.bindValue(":book_id", bookId);
+
+//     if (query.exec()) {
+//         showCart();  // Rafraîchir l'affichage du panier
+//     } else {
+//         QMessageBox::warning(this, "Erreur", "Impossible de supprimer le livre.");
 //     }
 // }
 
-void studentLibrary::on_borrowButton_clicked()
-{
-    QSqlQuery query(db);
-    query.prepare("UPDATE books SET quantity = quantity - 1 WHERE ID = :id AND quantity > 0");
-    query.bindValue(":id", currentBookId);
 
-    if (query.exec() && query.numRowsAffected() > 0) {
-        QMessageBox::information(this, "Succès", "Livre emprunté avec succès.");
-    } else {
-        QMessageBox::warning(this, "Erreur", "Le livre est indisponible.");
-    }
-}
+// void MainWindow::on_btnVoirCarte_clicked()
+// {
+//     QJsonArray libraries;
+
+//     QJsonObject lib1;
+//     lib1["name"] = "Bibliothèque Centrale";
+//     lib1["lat"] = 34.020882;
+//     lib1["lng"] = -6.841650;
+//     libraries.append(lib1);
+
+//     QJsonObject lib2;
+//     lib2["name"] = "Bibliothèque Faculté Sciences";
+//     lib2["lat"] = 34.024563;
+//     lib2["lng"] = -6.848329;
+//     libraries.append(lib2);
+
+//     MapViewer *map = new MapViewer(this);
+//     map->resize(800, 600);
+//     map->setLibraryData(libraries);
+//     map->show();
+// }
+
