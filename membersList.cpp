@@ -18,11 +18,11 @@ membersList::membersList(QWidget *parent) :
 
     //define the query on the db and the model
     auto query = QSqlQuery(db);
-    QString select{"SELECT * FROM members"};
+    QString select{"SELECT * FROM accounts"};
 
     //execute the query
     if(!query.exec(select))
-        qDebug() << "Cannot select from members";
+        qDebug() << "Cannot select from accounts";
 
     //define the model
     QSqlQueryModel * model = new QSqlQueryModel;
@@ -48,14 +48,14 @@ void membersList::on_value_textEdited(const QString &text)
     {
         //define the query on the db and the model
         auto query = QSqlQuery(db);
-        QString select{"SELECT * FROM members WHERE ID LIKE '"+value+"'"
+        QString select{"SELECT * FROM accounts WHERE ID LIKE '"+value+"'"
                        "OR firstName LIKE '"+value+"' OR lastName LIKE"
                        "'"+value+"' OR phone LIKE '"+value+"' OR email LIKE '"+value+"'"
                        "OR gender LIKE '"+value+"'"};
 
         //execute the query
         if(!query.exec(select))
-            qDebug() << "Cannot select from members";
+            qDebug() << "Cannot select from accounts";
         else
         {
             //define the model
@@ -68,11 +68,11 @@ void membersList::on_value_textEdited(const QString &text)
     {
         //define the query on the db and the model
         auto query = QSqlQuery(db);
-        QString select{"SELECT * FROM members"};
+        QString select{"SELECT * FROM accounts"};
 
         //execute the query
         if(!query.exec(select))
-            qDebug() << "Cannot select from members";
+            qDebug() << "Cannot select from accounts";
 
         //define the model
         QSqlQueryModel * model = new QSqlQueryModel;

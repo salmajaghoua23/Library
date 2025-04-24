@@ -13,28 +13,93 @@ Cart::Cart(QWidget *parent, QSqlDatabase db, int userId) :
     db(db),
     userId(userId)
 {
-
     ui->setupUi(this);
-    chargerPanier();  // Charger le panier à l'ouverture
+    QString gradientStyle = R"(
+QPushButton {
+    background-color: qlineargradient(
+        x1:0, y1:0, x2:1, y2:0,
+        stop:0 #FF69B4, stop:1 #8A2BE2
+    );
+    color: white;
+    border-radius: 12px;
+    padding: 10px 16px;
+    font-size: 16px;
+    font-weight: bold;
+    border: 1px solid #DA70D6;
+}
+
+QPushButton:hover {
+    background-color: qlineargradient(
+        x1:0, y1:0, x2:1, y2:0,
+        stop:0 #FF85C1, stop:1 #9F5DE2
+    );
+    border: 1px solid #FFD700;
+}
+
+QPushButton:pressed {
+    background-color: #7B1FA2;
+}
+
+QTableView {
+    background-color: #FFF0F5;
+    color: #4A148C;
+    font-size: 14px;
+    font-family: 'Segoe UI', sans-serif;
+    selection-background-color: #FFDDEE;
+    selection-color: #4A148C;
+    gridline-color: #E1BEE7;
+    border: 1px solid #BA55D3;
+    border-radius: 8px;
+}
+
+QTableView::item:hover {
+    background-color: #F3E5F5;
+}
+
+QHeaderView::section {
+    background-color: #DA70D6;
+    color: white;
+    font-weight: bold;
+    padding: 6px;
+    border: 1px solid #BA55D3;
+}
+)";
+
+    ui->btnRemoveSelected->setStyleSheet(gradientStyle);
+    ui->btnClearCart->setStyleSheet(gradientStyle);
+    ui->btnBorrowAll->setStyleSheet(gradientStyle);
+    ui->borrowButton->setStyleSheet(gradientStyle);
+    ui->voirMonPanierButton->setStyleSheet(gradientStyle);
+    ui->tableView->setStyleSheet(gradientStyle);
+
+   showCart(); // Charger le panier à l'ouverture
     QLabel *welcomeLabel = new QLabel("📚 Ready to borrow? Review your selected books below!", this);
     welcomeLabel->setStyleSheet("color: #8A2BE2; font-size: 16px; font-style: italic; padding: 8px;");
     // Style pour les boutons
     QString buttonStyle = R"(
-        QPushButton {
-            background-color: #6A1B9A;  /* Violet foncé */
-            color: white;
-            border-radius: 10px;
-            font-size: 16px;
-            padding: 10px;
-            border: 2px solid #FFD700;  /* Doré */
-        }
-        QPushButton:hover {
-            background-color: #8E24AA;  /* Violet clair */
-            border: 2px solid #FFEB3B;  /* Doré clair */
-        }
-        QPushButton:pressed {
-            background-color: #4A148C;  /* Violet encore plus foncé */
-        }
+QPushButton {
+    background-color: #6A1B9A;  /* Violet foncé */
+    color: white;
+    border-radius: 10px;
+    font-size: 16px;
+    padding: 10px;
+    border: 2px solid #FFD700;  /* Doré */
+    background-size: cover;  /* Couvre toute la zone du bouton */
+    background-position: center;  /* Centre l'image */
+    background-repeat: no-repeat;  /* Empêche l'image de se répéter */
+    transition: all 0.3s ease;  /* Pour des transitions douces */
+}
+
+QPushButton:hover {
+    background-color: rgba(142, 36, 170, 0.7);  /* Violet clair avec transparence */
+    border: 2px solid #FFEB3B;  /* Doré clair */
+}
+
+QPushButton:pressed {
+    background-color: #4A148C;  /* Violet foncé */
+    background-image: none;  /* Enlève l'image de fond quand pressé */
+}
+
     )";
     ui->btnRemoveSelected->setStyleSheet(buttonStyle);
     ui->btnClearCart->setStyleSheet(buttonStyle);
@@ -43,30 +108,45 @@ Cart::Cart(QWidget *parent, QSqlDatabase db, int userId) :
     ui->voirMonPanierButton->setStyleSheet(buttonStyle);
     // Style pour QTableView
     QString tableStyle = R"(
-        QTableView {
-            background-color: #F3E5F5;  /* Violet très clair */
-            color: #4A148C;  /* Violet foncé */
-            border: 1px solid #6A1B9A;
-            font-size: 14px;
-            font-family: Arial, sans-serif;
-        }
-        QTableView::item {
-            padding: 8px;
-            border-bottom: 1px solid #6A1B9A;
-        }
-        QTableView::item:selected {
-            background-color: #FFEB3B;  /* Doré clair */
-            color: #4A148C;  /* Violet foncé */
-        }
-        QHeaderView::section {
-            background-color: #6A1B9A;
-            color: black;
-            font-size: 16px;
-            padding: 5px;
-        }
-        QHeaderView::section:horizontal {
-            border: 1px solid #6A1B9A;
-        }
+QTableView {
+    background-color: white;  /* Violet très clair */
+    color: #4A148C;  /* Violet foncé */
+    border: 1px solid #6A1B9A;  /* Violet foncé pour la bordure */
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+    selection-background-color: #FFEB3B;  /* Doré clair pour la sélection */
+    selection-color: #4A148C;  /* Violet foncé pour le texte sélectionné */
+}
+
+QTableView::item {
+    padding: 8px;
+    border-bottom: 1px solid #6A1B9A;  /* Bordure entre les lignes */
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+QTableView::item:selected {
+    background-color: #FFEB3B;  /* Doré clair */
+    color: #4A148C;  /* Violet foncé */
+}
+
+QHeaderView::section {
+    background-color: #6A1B9A;  /* Violet foncé */
+    color: white;  /* Texte blanc pour une meilleure lisibilité */
+    font-size: 16px;
+    padding: 5px;
+    font-weight: bold;  /* Pour donner un peu plus de présence aux titres de colonnes */
+}
+
+QHeaderView::section:horizontal {
+    border: 1px solid #6A1B9A;  /* Bordure entre les colonnes */
+}
+
+/* Effet de survol pour les lignes */
+QTableView::item:hover {
+    background-color: #D1C4E9;  /* Violet clair quand on survole une ligne */
+    color: #4A148C;  /* Violet foncé pour le texte */
+}
+
     )";
     connect(ui->btnRemoveSelected, &QPushButton::clicked, this, &Cart::on_btnRemoveSelected_clicked);
     connect(ui->btnClearCart, &QPushButton::clicked, this, &Cart::on_btnClearCart_clicked);
@@ -76,7 +156,6 @@ Cart::Cart(QWidget *parent, QSqlDatabase db, int userId) :
 
     ui->tableView->setStyleSheet(tableStyle);
 }
-
 
 Cart::~Cart()
 {

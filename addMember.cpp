@@ -3,6 +3,7 @@
 #include "digitalLibrary.h"
 #include <QMessageBox>
 #include <QDebug>
+#include <QSqlError>
 
 addMember::addMember(QWidget *parent) :
     QDialog(parent),
@@ -12,66 +13,80 @@ addMember::addMember(QWidget *parent) :
     this->resize(350, 400);
     this->setWindowTitle("Add Member");
 
+    // Style optionnel pour meilleure visibilité
+    this->setStyleSheet(
+        "QLineEdit { padding: 5px; border: 1px solid #ccc; border-radius: 3px; }"
+        "QPushButton { padding: 8px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; }"
+        );
+
     setValidator();
 }
-
 addMember::~addMember()
 {
     delete ui;
+    qDebug() << "addMember destroyed";  // Optionnel : pour le débogage
 }
-
 void addMember::on_addMemberButton_clicked()
 {
-    //get the content of the fields
-    QString firstName =ui->firstName->text();
-    QString lastName = ui->lastName->text();
-    QString  phone = ui->phone->text();
-    QString email = ui->email->text();
+    // Récupération des valeurs
+    QString firstName = ui->firstName->text().trimmed();
+    QString lastName = ui->lastName->text().trimmed();
+    QString phone = ui->phone->text().trimmed();
     QString gender = ui->gender->currentText();
 
-    //call the mail Database
+    // Vérification des champs avec ET logique (&&)
+    if(firstName.isEmpty() || lastName.isEmpty() || phone.isEmpty() || gender.isEmpty())
+    {
+        QMessageBox::warning(this, "Empty Fields", "All fields are required!");
+        return;
+    }
+
     digitalLibrary lib;
     auto db = lib.db;
 
-    //Make sure that the fields are not empty
-    if((!firstName.isEmpty() & !lastName.isEmpty())&(!phone.isEmpty() & !email.isEmpty())& !gender.isEmpty())
+    // Vérifier la connexion à la base
+    if(!db.isOpen())
     {
-        //Create the query
-        auto query = QSqlQuery(db);
+        QMessageBox::critical(this, "Database Error", "Database connection failed!");
+        return;
+    }
 
-        //Insert into db
-        QString insert = {"INSERT INTO members (firstName, lastName, phone, email, gender)"
-                          "VALUES ('%1', '%2', '%3', '%4', '%5')"};
+    // Requête préparée (plus sécurisée)
+    QSqlQuery query(db);
+    query.prepare("INSERT INTO accounts (username, name, password, role) "
+                  "VALUES (:firstname, :lastname, :phone, :gender)");
 
-        //Execute the query
-        if(!query.exec(insert.arg(firstName).arg(lastName).arg(phone).arg(email).arg(gender)))
-            qDebug() << "Cannot insert into members";
-        else
-            QMessageBox::information(this, "SUCCESS", "Member added succesfully!");
+    query.bindValue(":firstname", firstName);
+    query.bindValue(":lastname", lastName);
+    query.bindValue(":phone", phone);
+    query.bindValue(":gender", gender);
+
+    if(!query.exec())
+    {
+        qDebug() << "SQL Error:" << query.lastError().text();
+        QMessageBox::critical(this, "Error",
+                              "Failed to add member:\n" + query.lastError().text());
     }
     else
-       QMessageBox::warning(this, "Empty", "Fields are empty!");
-
+    {
+        QMessageBox::information(this, "Success", "Member added successfully!");
+        this->accept(); // Ferme la fenêtre après succès
+    }
 }
 
-void addMember::setValidator(){
-    //regx for name
-    QRegularExpression Name("^[A-Za-z]{7,29}$");
-    QRegularExpressionValidator *valName = new QRegularExpressionValidator(Name, this);
-    ui->firstName->setValidator(valName);
-    ui->lastName->setValidator(valName);
+void addMember::setValidator()
+{
+    // Validation pour les noms (7-29 caractères alphabétiques)
+    QRegularExpression nameRegex("^[A-Za-z]{7,29}$");
+    ui->firstName->setValidator(new QRegularExpressionValidator(nameRegex, this));
+    ui->lastName->setValidator(new QRegularExpressionValidator(nameRegex, this));
 
-    //Validator for phone number
-    QRegularExpression phone("[0-9]{10}");
-    QRegularExpressionValidator *valPhone = new QRegularExpressionValidator(phone, this);
-    ui->phone->setValidator(valPhone);
+    // Validation pour le téléphone (10 chiffres)
+    QRegularExpression phoneRegex("^[0-9]{10}$");
+    ui->phone->setValidator(new QRegularExpressionValidator(phoneRegex, this));
 
-    //Validator for email
-    QRegularExpression email("^[a-zA-Z0-9_.-]+@[a-zA-Z0-9.-]+$");
-    QRegularExpressionValidator *valMail = new QRegularExpressionValidator(email, this);
-    ui->email->setValidator(valMail);
-
-
-
-
+    // Activer la validation en temps réel
+    ui->firstName->setProperty("valid", true);
+    ui->lastName->setProperty("valid", true);
+    ui->phone->setProperty("valid", true);
 }

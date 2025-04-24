@@ -14,74 +14,19 @@
    <string>Dialog</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QDialog {
-    background: qlineargradient(
-        x1:0, y1:0, x2:0, y2:1,
-        stop:0 #F8F0FF,  /* Light lavender */
-        stop:1 #E6E6FA   /* Slightly deeper lavender */
-    );
-    font-family: &quot;Segoe UI&quot;, sans-serif;
-    font-size: 16px;
-    color: #4B0082;  /* Deep purple */
-    border: 2px solid #D4AF37;  /* Gold border */
-    border-radius: 8px;
-}
-
-QDialog QLabel {
-    color: #6A0DAD;  /* Royal purple for labels */
-    font-weight: 500;
-}</string>
+   <string notr="true">background:white;</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <spacer name="horizontalSpacer_3">
-       <property name="orientation">
-        <enum>Qt::Orientation::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>138</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_5">
-       <property name="text">
-        <string/>
-       </property>
-       <property name="pixmap">
-        <pixmap resource="icons.qrc">:/book3.png</pixmap>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_4">
-       <property name="orientation">
-        <enum>Qt::Orientation::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>128</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </item>
    <item>
     <widget class="QGroupBox" name="loginGroup">
      <property name="styleSheet">
       <string notr="true">QGroupBox {
     font: 16pt &quot;Georgia&quot;;
-    border: 2px solid #6A0DAD;  /* Purple border */
+    border: 2px solid white;
     border-radius: 6px;
-    color: #4B0082;  /* Dark purple text */
-    background-color: #F8F0FF;  /* Light lavender background */
+    background-color:rgb(117, 117, 175);
+border-radius: 10px;
+    color: white;
     padding: 10px;
 }
 
@@ -89,67 +34,117 @@ QGroupBox::title {
     subcontrol-origin: margin;
     left: 10px;
     padding: 0 5px;
-    color: #FFD700;  /* Gold title text */
-    background-color: #6A0DAD;  /* Purple background for title */
+    color: white;
+    background-color: rgb(23, 170, 32)
 }</string>
      </property>
      <property name="title">
       <string>Login</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_6">
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_7">
         <property name="styleSheet">
          <string notr="true">QLabel {
-    font-family: &quot;Segoe UI&quot;, sans-serif;
-    font-size: 16px;
-    color: #4B0082;  /* Violet foncé au lieu de gris */
-    font-weight: 500;  /* Semi-gras pour plus d'élégance */
-}
-
-/* Style optionnel pour les labels importants (titre, etc.) */
-QLabel#importantLabel {
-    color: #6A0DAD;  /* Violet royal */
-    font-weight: 600;
-}
-
-/* Style optionnel pour les labels secondaires */
-QLabel.secondary {
-    color: #9370DB;  /* Violet doux */
-    font-size: 14px;
+    font: bold 18px &quot;Georgia&quot;;
+    color: rgb(85, 0, 127);
+    background-color: transparent;
+	font: 600 italic 22pt &quot;Segoe UI&quot;;
 }</string>
         </property>
         <property name="text">
-         <string>Password</string>
+         <string>Username</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="1" colspan="2">
-       <widget class="QLineEdit" name="password">
+      <item row="1" column="1" colspan="2">
+       <widget class="QLineEdit" name="username">
         <property name="styleSheet">
          <string notr="true">QLineEdit {
-    background-color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.7);  /* Légèrement transparent pour laisser voir le fond */
     border: 2px solid #9370DB;  /* Violet doux */
     border-radius: 8px;
     padding: 6px 10px;
     font-size: 16px;
-    color: #2f4f4f;  /* Gris foncé pour le texte */
+    color: #4B0082;  /* Violet foncé pour le texte */
+    font-weight: bold;
     transition: all 0.3s ease-in-out;
+    backdrop-filter: blur(10px); /* Effet de flou pour l’arrière-plan, en accord avec une image */
 }
 
 QLineEdit:hover {
     border: 2px solid #6A0DAD;  /* Violet plus intense */
-    background-color: #f8f0ff;  /* Lavande très claire */
+    background-color: rgba(248, 240, 255, 0.8);  /* Lavande très claire pour le hover */
 }
 
 QLineEdit:focus {
     border: 2px solid #FFD700;  /* Or pour le focus */
-    background-color: #ffffff;
+    background-color: rgba(255, 255, 255, 1);  /* Blanche pour se détacher au focus */
     color: #4B0082;  /* Violet foncé pour le texte */
-}</string>
+    font-size: 17px;  /* Légère augmentation de la taille pour plus d'attention */
+}
+</string>
         </property>
-        <property name="echoMode">
-         <enum>QLineEdit::EchoMode::Password</enum>
+       </widget>
+      </item>
+      <item row="3" column="2">
+       <widget class="QPushButton" name="signUpButton">
+        <property name="styleSheet">
+         <string notr="true">/* Base Button Style */
+QPushButton {
+    background-color: rgb(255, 28, 28);  /* Royal Purple */
+    color: white;            /* Gold Text */
+    border: none;
+    border-radius: 20px;        /* Rounded Corners */
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Hover Effect */
+QPushButton:hover {
+    background-color: rgb(179, 126, 82); /* Brighter Purple */
+    color: #FFFACD;             /* Lemon Chiffon */
+    border: 1px solid #FFD700;  /* Gold Border */
+}
+
+/* Pressed Effect */
+QPushButton:pressed {
+    background-color: #4B0082;  /* Indigo */
+    color: #D4AF37;             /* Metallic Gold */
+    font-size: 15px;            /* Slight Shrink */
+    padding: 11px 21px;         /* Compensates for Shrink */
+}
+
+/* Focus Effect */
+QPushButton:focus {
+    outline: none;
+    border: 2px solid #FFD700;
+}
+
+/* Accent Button Variant */
+QPushButton.accent {
+    background-color: #FFD700;  /* Gold */
+    color: #4B0082;             /* Deep Purple */
+}
+
+QPushButton.accent:hover {
+    background-color: #F0E68C;  /* Khaki */
+    color: #4B0082;
+    border: 1px solid #D4AF37;
+}
+
+QPushButton.accent:pressed {
+    background-color: #D4AF37;  /* Metallic Gold */
+    color: #4B0082;
+    font-size: 15px;
+    padding: 11px 21px;
+}
+</string>
+        </property>
+        <property name="text">
+         <string>Sign Up</string>
         </property>
        </widget>
       </item>
@@ -161,49 +156,56 @@ QLineEdit:focus {
         <property name="styleSheet">
          <string notr="true">/* Base Button Style */
 QPushButton {
-    background-color: #6A0DAD;  /* Royal purple */
-    color: #FFD700;  /* Gold text */
+    background-color: rgb(35, 170, 44);  /* Royal Purple */
+    color: white;            /* Gold Text */
     border: none;
-    border-radius: 20px;  /* Keeping your rounded style */
-    padding: 8px 16px;
-    font-size: 18px;
+    border-radius: 20px;        /* Rounded Corners */
+    padding: 10px 20px;
+    font-size: 16px;
     font-weight: bold;
-    transition: all 0.3s ease;
+    transition: all 0.3s ease-in-out;
 }
 
 /* Hover Effect */
 QPushButton:hover {
-    background-color: #8A2BE2;  /* Brighter purple */
-    color: #FFFACD;  /* Lighter gold */
-    border: 1px solid #FFD700;  /* Gold border appears */
+    background-color: rgb(179, 126, 82); /* Brighter Purple */
+    color: #FFFACD;             /* Lemon Chiffon */
+    border: 1px solid #FFD700;  /* Gold Border */
 }
 
 /* Pressed Effect */
 QPushButton:pressed {
-    background-color: #4B0082;  /* Deep purple */
-    color: #D4AF37;  /* Metallic gold */
-    font-size: 17px;  /* Keeping your subtle shrink effect */
-    padding: 9px 17px;  /* Compensates for font change */
+    background-color: #4B0082;  /* Indigo */
+    color: #D4AF37;             /* Metallic Gold */
+    font-size: 15px;            /* Slight Shrink */
+    padding: 11px 21px;         /* Compensates for Shrink */
 }
 
 /* Focus Effect */
 QPushButton:focus {
-    outline: 2px solid #FFD700;  /* Gold outline */
-    outline-offset: 2px;
+    outline: none;
+    border: 2px solid #FFD700;
 }
+
+/* Accent Button Variant */
 QPushButton.accent {
     background-color: #FFD700;  /* Gold */
-    color: #4B0082;  /* Deep purple text */
+    color: #4B0082;             /* Deep Purple */
 }
 
 QPushButton.accent:hover {
-    background-color: #F0E68C;  /* Light gold */
+    background-color: #F0E68C;  /* Khaki */
+    color: #4B0082;
     border: 1px solid #D4AF37;
 }
 
 QPushButton.accent:pressed {
-    background-color: #D4AF37;  /* Metallic gold */
-}</string>
+    background-color: #D4AF37;  /* Metallic Gold */
+    color: #4B0082;
+    font-size: 15px;
+    padding: 11px 21px;
+}
+</string>
         </property>
         <property name="text">
          <string>Login</string>
@@ -216,60 +218,6 @@ QPushButton.accent:pressed {
         </property>
        </widget>
       </item>
-      <item row="3" column="2">
-       <widget class="QPushButton" name="signUpButton">
-        <property name="styleSheet">
-         <string notr="true">/* Base Button Style */
-QPushButton {
-    background-color: #6A0DAD;  /* Royal purple */
-    color: #FFD700;  /* Gold text */
-    border: none;
-    border-radius: 20px;  /* Keeping your rounded style */
-    padding: 8px 16px;
-    font-size: 18px;
-    font-weight: bold;
-    transition: all 0.3s ease;
-}
-
-/* Hover Effect */
-QPushButton:hover {
-    background-color: #8A2BE2;  /* Brighter purple */
-    color: #FFFACD;  /* Lighter gold */
-    border: 1px solid #FFD700;  /* Gold border appears */
-}
-
-/* Pressed Effect */
-QPushButton:pressed {
-    background-color: #4B0082;  /* Deep purple */
-    color: #D4AF37;  /* Metallic gold */
-    font-size: 17px;  /* Keeping your subtle shrink effect */
-    padding: 9px 17px;  /* Compensates for font change */
-}
-
-/* Focus Effect */
-QPushButton:focus {
-    outline: 2px solid #FFD700;  /* Gold outline */
-    outline-offset: 2px;
-}
-QPushButton.accent {
-    background-color: #FFD700;  /* Gold */
-    color: #4B0082;  /* Deep purple text */
-}
-
-QPushButton.accent:hover {
-    background-color: #F0E68C;  /* Light gold */
-    border: 1px solid #D4AF37;
-}
-
-QPushButton.accent:pressed {
-    background-color: #D4AF37;  /* Metallic gold */
-}</string>
-        </property>
-        <property name="text">
-         <string>Sign Up</string>
-        </property>
-       </widget>
-      </item>
       <item row="4" column="1" colspan="2">
        <widget class="QPushButton" name="forgetPasswdBtn">
         <property name="focusPolicy">
@@ -277,79 +225,80 @@ QPushButton.accent:pressed {
         </property>
         <property name="styleSheet">
          <string notr="true">#forgetPasswdBtn {
-    background-color: #FFD700;  /* Gold background */
-    color: #4B0082;  /* Deep purple text */
+    background-color: #FFD700;        /* Gold background */
+    color: #4B0082;                   /* Deep purple text */
     border: none;
     border-radius: 15px;
-    padding: 6px 12px;
+    padding: 8px 16px;                /* Un peu plus de confort visuel */
     font-size: 14px;
     font-weight: 600;
+    transition: all 0.3s ease-in-out;
 }
 
 #forgetPasswdBtn:hover {
-    background-color: #F0E68C;  /* Light gold */
-    color: #6A0DAD;
+    background-color: #F0E68C;        /* Light gold */
+    color: #6A0DAD;                   /* Royal purple */
+    border: 1px solid #D4AF37;        /* Fin contour pour la clarté */
 }
 
 #forgetPasswdBtn:pressed {
-    background-color: #D4AF37;  /* Metallic gold */
-}</string>
+    background-color: #D4AF37;        /* Metallic gold */
+    color: #4B0082;
+    padding: 9px 17px;                /* Effet visuel subtil de clic */
+    font-size: 13.5px;
+}
+</string>
         </property>
         <property name="text">
          <string>Forget Password</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_7">
-        <property name="styleSheet">
-         <string notr="true">QLabel {
-    font-family: &quot;Segoe UI&quot;, sans-serif;
-    font-size: 16px;
-    color: #4B0082;  /* Violet foncé au lieu de gris */
-    font-weight: 500;  /* Semi-gras pour plus d'élégance */
-}
-
-/* Style optionnel pour les labels importants (titre, etc.) */
-QLabel#importantLabel {
-    color: #6A0DAD;  /* Violet royal */
-    font-weight: 600;
-}
-
-/* Style optionnel pour les labels secondaires */
-QLabel.secondary {
-    color: #9370DB;  /* Violet doux */
-    font-size: 14px;
-}</string>
-        </property>
-        <property name="text">
-         <string>Username</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1" colspan="2">
-       <widget class="QLineEdit" name="username">
+      <item row="2" column="1" colspan="2">
+       <widget class="QLineEdit" name="password">
         <property name="styleSheet">
          <string notr="true">QLineEdit {
-    background-color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.7);  /* Légèrement transparent pour laisser voir le fond */
     border: 2px solid #9370DB;  /* Violet doux */
     border-radius: 8px;
     padding: 6px 10px;
     font-size: 16px;
-    color: #2f4f4f;  /* Gris foncé pour le texte */
+    color: #4B0082;  /* Violet foncé pour le texte */
+    font-weight: bold;
     transition: all 0.3s ease-in-out;
+    backdrop-filter: blur(10px); /* Effet de flou pour l’arrière-plan, en accord avec une image */
 }
 
 QLineEdit:hover {
     border: 2px solid #6A0DAD;  /* Violet plus intense */
-    background-color: #f8f0ff;  /* Lavande très claire */
+    background-color: rgba(248, 240, 255, 0.8);  /* Lavande très claire pour le hover */
 }
 
 QLineEdit:focus {
     border: 2px solid #FFD700;  /* Or pour le focus */
-    background-color: #ffffff;
+    background-color: rgba(255, 255, 255, 1);  /* Blanche pour se détacher au focus */
     color: #4B0082;  /* Violet foncé pour le texte */
+    font-size: 17px;  /* Légère augmentation de la taille pour plus d'attention */
+}
+</string>
+        </property>
+        <property name="echoMode">
+         <enum>QLineEdit::EchoMode::Password</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_6">
+        <property name="styleSheet">
+         <string notr="true">QLabel {
+    font: bold 18px &quot;Georgia&quot;;
+    color: rgb(85, 0, 127);
+    background-color: transparent;
+	font: 600 italic 22pt &quot;Segoe UI&quot;;
 }</string>
+        </property>
+        <property name="text">
+         <string>Password</string>
         </property>
        </widget>
       </item>
@@ -358,8 +307,6 @@ QLineEdit:focus {
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="icons.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

@@ -1,0 +1,1127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>digitalLibrary</class>
+ <widget class="QDialog" name="digitalLibrary">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>856</width>
+    <height>692</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">  background-color: #D7CCC8;</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_10">
+   <item>
+    <widget class="QFrame" name="frame_4">
+     <property name="styleSheet">
+      <string notr="true">  background-color: #D7CCC8;
+</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::Shape::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Shadow::Raised</enum>
+     </property>
+     <widget class="QFrame" name="frame_3">
+      <property name="geometry">
+       <rect>
+        <x>238</x>
+        <y>13</y>
+        <width>577</width>
+        <height>611</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">  background-color: #D7CCC8;
+</string>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::Shape::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Shadow::Raised</enum>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_23">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_22">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout">
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_2">
+               <item>
+                <widget class="QFrame" name="frame_2">
+                 <property name="styleSheet">
+                  <string notr="true">  background-color: #D7CCC8;
+border-radius: 10px;</string>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::Shape::StyledPanel</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Shadow::Raised</enum>
+                 </property>
+                 <layout class="QVBoxLayout" name="verticalLayout_15">
+                  <item>
+                   <widget class="QLabel" name="label_3">
+                    <property name="styleSheet">
+                     <string notr="true">  background-color: #D7CCC8;</string>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                    <property name="pixmap">
+                     <pixmap>:/login-book.png</pixmap>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QLabel" name="label">
+             <property name="styleSheet">
+              <string notr="true">font: italic 18pt &quot;Georgia&quot;;
+color:  rgb(210, 156, 255);/* Violet foncé */
+text-shadow: 1px 1px 2px #FFD70033;  /* Ombre dorée subtile */</string>
+             </property>
+             <property name="text">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;&lt;span style=&quot; font-size:22pt; font-weight:700; color:#005500;&quot;&gt;Welcome Back&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="username">
+             <property name="styleSheet">
+              <string notr="true">font: bold italic 24pt &quot;Georgia&quot;;
+color: #D4AF37;  /* Or métallique */</string>
+             </property>
+             <property name="text">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ca8665;&quot;&gt;[+username]&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_21">
+         <item>
+          <widget class="QFrame" name="frame_9">
+           <property name="styleSheet">
+            <string notr="true">background-color: rgb(173, 115, 86);
+border-radius: 10px;</string>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::Shape::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Shadow::Raised</enum>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_12">
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_13">
+              <item>
+               <widget class="QLabel" name="label_24">
+                <property name="styleSheet">
+                 <string notr="true">font: 63 18pt &quot;georgia&quot;;
+color: rgb(255, 255, 255);
+font-weight: bold;</string>
+                </property>
+                <property name="text">
+                 <string>Books</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="bookNum">
+                <property name="styleSheet">
+                 <string notr="true">font: bold 24pt &quot;Georgia&quot;;
+color: white;
+text-shadow: 0 0 5px #FFD700;  /* Lueur dorée */</string>
+                </property>
+                <property name="text">
+                 <string>50</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_19">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Policy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>13</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QFrame" name="frame_8">
+           <property name="styleSheet">
+            <string notr="true">background-color: rgb(173, 115, 86);
+border-radius: 10px;</string>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::Shape::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Shadow::Raised</enum>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_9">
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_8">
+              <item>
+               <widget class="QLabel" name="label_20">
+                <property name="styleSheet">
+                 <string notr="true">font: 63 18pt &quot;georgia&quot;;
+color: rgb(255, 255, 255);
+font-weight: bold;</string>
+                </property>
+                <property name="text">
+                 <string>Members</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="memberNum">
+                <property name="styleSheet">
+                 <string notr="true">font: bold 24pt &quot;Georgia&quot;;
+color: white;
+text-shadow: 0 0 5px #FFD700;  /* Lueur dorée */</string>
+                </property>
+                <property name="text">
+                 <string>22</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_21">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Policy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>13</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QFrame" name="frame_6">
+           <property name="styleSheet">
+            <string notr="true">background-color: rgb(173, 115, 86);
+border-radius: 10px;</string>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::Shape::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Shadow::Raised</enum>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_20">
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_7">
+              <item>
+               <widget class="QLabel" name="label_13">
+                <property name="styleSheet">
+                 <string notr="true">font: 63 18pt &quot;georgia&quot;;
+color: rgb(255, 255, 255);
+font-weight: bold;</string>
+                </property>
+                <property name="text">
+                 <string>Authors</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="authorNum">
+                <property name="styleSheet">
+                 <string notr="true">font: bold 24pt &quot;Georgia&quot;;
+color: white;
+text-shadow: 0 0 5px #FFD700;  /* Lueur dorée */</string>
+                </property>
+                <property name="text">
+                 <string>7</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QFrame" name="frame">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>201</width>
+        <height>611</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color:795548; /* ou une autre couleur */
+border-radius: 8px;
+</string>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::Shape::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Shadow::Raised</enum>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Policy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>18</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_5">
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
+    font: 63 14pt &quot;Georgia&quot;;
+    color: white;
+    padding: 0 8px;
+    background: transparent;
+    border: none;
+}
+QPushButton:hover:!pressed {
+    background: rgb(255, 168, 110); /* Orange clair */
+    border-radius: 5px;
+}</string>
+           </property>
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:20pt; font-weight:700; font-style:italic; color:#ca8665;&quot;&gt;Genres&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <spacer name="horizontalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Policy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>28</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="manageGenre">
+           <property name="styleSheet">
+            <string notr="true">QPushButton{
+    background-color: #D7CCC8;
+    color: #2E7D32;
+    border: none;
+    border-radius: 15px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+:hover {
+    background-color: #BCAAA4;
+    color: #1B5E20;
+    border: 1px solid #6D4C41;
+}
+
+:pressed {
+    background-color: #8D6E63;
+    color: white;
+    font-size: 13.5px;
+}
+</string>
+           </property>
+           <property name="text">
+            <string>Manage Genres</string>
+           </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
+           <property name="default">
+            <bool>false</bool>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <spacer name="horizontalSpacer_18">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Policy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>18</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_6">
+           <property name="styleSheet">
+            <string notr="true">color:rgb(85, 170, 0)qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0 rgba(255, 235, 235, 206), stop:0.35 rgba(255, 188, 188, 80), stop:0.4 rgba(255, 162, 162, 80), stop:0.425 rgba(255, 132, 132, 156), stop:0.44 rgba(252, 128, 128, 80), stop:1 rgba(255, 255, 255, 0))</string>
+           </property>
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:20pt; font-weight:700; font-style:italic; color:#d38c69;&quot;&gt;Authors&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <item>
+          <spacer name="horizontalSpacer_4">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Policy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>28</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="manageAuthorButton">
+           <property name="styleSheet">
+            <string notr="true">QPushButton{
+    background-color: #D7CCC8;
+    color: #2E7D32;
+    border: none;
+    border-radius: 15px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+:hover {
+    background-color: #BCAAA4;
+    color: #1B5E20;
+    border: 1px solid #6D4C41;
+}
+
+:pressed {
+    background-color: #8D6E63;
+    color: white;
+    font-size: 13.5px;
+}
+</string>
+           </property>
+           <property name="text">
+            <string>Manage Authors</string>
+           </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
+           <property name="default">
+            <bool>false</bool>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_17">
+         <item>
+          <spacer name="horizontalSpacer_16">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Policy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>18</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_7">
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:20pt; font-weight:700; font-style:italic; color:#c78463;&quot;&gt;Members&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <item>
+          <spacer name="horizontalSpacer_5">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Policy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>28</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="addMemberBtn">
+           <property name="styleSheet">
+            <string notr="true">QPushButton{
+    background-color: #D7CCC8;
+    color: #2E7D32;
+    border: none;
+    border-radius: 15px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+:hover {
+    background-color: #BCAAA4;
+    color: #1B5E20;
+    border: 1px solid #6D4C41;
+}
+
+:pressed {
+    background-color: #8D6E63;
+    color: white;
+    font-size: 13.5px;
+}
+</string>
+           </property>
+           <property name="text">
+            <string>Add Member</string>
+           </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
+           <property name="default">
+            <bool>false</bool>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_8">
+         <item>
+          <spacer name="horizontalSpacer_6">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Policy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>28</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="editMemberBtn">
+           <property name="styleSheet">
+            <string notr="true">QPushButton{
+    background-color: #D7CCC8;
+    color: #2E7D32;
+    border: none;
+    border-radius: 15px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+:hover {
+    background-color: #BCAAA4;
+    color: #1B5E20;
+    border: 1px solid #6D4C41;
+}
+
+:pressed {
+    background-color: #8D6E63;
+    color: white;
+    font-size: 13.5px;
+}
+</string>
+           </property>
+           <property name="text">
+            <string>Edit Member</string>
+           </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
+           <property name="default">
+            <bool>false</bool>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_9">
+         <item>
+          <spacer name="horizontalSpacer_7">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Policy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>28</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="deleteMemberBtn">
+           <property name="styleSheet">
+            <string notr="true">QPushButton{
+    background-color: #D7CCC8;
+    color: #2E7D32;
+    border: none;
+    border-radius: 15px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+:hover {
+    background-color: #BCAAA4;
+    color: #1B5E20;
+    border: 1px solid #6D4C41;
+}
+
+:pressed {
+    background-color: #8D6E63;
+    color: white;
+    font-size: 13.5px;
+}
+</string>
+           </property>
+           <property name="text">
+            <string>Delete Member</string>
+           </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
+           <property name="default">
+            <bool>false</bool>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_10">
+         <item>
+          <spacer name="horizontalSpacer_8">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Policy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>28</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="membersListBtn">
+           <property name="styleSheet">
+            <string notr="true">QPushButton{
+    background-color: #D7CCC8;
+    color: #2E7D32;
+    border: none;
+    border-radius: 15px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+:hover {
+    background-color: #BCAAA4;
+    color: #1B5E20;
+    border: 1px solid #6D4C41;
+}
+
+:pressed {
+    background-color: #8D6E63;
+    color: white;
+    font-size: 13.5px;
+}
+</string>
+           </property>
+           <property name="text">
+            <string>Members List</string>
+           </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
+           <property name="default">
+            <bool>false</bool>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_18">
+         <item>
+          <spacer name="horizontalSpacer_11">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Policy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>18</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_8">
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:20pt; font-weight:700; font-style:italic; color:#bb7c5d;&quot;&gt;Books&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_12">
+         <item>
+          <spacer name="horizontalSpacer_10">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Policy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>28</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="editBookBtn">
+           <property name="styleSheet">
+            <string notr="true">QPushButton{
+    background-color: #D7CCC8;
+    color: #2E7D32;
+    border: none;
+    border-radius: 15px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+:hover {
+    background-color: #BCAAA4;
+    color: #1B5E20;
+    border: 1px solid #6D4C41;
+}
+
+:pressed {
+    background-color: #8D6E63;
+    color: white;
+    font-size: 13.5px;
+}
+</string>
+           </property>
+           <property name="text">
+            <string>Edit Book</string>
+           </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
+           <property name="default">
+            <bool>false</bool>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_13">
+         <item>
+          <spacer name="horizontalSpacer_12">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Policy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>28</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="deleteBookBtn">
+           <property name="styleSheet">
+            <string notr="true">QPushButton{
+    background-color: #D7CCC8;
+    color: #2E7D32;
+    border: none;
+    border-radius: 15px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+:hover {
+    background-color: #BCAAA4;
+    color: #1B5E20;
+    border: 1px solid #6D4C41;
+}
+
+:pressed {
+    background-color: #8D6E63;
+    color: white;
+    font-size: 13.5px;
+}
+</string>
+           </property>
+           <property name="text">
+            <string>Delete Book</string>
+           </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
+           <property name="default">
+            <bool>false</bool>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_11">
+         <item>
+          <spacer name="horizontalSpacer_9">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Policy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>28</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="addBookBtn">
+           <property name="styleSheet">
+            <string notr="true">QPushButton{
+    background-color: #D7CCC8;
+    color: #2E7D32;
+    border: none;
+    border-radius: 15px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+:hover {
+    background-color: #BCAAA4;
+    color: #1B5E20;
+    border: 1px solid #6D4C41;
+}
+
+:pressed {
+    background-color: #8D6E63;
+    color: white;
+    font-size: 13.5px;
+}
+</string>
+           </property>
+           <property name="text">
+            <string>Add Book</string>
+           </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
+           <property name="default">
+            <bool>false</bool>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_15">
+         <item>
+          <spacer name="horizontalSpacer_15">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Policy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>28</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="booksListBtn">
+           <property name="styleSheet">
+            <string notr="true">QPushButton{
+    background-color: #D7CCC8;
+    color: #2E7D32;
+    border: none;
+    border-radius: 15px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+:hover {
+    background-color: #BCAAA4;
+    color: #1B5E20;
+    border: 1px solid #6D4C41;
+}
+
+:pressed {
+    background-color: #8D6E63;
+    color: white;
+    font-size: 13.5px;
+}
+</string>
+           </property>
+           <property name="text">
+            <string>Books List</string>
+           </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
+           <property name="default">
+            <bool>false</bool>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_14">
+         <item>
+          <spacer name="horizontalSpacer_13">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Policy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>28</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="statsButton">
+           <property name="styleSheet">
+            <string notr="true">QPushButton{
+    background-color: #D7CCC8;
+    color: #2E7D32;
+    border: none;
+    border-radius: 15px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+:hover {
+    background-color: #BCAAA4;
+    color: #1B5E20;
+    border: 1px solid #6D4C41;
+}
+
+:pressed {
+    background-color: #8D6E63;
+    color: white;
+    font-size: 13.5px;
+}
+</string>
+           </property>
+           <property name="text">
+            <string>Statistic</string>
+           </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
+           <property name="default">
+            <bool>false</bool>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

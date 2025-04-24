@@ -17,13 +17,13 @@
    <item>
     <widget class="QFrame" name="frame">
      <property name="styleSheet">
-      <string notr="true">background-color:#e9f5db</string>
+      <string notr="true">background-color:rgb(255, 239, 242)</string>
      </property>
      <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+      <enum>QFrame::Shape::StyledPanel</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
+      <enum>QFrame::Shadow::Raised</enum>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
@@ -35,7 +35,7 @@
 color: #e0777d;</string>
           </property>
           <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Book ID :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt; font-weight:700; color:#aa55ff;&quot;&gt;Book ID :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
          </widget>
         </item>
@@ -46,7 +46,7 @@ color: #e0777d;</string>
 	background-color: rgb(255, 255, 255);
 	 border: 2px  solid;
      border-radius: 10px;
-	font: 24px
+	font: 24px;color:rgb(85, 0, 127);
 }</string>
           </property>
          </widget>
@@ -54,33 +54,23 @@ color: #e0777d;</string>
         <item>
          <widget class="QPushButton" name="deleteBookBtn">
           <property name="styleSheet">
-           <string notr="true">QPushButton{
-color: rgb(255, 255, 255);
-font: 14pt &quot;georgia&quot;;
-color: #ffffff;
-border-radius:8px;
-padding : 0 8px;
-background: #90a955;
-border -radius:10px;
+           <string notr="true">QPushButton
+{ 
+	border-radius:15px;
+	font: 16pt &quot;georgia&quot;;
+	background-color:rgb(168, 0, 252);
+	padding : 0 4px;
+	border-radius:20px;
+	color:rgb(255, 255, 0)
 }
+
+
 QPushButton:hover:!pressed
 
 {
-background:#e0777d;
+background:rgb(243, 196, 255);
 }
-QToolButton
-{
-
-border-radius:10px;
-bacground:red;
-color:red;
-}
-
-QPushButton:pressed
-{
-              font-size: 19px;
-              transition: 0.9s; 
-}</string>
+</string>
           </property>
           <property name="text">
            <string>Delete Book</string>

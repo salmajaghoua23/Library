@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>studentLibrary</class>
+ <widget class="QWidget" name="studentLibrary">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>822</width>
+    <height>542</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget {
+    background-color: #F5EBDD;
+    font-family: 'Segoe UI', sans-serif;
+    color: #5A4E42;
+}
+</string>
+  </property>
+  <widget class="QLabel" name="bookDetailsText">
+   <property name="geometry">
+    <rect>
+     <x>260</x>
+     <y>320</y>
+     <width>171</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QLabel {
+                                       font: 700 italic 9pt 'Segoe UI';
+                                       color: black;
+                                     
+                                       }</string>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:16pt; color:#aa557f;&quot;&gt;Label de détails ::&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="searchLineEdit">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>0</y>
+     <width>571</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QLineEdit {
+    background-color: #FFF8F2;
+    border: 2px solid #C8A69C;
+    border-radius: 12px;
+    padding: 8px 14px;
+    font-size: 13pt;
+    color: #5A4E42;
+}
+
+QLineEdit:focus {
+    border: 2px solid #D4AF37;
+    background-color: #FFFDF9;
+}
+</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="searchButton">
+   <property name="geometry">
+    <rect>
+     <x>770</x>
+     <y>0</y>
+     <width>51</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+    background:rgb(0, 85, 0)  ;/* Rose pastel au lieu de jaune doré */
+    color:white; /* Texte violet profond */
+    font: 63 14pt &quot;Georgia&quot;;
+	font: 700 italic 16pt &quot;Segoe UI&quot;;
+    padding: 10px;
+    border-radius: 20px;
+}
+
+QPushButton:hover {
+    background: #DDA0DD; /* Lavande douce au survol */
+}
+
+QPushButton:pressed {
+    background: #B57EDC; /* Violet clair appuyé */
+}
+</string>
+   </property>
+   <property name="text">
+    <string>Sc</string>
+   </property>
+  </widget>
+  <widget class="QFrame" name="buttonLayout">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>0</y>
+     <width>181</width>
+     <height>401</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QFrame {
+    background-color: #FFF8F2;
+    border: 2px solid #A89F91;
+    border-radius: 16px;
+}
+</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::Shape::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Shadow::Raised</enum>
+   </property>
+   <widget class="QPushButton" name="backButton">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>250</y>
+      <width>181</width>
+      <height>36</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    background-color: #C8A69C;
+    color: #FFFFFF;
+    font: bold 13pt &quot;Segoe UI&quot;;
+    border: none;
+    border-radius: 16px;
+    padding: 10px 18px;
+    transition: all 0.3s ease;
+}
+
+QPushButton:hover {
+    background-color: #A89F91;
+    color: #F5EBDD;
+}
+
+QPushButton:pressed {
+    background-color: #5A4E42;
+    color: #D4AF37;
+}
+</string>
+    </property>
+    <property name="text">
+     <string>Retourn &lt;&lt;&lt;</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnHistorique">
+    <property name="geometry">
+     <rect>
+      <x>-2</x>
+      <y>80</y>
+      <width>181</width>
+      <height>36</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    background-color: #C8A69C;
+    color: #FFFFFF;
+    font: bold 13pt &quot;Segoe UI&quot;;
+    border: none;
+    border-radius: 16px;
+    padding: 10px 18px;
+    transition: all 0.3s ease;
+}
+
+QPushButton:hover {
+    background-color: #A89F91;
+    color: #F5EBDD;
+}
+
+QPushButton:pressed {
+    background-color: #5A4E42;
+    color: #D4AF37;
+}
+</string>
+    </property>
+    <property name="text">
+     <string>Historique</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="borrowButton">
+    <property name="geometry">
+     <rect>
+      <x>-2</x>
+      <y>190</y>
+      <width>181</width>
+      <height>36</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    background-color: #C8A69C;
+    color: #FFFFFF;
+    font: bold 13pt &quot;Segoe UI&quot;;
+    border: none;
+    border-radius: 16px;
+    padding: 10px 18px;
+    transition: all 0.3s ease;
+}
+
+QPushButton:hover {
+    background-color: #A89F91;
+    color: #F5EBDD;
+}
+
+QPushButton:pressed {
+    background-color: #5A4E42;
+    color: #D4AF37;
+}
+</string>
+    </property>
+    <property name="text">
+     <string>Borrow</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="addToCartButton">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>140</y>
+      <width>181</width>
+      <height>36</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    background-color: #C8A69C;
+    color: #FFFFFF;
+    font: bold 13pt &quot;Segoe UI&quot;;
+    border: none;
+    border-radius: 16px;
+    padding: 10px 18px;
+    transition: all 0.3s ease;
+}
+
+QPushButton:hover {
+    background-color: #A89F91;
+    color: #F5EBDD;
+}
+
+QPushButton:pressed {
+    background-color: #5A4E42;
+    color: #D4AF37;
+}
+</string>
+    </property>
+    <property name="text">
+     <string>Add to cart</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnCart">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>30</y>
+      <width>181</width>
+      <height>36</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    background-color: #C8A69C;
+    color: #FFFFFF;
+    font: bold 13pt &quot;Segoe UI&quot;;
+    border: none;
+    border-radius: 16px;
+    padding: 10px 18px;
+    transition: all 0.3s ease;
+}
+
+QPushButton:hover {
+    background-color: #A89F91;
+    color: #F5EBDD;
+}
+
+QPushButton:pressed {
+    background-color: #5A4E42;
+    color: #D4AF37;
+}
+</string>
+    </property>
+    <property name="text">
+     <string>Cart</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QTableView" name="bookListView">
+   <property name="geometry">
+    <rect>
+     <x>200</x>
+     <y>80</y>
+     <width>581</width>
+     <height>401</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QTableView {
+    background: transparent;
+    color: rgb(85, 0, 127);
+    font: 600 11pt &quot;Segoe UI&quot;;
+    border: #dda0dd;
+    border-radius: 10px;
+}
+</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

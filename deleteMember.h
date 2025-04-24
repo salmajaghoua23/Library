@@ -1,12 +1,8 @@
 #ifndef DELETEMEMBER_H
 #define DELETEMEMBER_H
-#include <QObject>
 
 #include <QDialog>
-#include <QtSql/QSqlDatabase>
-#include <QSqlQuery>
-#include<QSqlQueryModel>
-#include <QDir>
+#include <QSqlTableModel>
 
 namespace Ui {
 class deleteMember;
@@ -20,12 +16,14 @@ public:
     explicit deleteMember(QWidget *parent = nullptr);
     ~deleteMember();
 
-
 private slots:
     void on_deleteMemberBtn_clicked();
-
+    void on_returnBtn_clicked();
 private:
     Ui::deleteMember *ui;
+    QSqlTableModel *model;
+    void loadMembers();
+
 };
 
 #endif // DELETEMEMBER_H

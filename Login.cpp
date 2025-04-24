@@ -15,7 +15,9 @@ Login::Login(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setWindowTitle("Login");
+
     setValidator();
+
 }
 
 Login::~Login()

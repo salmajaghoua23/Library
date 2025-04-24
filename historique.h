@@ -1,13 +1,26 @@
 #ifndef HISTORIQUE_H
 #define HISTORIQUE_H
-#include <QVBoxLayout>
+
 #include <QDialog>
 #include <QTableWidget>
-#include <QLabel>
-#include <QVector>
-#include <QStringList>
+#include <QChartView>
+#include <QBarSeries>
+#include <QBarSet>
+#include <QBarCategoryAxis>
+#include <QValueAxis>
+#include <QStandardPaths>
+#include <QDir>
+#include <QDebug>
+#include <QGroupBox>
+#include <QScrollArea>
+#include <QMessageBox>
+#include <QDateTime>
+#include <QFile>
+#include <QTextStream>
 
-class Historique : public QDialog
+//QT_CHARTS_USE_NAMESPACE
+
+    class Historique : public QDialog
 {
     Q_OBJECT
 
@@ -15,17 +28,26 @@ public:
     explicit Historique(QWidget *parent = nullptr);
     ~Historique();
 
+    void enregistrerReservation(const QString& livre, const QString& utilisateur);
+
 private:
-    QLabel *labelConnexions;
-    QTableWidget *tableReservations;
-    QTableWidget *tableActions;  // Table pour les actions (emprunts, retours, suppressions)
-    void appliquerAnimation(QWidget *widget);
+    void setupReservationsTable();
+    void chargerDonnees();
     void chargerConnexions();
     void chargerReservations();
-    void chargerActions();  // Méthode pour charger les actions (emprunts, retours, suppressions)
-public:
-    QVBoxLayout *connexionsLayout;
+    void chargerStatsConnexions();
+    void chargerStatsReservations();
+    void appliquerAnimation(QWidget *widget);
 
+    QChartView* createConnexionsChart();
+    QChartView* createReservationsChart();
+    QMap<QString, int> getConnexionsDataLast7Days();
+    QMap<QString, int> getReservationsDataLast7Days();
+    void initReservationFile();
+
+    // Widgets
+    QLabel *labelConnexions;
+    QTableWidget *tableReservations;
 };
 
 #endif // HISTORIQUE_H

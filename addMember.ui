@@ -17,13 +17,15 @@
    <item>
     <widget class="QFrame" name="frame">
      <property name="styleSheet">
-      <string notr="true">background-color:#e9f5db</string>
+      <string notr="true">background-color:rgb(255, 239, 242);/* ou une autre couleur */
+border-radius: 8px;
+color:black;</string>
      </property>
      <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+      <enum>QFrame::Shape::StyledPanel</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
+      <enum>QFrame::Shadow::Raised</enum>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
@@ -32,10 +34,11 @@
          <widget class="QLabel" name="label_6">
           <property name="styleSheet">
            <string notr="true">font: 14pt &quot;georgia&quot;;
-color: #e0777d;</string>
+color: rgb(255, 223, 61);
+font: 900 22pt &quot;Segoe UI&quot;;</string>
           </property>
           <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;First Name:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:700; color:#aa007f;&quot;&gt;First Name:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
          </widget>
         </item>
@@ -46,7 +49,7 @@ color: #e0777d;</string>
 	background-color: rgb(255, 255, 255);
 	 border: 1px  solid;
      border-radius: 4px;
-	font: 24px
+	font: 24px;color:rgb(85, 0, 127);color:black;
 }</string>
           </property>
          </widget>
@@ -59,10 +62,11 @@ color: #e0777d;</string>
          <widget class="QLabel" name="label_10">
           <property name="styleSheet">
            <string notr="true">font: 14pt &quot;georgia&quot;;
-color: #e0777d;</string>
+color: rgb(255, 223, 61);
+font: 900 22pt &quot;Segoe UI&quot;;</string>
           </property>
           <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Last Name :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:700; color:#aa007f;&quot;&gt;Last Name :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
          </widget>
         </item>
@@ -73,7 +77,7 @@ color: #e0777d;</string>
 	background-color: rgb(255, 255, 255);
 	 border: 1px  solid;
      border-radius: 4px;
-	font: 24px
+	font: 24px;color:rgb(85, 0, 127);color:black;
 }</string>
           </property>
          </widget>
@@ -86,10 +90,11 @@ color: #e0777d;</string>
          <widget class="QLabel" name="label_7">
           <property name="styleSheet">
            <string notr="true">font: 14pt &quot;georgia&quot;;
-color: #e0777d;</string>
+color: rgb(255, 223, 61);
+font: 900 22pt &quot;Segoe UI&quot;;</string>
           </property>
           <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Phone Number :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:700; color:#aa007f;&quot;&gt;Password:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
          </widget>
         </item>
@@ -100,34 +105,7 @@ color: #e0777d;</string>
 	background-color: rgb(255, 255, 255);
 	 border: 1px  solid;
      border-radius: 4px;
-	font: 24px
-}</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" name="verticalLayout_8">
-        <item>
-         <widget class="QLabel" name="label_8">
-          <property name="styleSheet">
-           <string notr="true">font: 14pt &quot;georgia&quot;;
-color: #e0777d;</string>
-          </property>
-          <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Email :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="email">
-          <property name="styleSheet">
-           <string notr="true">QLineEdit{
-	background-color: rgb(255, 255, 255);
-	 border: 1px  solid;
-     border-radius: 4px;
-	font: 24px
+	font: 24px;color:rgb(85, 0, 127);color:black;
 }</string>
           </property>
          </widget>
@@ -140,10 +118,11 @@ color: #e0777d;</string>
          <widget class="QLabel" name="label_9">
           <property name="styleSheet">
            <string notr="true">font: 14pt &quot;georgia&quot;;
-color: #e0777d;</string>
+color: rgb(255, 223, 61);
+font: 900 22pt &quot;Segoe UI&quot;;</string>
           </property>
           <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Gender :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:700; color:#aa007f;&quot;&gt;Role:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
          </widget>
         </item>
@@ -154,17 +133,17 @@ color: #e0777d;</string>
 	background-color: rgb(255, 255, 255);
 	 border: 1px  solid;
      border-radius: 4px;
-	font: 24px
+	font: 24px;color:rgb(85, 0, 127);
 }</string>
           </property>
           <item>
            <property name="text">
-            <string>Male</string>
+            <string>student</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>Female</string>
+            <string>admin</string>
            </property>
           </item>
          </widget>
@@ -176,10 +155,10 @@ color: #e0777d;</string>
         <item>
          <spacer name="horizontalSpacer">
           <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+           <enum>Qt::Orientation::Horizontal</enum>
           </property>
           <property name="sizeType">
-           <enum>QSizePolicy::Fixed</enum>
+           <enum>QSizePolicy::Policy::Fixed</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
@@ -192,32 +171,57 @@ color: #e0777d;</string>
         <item>
          <widget class="QPushButton" name="addMemberButton">
           <property name="styleSheet">
-           <string notr="true">QPushButton{
-color: rgb(255, 255, 255);
-font: 14pt &quot;georgia&quot;;
-border-radius:8px;
-padding : 0 8px;
-background: #90a955;
-border -radius:10px;
-}
-QPushButton:hover:!pressed
-
-{
-background:#572b788;
-}
-QToolButton
-{
-
-border-radius:10px;
-bacground:red;
-color:red;
+           <string notr="true">/* Base Button Style */
+QPushButton {
+    background-color: #6A0DAD;  /* Royal Purple */
+    color: #FFD700;             /* Gold Text */  
+    border-radius: 20px;        /* Rounded Corners */
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
 }
 
-QPushButton:pressed
-{
-              font-size: 19px;
-              transition: 0.9s; 
-}</string>
+/* Hover Effect */
+QPushButton:hover {
+    background-color: #8A2BE2;  /* Brighter Purple */
+    color: #FFFACD;             /* Lemon Chiffon */
+    border: 1px solid #FFD700;  /* Gold Border */
+}
+
+/* Pressed Effect */
+QPushButton:pressed {
+    background-color: #4B0082;  /* Indigo */
+    color: #D4AF37;             /* Metallic Gold */
+    font-size: 15px;            /* Slight Shrink */
+    padding: 11px 21px;         /* Compensates for Shrink */
+}
+
+/* Focus Effect */
+QPushButton:focus {
+    outline: none;
+    border: 2px solid #FFD700;
+}
+
+/* Accent Button Variant */
+QPushButton.accent {
+    background-color: #FFD700;  /* Gold */
+    color: #4B0082;             /* Deep Purple */
+}
+
+QPushButton.accent:hover {
+    background-color: #F0E68C;  /* Khaki */
+    color: #4B0082;
+    border: 1px solid #D4AF37;
+}
+
+QPushButton.accent:pressed {
+    background-color: #D4AF37;  /* Metallic Gold */
+    color: #4B0082;
+    font-size: 15px;
+    padding: 11px 21px;
+}
+</string>
           </property>
           <property name="text">
            <string>Add New Member</string>
@@ -227,10 +231,10 @@ QPushButton:pressed
         <item>
          <spacer name="horizontalSpacer_2">
           <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+           <enum>Qt::Orientation::Horizontal</enum>
           </property>
           <property name="sizeType">
-           <enum>QSizePolicy::Fixed</enum>
+           <enum>QSizePolicy::Policy::Fixed</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>

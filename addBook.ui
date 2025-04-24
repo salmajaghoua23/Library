@@ -14,15 +14,15 @@
    <string>Dialog</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background: #e9f5db;
-width:30px;
-hieght:30px;</string>
+   <string notr="true">background-color:rgb(255, 239, 242);
+border-radius: 8px;
+</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_5">
    <item>
     <widget class="QFrame" name="frame">
      <property name="styleSheet">
-      <string notr="true"/>
+      <string notr="true">color:black;</string>
      </property>
      <property name="frameShape">
       <enum>QFrame::Shape::StyledPanel</enum>
@@ -46,7 +46,7 @@ hieght:30px;</string>
 color: rgb(0, 0, 0);</string>
         </property>
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:14pt;font-family:'georgia'; font-weight:700; color:#e0777d;&quot;&gt;ISBN :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-family:'georgia'; font-size:18pt; font-weight:700; color:#aa007f;&quot;&gt;ISBN :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>
@@ -57,7 +57,7 @@ color: rgb(0, 0, 0);</string>
 	background-color: rgb(255, 255, 255);
 	 border: 2px  solid;
      border-radius: 4px;
-	font: 24px
+	font: 24px;color:black;
 }</string>
         </property>
         <property name="text">
@@ -72,7 +72,7 @@ color: rgb(0, 0, 0);</string>
 color: rgb(0, 0, 0);</string>
         </property>
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:14pt;font-family:'georgia'; font-weight:700; color:#e0777d;&quot;&gt;Name :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-family:'georgia'; font-size:18pt; font-weight:700; color:#aa007f;&quot;&gt;Name :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>
@@ -84,7 +84,7 @@ color: rgb(0, 0, 0);</string>
         <property name="font">
          <font>
           <family>Georgina</family>
-          <pointsize>20</pointsize>
+          <pointsize>-1</pointsize>
           <italic>false</italic>
           <bold>false</bold>
          </font>
@@ -94,8 +94,7 @@ color: rgb(0, 0, 0);</string>
 	background-color: rgb(255, 255, 255);
 	 border: 2px  solid;
      border-radius: 4px;
-	font: 20pt&quot;Georgina&quot;;
-height:30px;
+	font: 24px;color:black;
 }</string>
         </property>
        </widget>
@@ -107,8 +106,7 @@ height:30px;
 color: rgb(0, 0, 0);</string>
         </property>
         <property name="text">
-         <string>
-&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:14pt;font-family:'georgia'; font-weight:700; color:#e0777d;&quot;&gt;Author :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-family:'georgia'; font-size:18pt; font-weight:700; color:#aa007f;&quot;&gt;Author :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>
@@ -117,32 +115,23 @@ color: rgb(0, 0, 0);</string>
         <item>
          <widget class="QPushButton" name="chooseAuthBtn">
           <property name="styleSheet">
-           <string notr="true">QPushButton{
-color: rgb(255, 255, 255);
-font: 10pt &quot;Georgia&quot;;
-border-radius:8px;
-padding : 0 8px;
-background: #90a955;
-border -radius:10px;
+           <string notr="true">QPushButton
+{ 
+	border-radius:15px;
+	font: 16pt &quot;georgia&quot;;
+	background-color:rgb(168, 0, 252);
+	padding : 0 4px;
+	border-radius:20px;
+	color:rgb(255, 255, 0)
 }
+
+
 QPushButton:hover:!pressed
 
 {
-background:#572B788;
+background:#52b788;
 }
-QToolButton
-{
-
-border-radius:10px;
-bacground:red;
-color:red;
-}
-
-QPushButton:pressed
-{
-              font-size: 19px;
-              transition: 0.9s; 
-}</string>
+</string>
           </property>
           <property name="text">
            <string>Choose Author</string>
@@ -159,7 +148,7 @@ QPushButton:pressed
 	background-color: rgb(255, 255, 255);
 	 border: 2px  solid;
      border-radius: 4px;
-	font: 24px
+	font: 24px;color:black;
 }</string>
           </property>
          </widget>
@@ -173,8 +162,7 @@ QPushButton:pressed
 color: rgb(0, 0, 0);</string>
         </property>
         <property name="text">
-         <string>
-&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:14pt;font-family:'georgia'; font-weight:700; color:#e0777d;&quot;&gt;Genre :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-family:'georgia'; font-size:18pt; font-weight:700; color:#aa007f;&quot;&gt;Genre :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>
@@ -184,40 +172,30 @@ color: rgb(0, 0, 0);</string>
          <widget class="QPushButton" name="chooseGenreBtn">
           <property name="font">
            <font>
-            <family>Georgia</family>
-            <pointsize>10</pointsize>
+            <family>georgia</family>
+            <pointsize>16</pointsize>
             <italic>false</italic>
             <bold>false</bold>
            </font>
           </property>
           <property name="styleSheet">
-           <string notr="true">QPushButton{
-
-color: rgb(255, 255, 255);
-font: 10pt &quot;Georgia&quot;;
-border-radius:8px;
-padding : 0 8px;
-background: #90A955;
-border -radius:15px;
+           <string notr="true">QPushButton
+{ 
+	border-radius:15px;
+	font: 16pt &quot;georgia&quot;;
+	background-color:rgb(168, 0, 252);
+	padding : 0 4px;
+	border-radius:20px;
+	color:rgb(255, 255, 0)
 }
+
+
 QPushButton:hover:!pressed
 
 {
-background:#572B788;
+background:#52b788;
 }
-QToolButton
-{
-
-border-radius:10px;
-bacground:red;
-color:red;
-}
-
-QPushButton:pressed
-{
-              font-size: 19px;
-              transition: 0.9s; 
-}</string>
+</string>
           </property>
           <property name="text">
            <string>Choose Genre</string>
@@ -234,7 +212,7 @@ QPushButton:pressed
 	background-color: rgb(255, 255, 255);
 	 border: 2px  solid;
      border-radius: 4px;
-	font: 24px
+	font: 24px;color:black;
 }</string>
           </property>
          </widget>
@@ -256,7 +234,7 @@ QPushButton:pressed
 color: rgb(0, 0, 0);</string>
         </property>
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:14pt;font-family:'georgia'; font-weight:700; color:#e0777d;&quot;&gt;Quantity :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-family:'georgia'; font-size:18pt; font-weight:700; color:#aa007f;&quot;&gt;Quantity :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>
@@ -267,7 +245,7 @@ color: rgb(0, 0, 0);</string>
 	background-color: rgb(255, 255, 255);
 	 border: 2px  solid;
      border-radius: 4px;
-	font: 24px
+	font: 24px;color:black;
 }</string>
         </property>
        </widget>
@@ -287,7 +265,7 @@ color: rgb(0, 0, 0);</string>
 color: rgb(0, 0, 0);</string>
         </property>
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:14pt;font-family:'georgia'; font-weight:700; color:#e0777d;&quot;&gt;Publisher :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-family:'georgia'; font-size:16pt; font-weight:700; color:#aa007f;&quot;&gt;Publisher :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>
@@ -298,7 +276,7 @@ color: rgb(0, 0, 0);</string>
 	background-color: rgb(255, 255, 255);
 	 border: 2px  solid;
      border-radius: 4px;
-	font: 24px
+	font: 24px;color:black;
 }</string>
         </property>
        </widget>
@@ -310,7 +288,7 @@ color: rgb(0, 0, 0);</string>
 color: rgb(0, 0, 0);</string>
         </property>
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:14pt;font-family:'georgia'; font-weight:700; color:#e0777d;&quot;&gt;Price :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-family:'georgia'; font-size:18pt; font-weight:700; color:#aa007f;&quot;&gt;Price :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>
@@ -321,8 +299,7 @@ color: rgb(0, 0, 0);</string>
 	background-color: rgb(255, 255, 255);
 	 border: 2px  solid;
      border-radius: 4px;
-color:balck;
-	font: 24px
+	font: 24px;color:black;
 }</string>
         </property>
        </widget>
@@ -334,7 +311,7 @@ color:balck;
 color: #e0777d;</string>
         </property>
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Date&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:700; color:#aa007f;&quot;&gt;Date&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>
@@ -359,32 +336,23 @@ color:black;
         <item>
          <widget class="QPushButton" name="addBookBtn">
           <property name="styleSheet">
-           <string notr="true">QPushButton{
-color: rgb(255, 255, 255);
-font: 14pt &quot;georgia&quot;;
-border-radius:10px;
-padding : 0 8px;
-background: #90a955;
-border-radius:10px;
+           <string notr="true">QPushButton
+{ 
+	border-radius:15px;
+	font: 16pt &quot;georgia&quot;;
+	background-color:rgb(168, 0, 252);
+	padding : 0 4px;
+	border-radius:20px;
+	color:rgb(255, 255, 0)
 }
+
+
 QPushButton:hover:!pressed
 
 {
-background:#e0777d;
+background:#52b788;
 }
-QToolButton
-{
-
-border-radius:10px;
-bacground:red;
-color:red;
-}
-
-QPushButton:pressed
-{
-              font-size: 19px;
-              transition: 0.9s; 
-}</string>
+</string>
           </property>
           <property name="text">
            <string>Add Book</string>
@@ -439,7 +407,7 @@ QPushButton:pressed
 color: rgb(0, 0, 0);</string>
         </property>
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:14pt;font-family:'georgia'; font-weight:700; color:#e0777d;&quot;&gt;Book Description :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-family:'georgia'; font-size:14pt; font-weight:700; color:#aa007f;&quot;&gt;Book Description :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>
@@ -467,7 +435,7 @@ color: rgb(0, 0, 0);</string>
          <enum>Qt::FocusPolicy::StrongFocus</enum>
         </property>
         <property name="styleSheet">
-         <string notr="true">background-color: #90A955;
+         <string notr="true">background-color:rgb(143, 0, 214);
 border-color: rgb(0, 0, 0);</string>
         </property>
         <property name="frameShape">
@@ -493,7 +461,7 @@ border-color: rgb(0, 0, 0);</string>
 color: #e0777d;</string>
           </property>
           <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Book Cover&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700; color:#aa007f;&quot;&gt;Book Cover&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
          </widget>
         </item>
@@ -534,9 +502,9 @@ color: #e0777d;</string>
              <colorrole role="Button">
               <brush brushstyle="SolidPattern">
                <color alpha="255">
-                <red>144</red>
-                <green>169</green>
-                <blue>85</blue>
+                <red>168</red>
+                <green>0</green>
+                <blue>252</blue>
                </color>
               </brush>
              </colorrole>
@@ -561,18 +529,18 @@ color: #e0777d;</string>
              <colorrole role="Base">
               <brush brushstyle="SolidPattern">
                <color alpha="255">
-                <red>144</red>
-                <green>169</green>
-                <blue>85</blue>
+                <red>168</red>
+                <green>0</green>
+                <blue>252</blue>
                </color>
               </brush>
              </colorrole>
              <colorrole role="Window">
               <brush brushstyle="SolidPattern">
                <color alpha="255">
-                <red>144</red>
-                <green>169</green>
-                <blue>85</blue>
+                <red>168</red>
+                <green>0</green>
+                <blue>252</blue>
                </color>
               </brush>
              </colorrole>
@@ -599,9 +567,9 @@ color: #e0777d;</string>
              <colorrole role="Button">
               <brush brushstyle="SolidPattern">
                <color alpha="255">
-                <red>144</red>
-                <green>169</green>
-                <blue>85</blue>
+                <red>168</red>
+                <green>0</green>
+                <blue>252</blue>
                </color>
               </brush>
              </colorrole>
@@ -626,18 +594,18 @@ color: #e0777d;</string>
              <colorrole role="Base">
               <brush brushstyle="SolidPattern">
                <color alpha="255">
-                <red>144</red>
-                <green>169</green>
-                <blue>85</blue>
+                <red>168</red>
+                <green>0</green>
+                <blue>252</blue>
                </color>
               </brush>
              </colorrole>
              <colorrole role="Window">
               <brush brushstyle="SolidPattern">
                <color alpha="255">
-                <red>144</red>
-                <green>169</green>
-                <blue>85</blue>
+                <red>168</red>
+                <green>0</green>
+                <blue>252</blue>
                </color>
               </brush>
              </colorrole>
@@ -664,9 +632,9 @@ color: #e0777d;</string>
              <colorrole role="Button">
               <brush brushstyle="SolidPattern">
                <color alpha="255">
-                <red>144</red>
-                <green>169</green>
-                <blue>85</blue>
+                <red>168</red>
+                <green>0</green>
+                <blue>252</blue>
                </color>
               </brush>
              </colorrole>
@@ -691,18 +659,18 @@ color: #e0777d;</string>
              <colorrole role="Base">
               <brush brushstyle="SolidPattern">
                <color alpha="255">
-                <red>144</red>
-                <green>169</green>
-                <blue>85</blue>
+                <red>168</red>
+                <green>0</green>
+                <blue>252</blue>
                </color>
               </brush>
              </colorrole>
              <colorrole role="Window">
               <brush brushstyle="SolidPattern">
                <color alpha="255">
-                <red>144</red>
-                <green>169</green>
-                <blue>85</blue>
+                <red>168</red>
+                <green>0</green>
+                <blue>252</blue>
                </color>
               </brush>
              </colorrole>
@@ -719,32 +687,23 @@ color: #e0777d;</string>
            </palette>
           </property>
           <property name="styleSheet">
-           <string notr="true">QPushButton{
-color: rgb(255, 255, 255);
-font: 14pt &quot;georgia&quot;;
-border-radius:10px;
-padding : 0 8px;
-background: #90a955;
-border-radius:10px;
+           <string notr="true">QPushButton
+{ 
+	border-radius:15px;
+	font: 16pt &quot;georgia&quot;;
+	background-color:rgb(168, 0, 252);
+	padding : 0 4px;
+	border-radius:20px;
+	color:rgb(255, 255, 0)
 }
+
+
 QPushButton:hover:!pressed
 
 {
-background:#e0777d;
+background:#52b788;
 }
-QToolButton
-{
-
-border-radius:10px;
-bacground:red;
-color:red;
-}
-
-QPushButton:pressed
-{
-              font-size: 19px;
-              transition: 0.9s; 
-}</string>
+</string>
           </property>
           <property name="text">
            <string>Select Image</string>
@@ -790,32 +749,23 @@ QPushButton:pressed
         <item>
          <widget class="QPushButton" name="cancelBtn">
           <property name="styleSheet">
-           <string notr="true">QPushButton{
-color: rgb(255, 255, 255);
-font: 14pt &quot;georgia&quot;;
-border-radius:10px;
-padding : 0 8px;
-background: #90a955;
-border-radius:10px;
+           <string notr="true">QPushButton
+{ 
+	border-radius:15px;
+	font: 16pt &quot;georgia&quot;;
+	background-color:rgb(168, 0, 252);
+	padding : 0 4px;
+	border-radius:20px;
+	color:rgb(255, 255, 0)
 }
+
+
 QPushButton:hover:!pressed
 
 {
-background:#e0777d;
+background:#52b788;
 }
-QToolButton
-{
-
-border-radius:10px;
-bacground:red;
-color:red;
-}
-
-QPushButton:pressed
-{
-              font-size: 19px;
-              transition: 0.9s; 
-}</string>
+</string>
           </property>
           <property name="text">
            <string>Cancel</string>

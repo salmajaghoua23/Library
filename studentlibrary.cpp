@@ -3,6 +3,7 @@
 #include "digitalLibrary.h"
 #include "mapviewer.h"
 #include "cart.h"
+#include"Login.h"
 #include "historique.h"
 #include <QMessageBox>
 #include <QSqlQuery>
@@ -17,7 +18,13 @@
 #include <QSqlError>
 #include <QMessageBox>
 #include <QDebug>
-
+#include <QDialog>
+#include <QGraphicsView>
+#include <QGraphicsScene>
+#include <QGraphicsPixmapItem>
+#include <QGraphicsEllipseItem>
+#include <QVBoxLayout>
+#include<QWidget>
 studentLibrary::studentLibrary(QWidget *parent, QSqlDatabase db) :
     QDialog(parent),
     ui(new Ui::studentLibrary),
@@ -25,19 +32,19 @@ studentLibrary::studentLibrary(QWidget *parent, QSqlDatabase db) :
     model(new QSqlQueryModel(this)),
     currentBookId(-1)
 {
-
     ui->setupUi(this);
-   // connectDB();
+
+    // Création de la table cart si elle n'existe pas
     QSqlQuery createTableQuery(db);
     QString createTableSQL = R"(
-    CREATE TABLE IF NOT EXISTS cart (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER,
-        book_id INTEGER,
-        name TEXT,
-        author TEXT,
-        added_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
+        CREATE TABLE IF NOT EXISTS cart (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            book_id INTEGER,
+            name TEXT,
+            author TEXT,
+            added_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
     )";
 
     if (!createTableQuery.exec(createTableSQL)) {
@@ -47,19 +54,182 @@ studentLibrary::studentLibrary(QWidget *parent, QSqlDatabase db) :
     // Cacher les boutons au départ
     ui->addToCartButton->setVisible(false);
     ui->borrowButton->setVisible(false);
-    ui->backButton->setVisible(false); // Cachez aussi le bouton retour initialement
+    ui->backButton->setVisible(false);
 
-    // Connecter les boutons
+    // Création du bouton Carte
+    // QPushButton *btnCarte = new QPushButton("🗺️ Voir sur une carte", this);
+
+    // // Style du bouton
+    // btnCarte->setStyleSheet(R"(
+    //     QPushButton {
+    //         font-family: 'Georgia', serif;
+    //         font-size: 20px;
+    //         font-style: italic;
+    //         font-weight: bold;
+    //         color: #4B0082;
+    //         background-color: #FFB6C1;
+    //         border-radius: 12px;
+    //         padding: 8px;
+    //     }
+    //     QPushButton:hover {
+    //         background-color: #B57EDC;
+    //     }
+    //     QPushButton:pressed {
+    //         background-color: #DDA0DD;
+    //     }
+    // )");
+
+    // // Créer un layout et l'associer au frame
+    // QVBoxLayout *carteLayout = new QVBoxLayout();
+    // carteLayout->addWidget(btnCarte);
+
+    // // Appliquer le layout au QFrame
+    // ui->buttonLayout->setLayout(carteLayout);
+    // // Connexion du bouton à la fonction
+    // connect(btnCarte, &QPushButton::clicked, this, &studentLibrary::afficherCarteLivre);
+
+    // // Création colonne "localisation" si absente
+    // checkAndCreateLocalisationColumn();
+
+    // Connexions
     connect(ui->searchButton, &QPushButton::clicked, this, &studentLibrary::on_searchButton_clicked);
     connect(ui->addToCartButton, &QPushButton::clicked, this, &studentLibrary::on_addToCartButton_clicked);
-   // connect(ui->borrowButton, &QPushButton::clicked, this, &studentLibrary::on_borrowButton_clicked);
-    connect(ui->backButton, &QPushButton::clicked, this, &studentLibrary::on_backButton_clicked); // Nouvelle connexion
+    connect(ui->backButton, &QPushButton::clicked, this, &studentLibrary::on_backButton_clicked);
+    connect(ui->btnHistorique,&QPushButton::clicked, this, &studentLibrary::on_btnHistorique_clicked);
 }
+
 studentLibrary::~studentLibrary()
 {
     delete ui;
 }
+void studentLibrary::updateBookLocalisation(int bookId, const QString& localisation)
+{
+    QSqlQuery query(db);
+    query.prepare("UPDATE books SET localisation = :localisation WHERE id = :bookId;");
+    query.bindValue(":localisation", localisation);
+    query.bindValue(":bookId", bookId);
 
+    if (query.exec()) {
+        qDebug() << "Localisation mise à jour avec succès.";
+    } else {
+        qDebug() << "Erreur lors de la mise à jour de la localisation: " << query.lastError();
+    }
+}
+void studentLibrary::checkAndCreateLocalisationColumn()
+{
+    // Vérifier si la colonne "localisation" existe déjà
+    QSqlQuery query(db);
+    query.prepare("PRAGMA table_info(books);");  // Pour SQLite, ajuste selon ton SGBD
+    query.exec();
+
+    bool localisationExists = false;
+    while (query.next()) {
+        if (query.value(1).toString() == "localisation") {
+            localisationExists = true;
+            break;
+        }
+    }
+
+    // Si la colonne n'existe pas, on la crée
+    if (!localisationExists) {
+        QSqlQuery addColumnQuery(db);
+        addColumnQuery.prepare("ALTER TABLE books ADD COLUMN localisation TEXT;");
+        if (addColumnQuery.exec()) {
+            qDebug() << "Colonne 'localisation' ajoutée avec succès.";
+        } else {
+            qDebug() << "Erreur lors de l'ajout de la colonne 'localisation': " << addColumnQuery.lastError();
+        }
+    }
+}
+
+// void studentLibrary::afficherCarteLivre() {
+//     QString localisation = getLocalisationLivre(); // récupère depuis la DB
+//     QDialog *carteDialog = new QDialog(this);
+//     carteDialog->setWindowTitle("Localisation du livre");
+
+//     QLabel *carte = new QLabel;
+//     carte->setPixmap(QPixmap(":/images/plan_bibliotheque.png").scaled(500, 400));
+
+//     QLabel *marker = new QLabel(carte);
+//     marker->setPixmap(QPixmap(":/images/marker.png").scaled(20, 20));
+//     marker->move(getCoordonnées(localisation)); // positionne le marqueur
+
+//     QVBoxLayout *layout = new QVBoxLayout(carteDialog);
+//     layout->addWidget(carte);
+
+//     carteDialog->setLayout(layout);
+//     carteDialog->exec();
+// }
+QPoint studentLibrary::getCoordonnées(const QString& localisation) {
+    static QMap<QString, QPoint> map = {
+                                        {"Section A, Étagère 1", QPoint(50, 50)},
+                                        {"Section A, Étagère 2", QPoint(100, 50)},
+                                        {"Section A, Étagère 3", QPoint(150, 50)},
+                                        {"Section B, Étagère 1", QPoint(50, 100)},
+                                        {"Section B, Étagère 2", QPoint(100, 100)},
+                                        {"Section B, Étagère 3", QPoint(150, 100)},
+                                        };
+
+    QPoint coord = map.value(localisation, QPoint(-1, -1));
+    if (coord == QPoint(-1, -1)) {
+        qDebug() << "Localisation non trouvée dans la map : " << localisation;
+    }
+    return coord;
+}
+
+
+void studentLibrary::afficherCarteLivre()
+{
+    // Créer un QDialog pour la carte
+    QDialog *carteDialog = new QDialog(this);
+    carteDialog->setWindowTitle("📍 Localisation");
+
+    // Créer une scène et une vue
+    QGraphicsScene *scene = new QGraphicsScene();
+    QGraphicsView *view = new QGraphicsView(scene, carteDialog);
+    view->setFixedSize(800, 800);
+    scene->setSceneRect(0, 0, 800, 800);
+
+    // Charger l'image du plan de la bibliothèque
+    QPixmap carte(":/cartLocalisation.png");
+    if (carte.isNull()) {
+        QMessageBox::warning(this, "Erreur", "L'image de la carte n'a pas été trouvée !");
+        return;
+    }
+
+    QGraphicsPixmapItem *carteItem = scene->addPixmap(carte.scaled(800, 800, Qt::KeepAspectRatioByExpanding));
+    carteItem->setZValue(0);  // fond
+
+    // Récupérer la localisation depuis la base de données
+    QSqlQuery query(db);
+    query.prepare("SELECT localisation FROM books WHERE id = :id");
+    query.bindValue(":id", currentBookId);
+
+    if (query.exec() && query.next()) {
+        QString localisation = query.value(0).toString();
+        QPoint coord = getCoordonnées(localisation);
+
+        if (coord != QPoint(-1, -1)) {
+            // Ajouter un point rouge (ellipse) à l'emplacement du livre
+            QGraphicsEllipseItem *point = scene->addEllipse(coord.x(), coord.y(), 12, 12, QPen(Qt::red), QBrush(Qt::red));
+            point->setZValue(1);  // au-dessus de la carte
+        } else {
+            QMessageBox::information(this, "Localisation non trouvée", "Ce livre n'a pas de coordonnées définies sur la carte.");
+        }
+    } else {
+        QMessageBox::warning(this, "Erreur", "Impossible de récupérer la localisation du livre.");
+    }
+
+    // Afficher la vue dans la boîte de dialogue
+    QVBoxLayout *layout = new QVBoxLayout(carteDialog);
+    layout->addWidget(view);
+    carteDialog->setLayout(layout);
+    carteDialog->exec();
+}
+
+void studentLibrary::on_btnLocalisation_clicked() {
+    afficherCarteLivre();
+}
 // Dans le constructeur ou une méthode
 void studentLibrary::on_btnHistorique_clicked() {
     Historique *h = new Historique(this);
@@ -74,22 +244,32 @@ int studentLibrary::getUserId()
 void studentLibrary::on_backButton_clicked()
 {
     // Réinitialise l'interface à son état initial
-    ui->searchLineEdit->clear();
-    ui->bookDetailsText->clear();
-    ui->addToCartButton->setVisible(false);
-    ui->backButton->setVisible(false);
+        this->hide();
+        Login login;
+        login.exec();
 
-    // Efface la sélection dans la liste
-    ui->bookListView->selectionModel()->clearSelection();
-
-    // Optionnel: efface le modèle si vous voulez vider la liste
-     model->clear();
 }
 void studentLibrary::on_searchButton_clicked()
 {
     QString searchTerm = ui->searchLineEdit->text();
+
     if (searchTerm.isEmpty()) {
         QMessageBox::information(this, "Attention", "Veuillez entrer un terme de recherche.");
+
+        // Rendre le fond de la QTableView transparent si aucun terme n'est entré
+        ui->bookListView->setStyleSheet("QTableView {"
+                                        "background: transparent;"
+                                        "color: rgb(85, 0, 127);"
+                                        "font: 600 11pt 'Segoe UI';"
+                                        "border: 1px solid #dda0dd;"
+                                        "border-radius: 10px;"
+                                        "}");
+        // Rendre le fond du QLabel transparent lorsque la recherche est vide
+        ui->bookDetailsText->setStyleSheet("QLabel {"
+                                       "font: 700 italic 9pt 'Segoe UI';"
+                                       "color: black;"
+                                       "background: transparent;"
+                                       "}");
         return;
     }
 
@@ -102,10 +282,25 @@ void studentLibrary::on_searchButton_clicked()
     if (query.exec()) {
         model->setQuery(query);
         ui->bookListView->setModel(model);
+
+        // Rendre le fond de la QTableView visible après la recherche
+        ui->bookListView->setStyleSheet("QTableView {"
+                                        "background: white;"
+                                        "color: #4B0082;"
+                                        "font: 600 11pt 'Segoe UI';"
+                                        "border: 1px solid #FFDDEE;"
+                                        "}");
+        // Rendre le fond du QLabel visible après la recherche
+        ui->bookDetailsText->setStyleSheet("QLabel {"
+                                       "font: 700 italic 9pt 'Segoe UI';"
+                                       "color: black;"
+                                       "background: white;"
+                                       "}");
     } else {
         QMessageBox::critical(this, "Erreur", "Échec de la récupération des données.");
     }
 }
+
 
 
 void studentLibrary::on_bookListView_clicked(const QModelIndex &index)
@@ -238,26 +433,4 @@ void studentLibrary::on_btnCart_clicked()
 //     }
 // }
 
-
-// void MainWindow::on_btnVoirCarte_clicked()
-// {
-//     QJsonArray libraries;
-
-//     QJsonObject lib1;
-//     lib1["name"] = "Bibliothèque Centrale";
-//     lib1["lat"] = 34.020882;
-//     lib1["lng"] = -6.841650;
-//     libraries.append(lib1);
-
-//     QJsonObject lib2;
-//     lib2["name"] = "Bibliothèque Faculté Sciences";
-//     lib2["lat"] = 34.024563;
-//     lib2["lng"] = -6.848329;
-//     libraries.append(lib2);
-
-//     MapViewer *map = new MapViewer(this);
-//     map->resize(800, 600);
-//     map->setLibraryData(libraries);
-//     map->show();
-// }
 

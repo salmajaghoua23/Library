@@ -104,8 +104,8 @@ void digitalLibrary::on_statsButton_clicked() {
             statWindow = nullptr;
         });
     }
-    statWindow->loadAndShowStats(); // Charge et affiche
-    statWindow->show();
+     statWindow->loadAndShowStats(); // Charge et affiche
+    //statWindow->show();
 }
 void digitalLibrary::on_manageGenre_clicked()
 {

@@ -10,7 +10,8 @@ set(CMAKE_AUTOUIC ON)
 # 🔍 Important : Assure que Qt6Charts est bien détecté
 set(Qt6Charts_DIR "C:/Qt/6.9.0/mingw_64/lib/cmake/Qt6Charts")
 #file(COPY resources/html/map.html DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Sql Widgets Charts)
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Sql Widgets Charts  Multimedia
+  MultimediaWidgets)
 
 #qt_add_resources(RESOURCE_FILES html.qrc)
 set(SOURCES
@@ -104,5 +105,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt6::Sql
     Qt6::Widgets
     Qt6::Charts
-  #  Qt6::WebEngineWidgets
+    Qt6::Multimedia
+    Qt6::MultimediaWidgets
+  # Qt6::WebEngineWidgets
 )

@@ -1,9 +1,7 @@
 #include "editMember.h"
 #include "ui_editMember.h"
 #include "digitalLibrary.h"
-#include <QSqlRecord>
-#include <QSqlField>
-#include <QTableView>
+#include <QSqlError>
 #include <QMessageBox>
 #include <QRegularExpression>
 #include <QRegularExpressionValidator>
@@ -14,6 +12,7 @@ editMember::editMember(QWidget *parent) :
     ui(new Ui::editMember)
 {
     ui->setupUi(this);
+
     this->setWindowTitle("Edit Member Info");
     setValidator();
 }
@@ -25,116 +24,121 @@ editMember::~editMember()
 
 void editMember::on_searchMemberBtn_clicked()
 {
-    //get the content of the Line edit
-    QString ID = ui->ID->text();
-    QString firstName;
-    QString lastName;
-    QString phone;
-    QString mail;
-    QString gender;
+    // Reset counter
+    count = 0;
 
-    //call the mail Database
+    // Get username from input
+    QString username = ui->ID->text().trimmed();
+
+    if(username.isEmpty()) {
+        QMessageBox::warning(this, "Input Error", "Please enter a username");
+        return;
+    }
+
+    // Initialize variables
+    QString firstName, lastName, phone, gender;
+
+    // Connect to database
     digitalLibrary lib;
     auto db = lib.db;
 
-    //Define the query
-    auto query = QSqlQuery(db);
-    QString searchID = {"SELECT * FROM members WHERE ID = '%1'"};
+    if(!db.isOpen()) {
+        QMessageBox::critical(this, "Database Error", "Database not connected!");
+        return;
+    }
 
-    //execute the query
-    if(!query.exec(searchID.arg(ID)))
-        qDebug() << "Cannot select from members";
+    // Prepare and execute query
+    QSqlQuery query(db);
+    query.prepare("SELECT username, name, password, role FROM accounts WHERE username = ?");
+    query.addBindValue(username);
 
-    //check if the member is found
-    while(query.next())
-        count++;
+    if(!query.exec()) {
+        QMessageBox::critical(this, "Query Error",
+                              "Failed to search member: " + query.lastError().text());
+        return;
+    }
 
-    if(count != 1)
-    {
-        QMessageBox::warning(this, "Not Found", "Member not Found");
+    // Process results
+    if(query.next()) {
+        count = 1;
+        firstName = query.value("username").toString();
+        lastName = query.value("name").toString();
+        phone = query.value("password").toString();
+        gender = query.value("role").toString();
+
+        // Update UI
+        ui->firstName->setText(firstName);
+        ui->lastName->setText(lastName);
+        ui->phone->setText(phone);
+        ui->gender->setCurrentText(gender);
+    } else {
+        QMessageBox::information(this, "Not Found", "No member found with this username");
         ui->ID->clear();
     }
-    else
-    {
-        //Retrieve the fields identified by ID
-        if(query.first())
-        {
-            firstName = query.value(1).toString();
-            lastName = query.value(2).toString();
-            phone = query.value(3).toString();
-            mail = query.value(4).toString();
-            gender = query.value(5).toString();
-        }
-    }
-
-    //Show the fields in the corresponding line Edit
-    ui->firstName->setText(firstName);
-    ui->lastName->setText(lastName);
-    ui->phone->setText(phone);
-    ui->mail->setText(mail);
-    ui->gender->setCurrentText(gender);
-
 }
 
 void editMember::on_editMemberBtn_clicked()
 {
-    //get the content of the line edits
-    QString ID = ui->ID->text();
-    QString firstName = ui->firstName->text();
-    QString lastName = ui->lastName->text();
-    QString phone = ui->phone->text();;
-    QString mail = ui->mail->text();
+    // Verify we have search results
+    if(count != 1) {
+        QMessageBox::warning(this, "Error", "Please search for a member first");
+        return;
+    }
+
+    // Get input values
+    QString username = ui->ID->text().trimmed();
+    QString firstName = ui->firstName->text().trimmed();
+    QString lastName = ui->lastName->text().trimmed();
+    QString phone = ui->phone->text().trimmed();
     QString gender = ui->gender->currentText();
 
-    //call the mail Database
+    // Validate inputs
+    if(firstName.isEmpty() || lastName.isEmpty()) {
+        QMessageBox::warning(this, "Input Error", "First and last names cannot be empty");
+        return;
+    }
+
+    // Connect to database
     digitalLibrary lib;
     auto db = lib.db;
 
-    //Define the query
-    auto query = QSqlQuery(db);
-    QString searchID = {"UPDATE members SET firstName = '"+firstName+"',"
-                        "lastName = '"+lastName+"', phone = '"+phone+"',"
-                        "email = '"+mail+"', gender = '"+gender+"'"
-                        " WHERE ID = '"+ID+"'"};
-    if(!ID.isEmpty())
-    {
-        if(count == 1)
-        {
-            //execute the query
-            if(!query.exec(searchID))
-                qDebug() << "Cannot update members";
-            else
-                QMessageBox::information(this, "SUCCESS", "Member updated successfully");
-        }
-        else
-            QMessageBox::warning(this, "Warning", "Search member");
+    // Prepare update query
+    QSqlQuery query(db);
+    query.prepare("UPDATE accounts SET "
+                  "username = ?, "
+                  "name = ?, "
+                  "password = ?, "
+                  "role = ? "
+                  "WHERE username = ?");
+
+    query.addBindValue(firstName);
+    query.addBindValue(lastName);
+    query.addBindValue(phone);
+    query.addBindValue(gender);
+    query.addBindValue(username);
+
+    // Execute update
+    if(!query.exec()) {
+        QMessageBox::critical(this, "Update Error",
+                              "Failed to update member: " + query.lastError().text());
+    } else {
+        QMessageBox::information(this, "Success", "Member updated successfully");
+        count = 0; // Reset search status
     }
-    else
-        QMessageBox::warning(this, "Warning", "Insert ID");
 }
 
-void editMember::setValidator(){
+void editMember::setValidator()
+{
+    // Validator for username (alphanumeric, 5-20 chars)
+    QRegularExpression username("^[A-Za-z0-9_]{5,20}$");
+    ui->ID->setValidator(new QRegularExpressionValidator(username, this));
 
-    //Validator for ID
-    QRegularExpression ID("[0-9]{1000}");
-    QRegularExpressionValidator *valID = new QRegularExpressionValidator(ID, this);
-    ui->ID->setValidator(valID);
+    // Validator for names (letters only, 2-29 chars)
+    QRegularExpression name("^[A-Za-zÀ-ÿ\\s]{2,29}$");
+    ui->firstName->setValidator(new QRegularExpressionValidator(name, this));
+    ui->lastName->setValidator(new QRegularExpressionValidator(name, this));
 
-    //regx for name
-    QRegularExpression Name("^[A-Za-z]{7,29}$");
-    QRegularExpressionValidator *valName = new QRegularExpressionValidator(Name, this);
-    ui->firstName->setValidator(valName);
-    ui->lastName->setValidator(valName);
-
-    //Validator for phone number
-    QRegularExpression phone("[0-9]{10}");
-    QRegularExpressionValidator *valPhone = new QRegularExpressionValidator(phone, this);
-    ui->phone->setValidator(valPhone);
-
-    //Validator for email
-    QRegularExpression email("^[a-zA-Z0-9_.-]+@[a-zA-Z0-9.-]+$");
-    QRegularExpressionValidator *valMail = new QRegularExpressionValidator(email, this);
-    ui->mail->setValidator(valMail);
-
+    // Validator for phone (10 digits)
+    QRegularExpression phone("^[0-9]{10}$");
+    ui->phone->setValidator(new QRegularExpressionValidator(phone, this));
 }
-

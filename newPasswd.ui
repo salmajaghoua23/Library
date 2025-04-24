@@ -6,24 +6,37 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>502</width>
-    <height>589</height>
+    <width>673</width>
+    <height>751</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color:#e9f5db;</string>
+   <string notr="true">background-color:white;</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="styleSheet">
-      <string notr="true">font: 16pt &quot;Comic Sans MS&quot; Bold;
-border-color: rgb(196, 178, 255);
-border-color: rgb(170, 0, 255);
-color: #E0777D;</string>
+      <string notr="true">QGroupBox {
+    font: 16pt &quot;Georgia&quot;;
+    border: 2px solid white;
+    border-radius: 6px;
+    background-color:rgb(117, 117, 175);
+border-radius: 10px;
+    color: white;
+    padding: 10px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 10px;
+    padding: 0 5px;
+    color: white;
+    background-color: rgb(23, 170, 32)
+}</string>
      </property>
      <property name="title">
       <string>Forget Password</string>
@@ -32,11 +45,14 @@ color: #E0777D;</string>
       <item row="0" column="1" colspan="2">
        <widget class="QLineEdit" name="username">
         <property name="styleSheet">
-         <string notr="true">QLineEdit{
-	background-color: rgb(255, 255, 255);
-	 border: 2px  solid;
-     border-radius: 10px;
-	font: 24px
+         <string notr="true">QLineEdit {
+    background-color: rgba(255, 255, 255, 0.7);
+    border: 2px solid #9370DB;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 16px;
+    color: #4B0082;
+    font-weight: bold;
 }</string>
         </property>
        </widget>
@@ -44,21 +60,29 @@ color: #E0777D;</string>
       <item row="0" column="0">
        <widget class="QLabel" name="label">
         <property name="styleSheet">
-         <string notr="true">font: 14pt &quot;Georgina&quot; Bold;</string>
+         <string notr="true">QLabel {
+    font: bold 18px &quot;Georgia&quot;;
+    color: rgb(85, 0, 127);
+    background-color: transparent;
+	font: 600 italic 22pt &quot;Segoe UI&quot;;
+}</string>
         </property>
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Username&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:20pt; font-weight:700; font-style:normal; color:#ffffff;&quot;&gt;Username&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>
       <item row="1" column="1" colspan="2">
        <widget class="QLineEdit" name="name">
         <property name="styleSheet">
-         <string notr="true">QLineEdit{
-	background-color: rgb(255, 255, 255);
-	 border: 2px  solid;
-     border-radius: 	10px;
-	font: 24px
+         <string notr="true">QLineEdit {
+    background-color: rgba(255, 255, 255, 0.7);
+    border: 2px solid #9370DB;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 16px;
+    color: #4B0082;
+    font-weight: bold;
 }</string>
         </property>
        </widget>
@@ -66,42 +90,73 @@ color: #E0777D;</string>
       <item row="2" column="0">
        <widget class="QLabel" name="label_2">
         <property name="styleSheet">
-         <string notr="true">font: 14pt &quot;Georgina&quot; Bold;</string>
+         <string notr="true">QLabel {
+    font: bold 18px &quot;Georgia&quot;;
+    color: rgb(85, 0, 127);
+    background-color: transparent;
+	font: 600 italic 22pt &quot;Segoe UI&quot;;
+}</string>
         </property>
         <property name="text">
-         <string>New Password</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:20pt; font-weight:700; font-style:normal; color:#ffffff;&quot;&gt;New Password&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>
       <item row="3" column="1">
        <widget class="QPushButton" name="backButton">
         <property name="styleSheet">
-         <string notr="true">QPushButton{
-border-radius:10px;
-padding : 0 4px;
-background: #90a955;
-border -radius:10px;
-color: rgb(255, 255, 255);
-font: 24px
-}
-QPushButton:hover:!pressed
-
-{
-background:#e0777d;
-}
-QToolButton
-{
-
-border-radius:10px;
-bacground:red;
-color:red;
+         <string notr="true">/* Base Button Style */
+QPushButton {
+    background-color: rgb(255, 28, 28);  /* Royal Purple */
+    color: white;            /* Gold Text */
+    border: none;
+    border-radius: 20px;        /* Rounded Corners */
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
 }
 
-QPushButton:pressed
-{
-              font-size: 19px;
-              transition: 0.9s; 
-}</string>
+/* Hover Effect */
+QPushButton:hover {
+    background-color: rgb(179, 126, 82); /* Brighter Purple */
+    color: #FFFACD;             /* Lemon Chiffon */
+    border: 1px solid #FFD700;  /* Gold Border */
+}
+
+/* Pressed Effect */
+QPushButton:pressed {
+    background-color: #4B0082;  /* Indigo */
+    color: #D4AF37;             /* Metallic Gold */
+    font-size: 15px;            /* Slight Shrink */
+    padding: 11px 21px;         /* Compensates for Shrink */
+}
+
+/* Focus Effect */
+QPushButton:focus {
+    outline: none;
+    border: 2px solid #FFD700;
+}
+
+/* Accent Button Variant */
+QPushButton.accent {
+    background-color: #FFD700;  /* Gold */
+    color: #4B0082;             /* Deep Purple */
+}
+
+QPushButton.accent:hover {
+    background-color: #F0E68C;  /* Khaki */
+    color: #4B0082;
+    border: 1px solid #D4AF37;
+}
+
+QPushButton.accent:pressed {
+    background-color: #D4AF37;  /* Metallic Gold */
+    color: #4B0082;
+    font-size: 15px;
+    padding: 11px 21px;
+}
+</string>
         </property>
         <property name="text">
          <string>Back</string>
@@ -111,57 +166,91 @@ QPushButton:pressed
       <item row="2" column="1" colspan="2">
        <widget class="QLineEdit" name="newpass">
         <property name="styleSheet">
-         <string notr="true">QLineEdit{
-	background-color: rgb(255, 255, 255);
-	 border: 2px  solid;
-     border-radius: 10px;
-	font: 24px
+         <string notr="true">QLineEdit {
+    background-color: rgba(255, 255, 255, 0.7);
+    border: 2px solid #9370DB;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 16px;
+    color: #4B0082;
+    font-weight: bold;
 }</string>
         </property>
         <property name="echoMode">
-         <enum>QLineEdit::Password</enum>
+         <enum>QLineEdit::EchoMode::Password</enum>
         </property>
        </widget>
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="label_3">
         <property name="styleSheet">
-         <string notr="true">font: 14pt &quot;Georgina&quot; Bold;</string>
+         <string notr="true">QLabel {
+    font: bold 18px &quot;Georgia&quot;;
+    color: rgb(85, 0, 127);
+    background-color: transparent;
+	font: 600 italic 22pt &quot;Segoe UI&quot;;
+}</string>
         </property>
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:20pt; font-weight:700; font-style:normal; color:#ffffff;&quot;&gt;Name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>
       <item row="3" column="2">
        <widget class="QPushButton" name="submitButton">
         <property name="styleSheet">
-         <string notr="true">QPushButton{
-border-radius:10px;
-padding : 0 4px;
-background: #90A955;
-border -radius:10px;
-color: rgb(255, 255, 255);
-font: 24px
-}
-QPushButton:hover:!pressed
-
-{
-background:#E0777D;
-}
-QToolButton
-{
-
-border-radius:10px;
-bacground:red;
-color:red;
+         <string notr="true">/* Base Button Style */
+QPushButton {
+    background-color: rgb(35, 170, 44);  /* Royal Purple */
+    color: white;            /* Gold Text */
+    border: none;
+    border-radius: 20px;        /* Rounded Corners */
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
 }
 
-QPushButton:pressed
-{
-              font-size: 19px;
-              transition: 0.9s; 
-}</string>
+/* Hover Effect */
+QPushButton:hover {
+    background-color: rgb(179, 126, 82); /* Brighter Purple */
+    color: #FFFACD;             /* Lemon Chiffon */
+    border: 1px solid #FFD700;  /* Gold Border */
+}
+
+/* Pressed Effect */
+QPushButton:pressed {
+    background-color: #4B0082;  /* Indigo */
+    color: #D4AF37;             /* Metallic Gold */
+    font-size: 15px;            /* Slight Shrink */
+    padding: 11px 21px;         /* Compensates for Shrink */
+}
+
+/* Focus Effect */
+QPushButton:focus {
+    outline: none;
+    border: 2px solid #FFD700;
+}
+
+/* Accent Button Variant */
+QPushButton.accent {
+    background-color: #FFD700;  /* Gold */
+    color: #4B0082;             /* Deep Purple */
+}
+
+QPushButton.accent:hover {
+    background-color: #F0E68C;  /* Khaki */
+    color: #4B0082;
+    border: 1px solid #D4AF37;
+}
+
+QPushButton.accent:pressed {
+    background-color: #D4AF37;  /* Metallic Gold */
+    color: #4B0082;
+    font-size: 15px;
+    padding: 11px 21px;
+}
+</string>
         </property>
         <property name="text">
          <string>Submit</string>

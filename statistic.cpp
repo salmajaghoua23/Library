@@ -70,10 +70,7 @@ void Statistic::loadAndShowStats() {
     QMap<QString, int> bookPopularity;
     QMap<QString, int> quantityByCategory;
     QMap<QString, int> membersByType;
-
     QSqlQuery query(m_db);
-
-
     // 1️⃣ Statistiques membres
     query.prepare("SELECT type, COUNT(*) FROM membres GROUP BY type");
     if (!query.exec()) {
@@ -122,28 +119,27 @@ void Statistic::loadAndShowStats() {
         layout->addWidget(quantityChartView);
     }
 
-    // 👥 Fenêtre des membres
-    if (!memberStatsWindow) {
-        memberStatsWindow = new QWidget();
-        memberStatsWindow->setWindowTitle("👥 Statistiques des membres");
-        QVBoxLayout *layout = new QVBoxLayout(memberStatsWindow);
-        layout->addWidget(membersChartView);
-    }
+    // // 👥 Fenêtre des membres
+    // if (!memberStatsWindow) {
+    //     memberStatsWindow = new QWidget();
+    //     memberStatsWindow->setWindowTitle("👥 Statistiques des membres");
+    //     QVBoxLayout *layout = new QVBoxLayout(memberStatsWindow);
+    //     layout->addWidget(membersChartView);
+    // }
 
     bookStatsWindow->show();
     bookStatsWindow->raise();
 
-    memberStatsWindow->show();
-    memberStatsWindow->raise();
+    // memberStatsWindow->show();
+    // memberStatsWindow->raise();
 }
 
 void Statistic::createPopularityChart(const QMap<QString, int>& data) {
     QPieSeries *series = new QPieSeries();
     for (auto it = data.constBegin(); it != data.constEnd(); ++it) {
         QPieSlice *slice = series->append(it.key(), it.value());
-        slice->setBrush(QColor("#FFD700"));
+        slice->setBrush(QColor("#FdD600"));
     }
-
     QChart *chart = new QChart();
     chart->addSeries(series);
     chart->setTitle("Popularité des livres");

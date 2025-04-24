@@ -6,32 +6,43 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>517</width>
-    <height>486</height>
+    <width>605</width>
+    <height>646</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color:#E9F5DB;</string>
+   <string notr="true">background-color:white;</string>
   </property>
   <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>511</width>
-     <height>461</height>
+     <x>10</x>
+     <y>10</y>
+     <width>591</width>
+     <height>631</height>
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">font: 18pt &quot;Georgina&quot;;
-border-color: rgb(196, 178, 255);
-border-color: rgb(170, 0, 255);
-color: pink;
+    <string notr="true">QGroupBox {
+    font: 16pt &quot;Georgia&quot;;
+    border: 2px solid white;
+    border-radius: 6px;
+    background-color:rgb(117, 117, 175);
+border-radius: 10px;
+    color: white;
+    padding: 10px;
+}
 
-</string>
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 10px;
+    padding: 0 5px;
+    color: white;
+    background-color: rgb(23, 170, 32)
+}</string>
    </property>
    <property name="title">
     <string>   Sign Up</string>
@@ -40,11 +51,14 @@ color: pink;
     <item row="0" column="1" colspan="2">
      <widget class="QLineEdit" name="username">
       <property name="styleSheet">
-       <string notr="true">QLineEdit{
-	background-color: rgb(255, 255, 255);
-	 border: 2px  solid;
-     border-radius: 4px;
-	font: 24px
+       <string notr="true">QLineEdit {
+    background-color: rgba(255, 255, 255, 0.7);
+    border: 2px solid #9370DB;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 16px;
+    color: #4B0082;
+    font-weight: bold;
 }</string>
       </property>
      </widget>
@@ -52,11 +66,14 @@ color: pink;
     <item row="1" column="1" colspan="2">
      <widget class="QLineEdit" name="name">
       <property name="styleSheet">
-       <string notr="true">QLineEdit{
-	background-color: rgb(255, 255, 255);
-	 border: 2px  solid;
-     border-radius: 4px;
-	font: 24px
+       <string notr="true">QLineEdit {
+    background-color: rgba(255, 255, 255, 0.7);
+    border: 2px solid #9370DB;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 16px;
+    color: #4B0082;
+    font-weight: bold;
 }</string>
       </property>
      </widget>
@@ -64,11 +81,14 @@ color: pink;
     <item row="2" column="1" colspan="2">
      <widget class="QLineEdit" name="password">
       <property name="styleSheet">
-       <string notr="true">QLineEdit{
-	background-color: rgb(255, 255, 255);
-	 border: 2px  solid;
-     border-radius: 4px;
-	font: 24px
+       <string notr="true">QLineEdit {
+    background-color: rgba(255, 255, 255, 0.7);
+    border: 2px solid #9370DB;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 16px;
+    color: #4B0082;
+    font-weight: bold;
 }</string>
       </property>
       <property name="inputMethodHints">
@@ -85,7 +105,14 @@ color: pink;
     <item row="3" column="1" colspan="2">
      <widget class="QComboBox" name="roleComboBox">
       <property name="styleSheet">
-       <string notr="true">background:white;</string>
+       <string notr="true">QComboBox {
+    background-color: rgba(255, 255, 255, 0.7);
+    border: 2px solid #9370DB;
+    border-radius: 8px;
+    padding: 6px;
+    font-size: 16px;
+    color: #4B0082;
+}</string>
       </property>
       <property name="editable">
        <bool>true</bool>
@@ -98,45 +125,73 @@ color: pink;
     <item row="1" column="0">
      <widget class="QLabel" name="label_2">
       <property name="styleSheet">
-       <string notr="true">font: 14pt &quot;Georgina&quot;;</string>
+       <string notr="true">QLabel {
+    font: bold 18px &quot;Georgia&quot;;
+    color: rgb(85, 0, 127);
+    background-color: transparent;
+	font: 600 italic 22pt &quot;Segoe UI&quot;;
+}</string>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700; color:#ffffff;&quot;&gt;Name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
     </item>
     <item row="5" column="2">
      <widget class="QPushButton" name="backButton">
       <property name="styleSheet">
-       <string notr="true">QPushButton{
-border-radius:10px;
-padding : 0 4px;
-background: #90A955;
-border -radius:10px;
-color: rgb(255, 255, 255);
-font: 26px&quot;Georgina&quot;
-}
-QPushButton:hover{
-background:#572B788;
-}
-QPushButton:pressed
-
-{
-background:#E0777D;
-}
-QToolButton
-{
-
-border-radius:10px;
-bacground:red;
-color:red;
+       <string notr="true">/* Base Button Style */
+QPushButton {
+    background-color: rgb(255, 28, 28);  /* Royal Purple */
+    color: white;            /* Gold Text */
+    border: none;
+    border-radius: 20px;        /* Rounded Corners */
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
 }
 
-QPushButton:pressed
-{
-              font-size: 19px;
-              transition: 0.9s; 
-}</string>
+/* Hover Effect */
+QPushButton:hover {
+    background-color: rgb(179, 126, 82); /* Brighter Purple */
+    color: #FFFACD;             /* Lemon Chiffon */
+    border: 1px solid #FFD700;  /* Gold Border */
+}
+
+/* Pressed Effect */
+QPushButton:pressed {
+    background-color: #4B0082;  /* Indigo */
+    color: #D4AF37;             /* Metallic Gold */
+    font-size: 15px;            /* Slight Shrink */
+    padding: 11px 21px;         /* Compensates for Shrink */
+}
+
+/* Focus Effect */
+QPushButton:focus {
+    outline: none;
+    border: 2px solid #FFD700;
+}
+
+/* Accent Button Variant */
+QPushButton.accent {
+    background-color: #FFD700;  /* Gold */
+    color: #4B0082;             /* Deep Purple */
+}
+
+QPushButton.accent:hover {
+    background-color: #F0E68C;  /* Khaki */
+    color: #4B0082;
+    border: 1px solid #D4AF37;
+}
+
+QPushButton.accent:pressed {
+    background-color: #D4AF37;  /* Metallic Gold */
+    color: #4B0082;
+    font-size: 15px;
+    padding: 11px 21px;
+}
+</string>
       </property>
       <property name="text">
        <string>Back</string>
@@ -146,45 +201,73 @@ QPushButton:pressed
     <item row="2" column="0">
      <widget class="QLabel" name="label_3">
       <property name="styleSheet">
-       <string notr="true">font: 14pt &quot;Georgina&quot;;</string>
+       <string notr="true">QLabel {
+    font: bold 18px &quot;Georgia&quot;;
+    color: rgb(85, 0, 127);
+    background-color: transparent;
+	font: 600 italic 22pt &quot;Segoe UI&quot;;
+}</string>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Password&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700; color:#ffffff;&quot;&gt;Password&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
     </item>
     <item row="5" column="1">
      <widget class="QPushButton" name="createButton">
       <property name="styleSheet">
-       <string notr="true">QPushButton{
-border-radius:10px;
-padding : 0 4px;
-background: #90A955;
-border -radius:10px;
-color: rgb(255, 255, 255);
-font: 26px&quot;Georgina&quot;
-}
-QPushButton:hover{
-background:#572B788;
-}
-QPushButton:pressed
-
-{
-background:#E0777D;
-}
-QToolButton
-{
-
-border-radius:10px;
-bacground:red;
-color:red;
+       <string notr="true">/* Base Button Style */
+QPushButton {
+    background-color: rgb(35, 170, 44);  /* Royal Purple */
+    color: white;            /* Gold Text */
+    border: none;
+    border-radius: 20px;        /* Rounded Corners */
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
 }
 
-QPushButton:pressed
-{
-              font-size: 19px;
-              transition: 0.9s; 
-}</string>
+/* Hover Effect */
+QPushButton:hover {
+    background-color: rgb(179, 126, 82); /* Brighter Purple */
+    color: #FFFACD;             /* Lemon Chiffon */
+    border: 1px solid #FFD700;  /* Gold Border */
+}
+
+/* Pressed Effect */
+QPushButton:pressed {
+    background-color: #4B0082;  /* Indigo */
+    color: #D4AF37;             /* Metallic Gold */
+    font-size: 15px;            /* Slight Shrink */
+    padding: 11px 21px;         /* Compensates for Shrink */
+}
+
+/* Focus Effect */
+QPushButton:focus {
+    outline: none;
+    border: 2px solid #FFD700;
+}
+
+/* Accent Button Variant */
+QPushButton.accent {
+    background-color: #FFD700;  /* Gold */
+    color: #4B0082;             /* Deep Purple */
+}
+
+QPushButton.accent:hover {
+    background-color: #F0E68C;  /* Khaki */
+    color: #4B0082;
+    border: 1px solid #D4AF37;
+}
+
+QPushButton.accent:pressed {
+    background-color: #D4AF37;  /* Metallic Gold */
+    color: #4B0082;
+    font-size: 15px;
+    padding: 11px 21px;
+}
+</string>
       </property>
       <property name="text">
        <string>Create</string>
@@ -194,20 +277,30 @@ QPushButton:pressed
     <item row="0" column="0">
      <widget class="QLabel" name="label">
       <property name="styleSheet">
-       <string notr="true">font: 14pt &quot;Georgina&quot;;</string>
+       <string notr="true">QLabel {
+    font: bold 18px &quot;Georgia&quot;;
+    color: rgb(85, 0, 127);
+    background-color: transparent;
+	font: 600 italic 22pt &quot;Segoe UI&quot;;
+}</string>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Username&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700; color:#ffffff;&quot;&gt;Username&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
     </item>
     <item row="3" column="0">
      <widget class="QLabel" name="label_4">
       <property name="styleSheet">
-       <string notr="true">font: &quot;Georgina&quot;;</string>
+       <string notr="true">QLabel {
+    font: bold 18px &quot;Georgia&quot;;
+    color: rgb(85, 0, 127);
+    background-color: transparent;
+	font: 600 italic 22pt &quot;Segoe UI&quot;;
+}</string>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Role&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700; color:#ffffff;&quot;&gt;Role&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
     </item>
