@@ -71,14 +71,14 @@ QHeaderView::section {
     ui->borrowButton->setStyleSheet(gradientStyle);
     ui->voirMonPanierButton->setStyleSheet(gradientStyle);
     ui->tableView->setStyleSheet(gradientStyle);
-
-   showCart(); // Charger le panier à l'ouverture
+    chargerPanier();
+   // showCart(); // Charger le panier à l'ouverture
     QLabel *welcomeLabel = new QLabel("📚 Ready to borrow? Review your selected books below!", this);
     welcomeLabel->setStyleSheet("color: #8A2BE2; font-size: 16px; font-style: italic; padding: 8px;");
     // Style pour les boutons
     QString buttonStyle = R"(
 QPushButton {
-    background-color: #6A1B9A;  /* Violet foncé */
+    background-color: #2C5E2A;  /* Violet foncé */
     color: white;
     border-radius: 10px;
     font-size: 16px;
@@ -92,11 +92,11 @@ QPushButton {
 
 QPushButton:hover {
     background-color: rgba(142, 36, 170, 0.7);  /* Violet clair avec transparence */
-    border: 2px solid #FFEB3B;  /* Doré clair */
+    border: 2px solid #8A9B68;  /* Doré clair */
 }
 
 QPushButton:pressed {
-    background-color: #4A148C;  /* Violet foncé */
+    background-color: #8A9B68;  /* Violet foncé */
     background-image: none;  /* Enlève l'image de fond quand pressé */
 }
 
@@ -109,7 +109,7 @@ QPushButton:pressed {
     // Style pour QTableView
     QString tableStyle = R"(
 QTableView {
-    background-color: white;  /* Violet très clair */
+    background-color: beige;  /* Violet très clair */
     color: #4A148C;  /* Violet foncé */
     border: 1px solid #6A1B9A;  /* Violet foncé pour la bordure */
     font-size: 14px;
@@ -171,7 +171,7 @@ void Cart::setDatabase(const QSqlDatabase &database) {
 void Cart::chargerPanier()
 {
     QSqlQuery query(db);
-    query.prepare("SELECT name, author, added_at FROM cart WHERE user_id = :user_id");
+    query.prepare("SELECT book_id, name, author, added_at FROM cart WHERE user_id = :user_id");
     query.bindValue(":user_id", userId);
 
     if (!query.exec()) {
@@ -182,36 +182,43 @@ void Cart::chargerPanier()
     QSqlQueryModel *cartModel = new QSqlQueryModel(this);
     cartModel->setQuery(query);
 
-    cartModel->setHeaderData(0, Qt::Horizontal, "Titre");
-    cartModel->setHeaderData(1, Qt::Horizontal, "Auteur");
-    cartModel->setHeaderData(2, Qt::Horizontal, "Date ajoutée");
+    cartModel->setHeaderData(1, Qt::Horizontal, "Titre");
+    cartModel->setHeaderData(2, Qt::Horizontal, "Auteur");
+    cartModel->setHeaderData(3, Qt::Horizontal, "Date ajoutée");
 
     ui->tableView->setModel(cartModel);
 }
 
 
-// Supprimer un livre sélectionné
+
 void Cart::on_btnRemoveSelected_clicked()
 {
     int row = ui->tableView->selectionModel()->currentIndex().row();
     if (row != -1) {
         int bookId = ui->tableView->model()->data(ui->tableView->model()->index(row, 0)).toInt();
         QSqlQuery query(db);
-        query.prepare("UPDATE books SET in_cart = 0 WHERE ID = :bookId");
+        query.prepare("DELETE FROM cart WHERE user_id = :userId AND book_id = :bookId");
+        query.bindValue(":userId", userId);
         query.bindValue(":bookId", bookId);
         if (query.exec()) {
-            chargerPanier();
+            chargerPanier();  // Rafraîchir le panier
+        } else {
+            QMessageBox::warning(this, "Erreur", "Impossible de supprimer le livre du panier.");
         }
     }
 }
 
-// Vider tout le panier
 void Cart::on_btnClearCart_clicked()
 {
     QSqlQuery query(db);
-    if (query.exec("UPDATE books SET in_cart = 0 WHERE in_cart = 1")) {
-        chargerPanier();
+    query.prepare("DELETE FROM cart WHERE user_id = :userId");
+    query.bindValue(":userId", userId);
+
+    if (query.exec()) {
+        chargerPanier();  // Rafraîchir le panier
         QMessageBox::information(this, "Succès", "Panier vidé.");
+    } else {
+        QMessageBox::warning(this, "Erreur", "Échec de la suppression du panier.");
     }
 }
 
@@ -219,32 +226,49 @@ void Cart::on_btnClearCart_clicked()
 void Cart::on_btnBorrowAll_clicked()
 {
     QSqlQuery select(db), update(db);
-    select.prepare("SELECT ID, title FROM books WHERE in_cart = 1 AND quantity > 0");
+    select.prepare("SELECT book_id, name FROM cart WHERE user_id = :userId AND borrowed = 0");
+
+    select.bindValue(":userId", userId);
 
     if (select.exec()) {
-        while (select.next()) {
-            int bookId = select.value("ID").toInt();
-            QString title = select.value("title").toString();
+        bool success = true;  // Variable pour suivre si toutes les opérations ont réussi
 
-            update.prepare("UPDATE books SET quantity = quantity - 1, in_cart = 0 WHERE ID = :id AND quantity > 0");
-            update.bindValue(":id", bookId);
-            if (update.exec()) {
-                // Historique
-                QFile file("historique_reservations.txt");
-                if (file.open(QIODevice::Append | QIODevice::Text)) {
-                    QTextStream out(&file);
-                    QString date = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
-                    out << date << " - " << title << "\n";
-                    file.close();
-                }
+        while (select.next()) {
+            int bookId = select.value("book_id").toInt();
+            QString title = select.value("name").toString();
+
+            // Marquer le livre comme emprunté dans la table cart
+            update.prepare("UPDATE cart SET borrowed = 1 WHERE user_id = :userId AND book_id = :bookId AND borrowed = 0");
+            update.bindValue(":userId", userId);
+            update.bindValue(":bookId", bookId);
+
+            if (!update.exec() || update.numRowsAffected() == 0) {
+                success = false;  // Si l'opération échoue pour un livre, on garde la variable en échec
+                break;
+            }
+
+            // Enregistrer l'emprunt dans l'historique
+            QFile file("historique_reservations.txt");
+            if (file.open(QIODevice::Append | QIODevice::Text)) {
+                QTextStream out(&file);
+                QString date = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
+                out << date << " - " << title << " emprunté par l'utilisateur " << userId << "\n";
+                file.close();
             }
         }
-        chargerPanier();
-        QMessageBox::information(this, "Succès", "Tous les livres ont été empruntés.");
+
+        // Rafraîchir le panier si tout a été emprunté avec succès
+        if (success) {
+            chargerPanier();
+            QMessageBox::information(this, "Succès", "Tous les livres ont été empruntés.");
+        } else {
+            QMessageBox::warning(this, "Erreur", "Échec lors de l'emprunt de tous les livres.");
+        }
     } else {
-        QMessageBox::warning(this, "Erreur", "Échec lors de l'emprunt.");
+        QMessageBox::warning(this, "Erreur", "Impossible de récupérer les livres du panier.");
     }
 }
+
 void Cart::on_voirMonPanierButton_clicked()
 {
     // Affiche le panier
@@ -289,30 +313,33 @@ void Cart::on_borrowButton_clicked()
     }
 
     int row = selectedIndex.row();
-
     int bookId = model->data(model->index(row, 0)).toInt(); // Colonne 0 = ID
     QString nomLivre = model->data(model->index(row, 1)).toString(); // Colonne 1 = title
 
     QSqlQuery query(db);
-    query.prepare("UPDATE books SET quantity = quantity - 1, in_cart = 0 WHERE ID = :bookId AND quantity > 0");
+    query.prepare("UPDATE cart SET borrowed = 1 WHERE user_id = :userId AND book_id = :bookId AND borrowed = 0");
+    query.bindValue(":userId", userId);
     query.bindValue(":bookId", bookId);
 
     if (query.exec() && query.numRowsAffected() > 0) {
         QMessageBox::information(this, "Succès", "Livre emprunté avec succès.");
 
+        // Enregistrer l'historique dans un fichier
         QFile file("historique_reservations.txt");
         if (file.open(QIODevice::Append | QIODevice::Text)) {
             QTextStream out(&file);
             QString date = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
-            out << date << " - " << nomLivre << "\n";
+            out << date << " - " << nomLivre << " emprunté par l'utilisateur " << userId << "\n";
             file.close();
         }
 
+        // Rafraîchir le panier pour refléter l'emprunt
         chargerPanier();
     } else {
         QMessageBox::warning(this, "Erreur", "Ce livre est déjà emprunté ou indisponible.");
     }
 }
+
 int Cart::getUserId()
 {
     // Exemple statique, tu devras adapter selon ton système d'authentification

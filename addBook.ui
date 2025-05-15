@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>890</width>
-    <height>723</height>
+    <width>546</width>
+    <height>631</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -215,6 +215,31 @@ background:#52b788;
 	font: 24px;color:black;
 }</string>
           </property>
+          <item>
+           <property name="text">
+            <string>science</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>romantic</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>philosophie</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>politic</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>sociale</string>
+           </property>
+          </item>
          </widget>
         </item>
        </layout>

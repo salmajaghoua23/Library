@@ -72,7 +72,7 @@ void Statistic::loadAndShowStats() {
     QMap<QString, int> membersByType;
     QSqlQuery query(m_db);
     // 1️⃣ Statistiques membres
-    query.prepare("SELECT type, COUNT(*) FROM membres GROUP BY type");
+    query.prepare("SELECT type, COUNT(*) FROM accounts GROUP BY type");
     if (!query.exec()) {
         qDebug() << "❌ Erreur requête membres:" << query.lastError();
     } else {

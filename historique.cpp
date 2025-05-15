@@ -19,8 +19,8 @@ Historique::Historique(QWidget *parent) : QDialog(parent)
 {
     // Configuration de la fenêtre principale
     setWindowTitle("Historique et Statistiques");
-    setMinimumSize(900, 600);  // Taille minimale
-    resize(1100, 750);         // Taille initiale recommandée
+    setMinimumSize(600, 600);  // Taille minimale
+    resize(900, 750);         // Taille initiale recommandée
     setStyleSheet("background-color: #f5f7fa;");
 
     // Layout principal avec marges réduites
@@ -146,6 +146,7 @@ void Historique::setupReservationsTable()
         "QTableWidget::item {"
         "   padding: 8px;"
         "   border-bottom: 1px solid #f0f2f5;"
+        "color:black;"
         "}"
         );
 
@@ -290,10 +291,10 @@ void Historique::initReservationFile()
         QTextStream out(&file);
         QDateTime now = QDateTime::currentDateTime();
 
-        // Données de démo
-        out << now.toString("yyyy-MM-dd HH:mm:ss") << "|1984|George Orwell\n";
-        out << now.addDays(-1).toString("yyyy-MM-dd HH:mm:ss") << "|Le Petit Prince|Antoine de Saint-Exupéry\n";
-        out << now.addDays(-2).toString("yyyy-MM-dd HH:mm:ss") << "|L'Étranger|Albert Camus\n";
+        // // Données de démo
+        // out << now.toString("yyyy-MM-dd HH:mm:ss") << "|1984|George Orwell\n";
+        // out << now.addDays(-1).toString("yyyy-MM-dd HH:mm:ss") << "|Le Petit Prince|Antoine de Saint-Exupéry\n";
+        // out << now.addDays(-2).toString("yyyy-MM-dd HH:mm:ss") << "|L'Étranger|Albert Camus\n";
 
         file.close();
     }

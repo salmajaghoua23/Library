@@ -6,6 +6,7 @@
 #include <QSqlQueryModel>
 #include <QModelIndex>
 #include <QWidget>
+#include<QTableView>
 #include <qlabel.h>
 QT_BEGIN_NAMESPACE
 namespace Ui { class studentLibrary; }
@@ -26,16 +27,17 @@ private slots:
     void on_searchButton_clicked();
     void on_bookListView_clicked(const QModelIndex &index);
     void on_addToCartButton_clicked();
-    //void showCart();
+    void showCart();
     void on_backButton_clicked();
     void on_btnHistorique_clicked();
     //void on_btnVoirPanier_clicked();
     void on_btnCart_clicked();
     void afficherCarteLivre();
+    void removeBookFromCart(int rowIndex);
     void on_btnLocalisation_clicked();
 private:
     void showBookDetails(int bookId);
-   // Cart userCart;
+    QTableView *cartTableView;
     Ui::studentLibrary *ui;
     QSqlDatabase db;
     QSqlQueryModel *model;

@@ -53,7 +53,7 @@ studentLibrary::studentLibrary(QWidget *parent, QSqlDatabase db) :
 
     // Cacher les boutons au départ
     ui->addToCartButton->setVisible(false);
-    ui->borrowButton->setVisible(false);
+   // ui->borrowButton->setVisible(false);
     ui->backButton->setVisible(false);
 
     // Création du bouton Carte
@@ -90,6 +90,13 @@ studentLibrary::studentLibrary(QWidget *parent, QSqlDatabase db) :
 
     // // Création colonne "localisation" si absente
     // checkAndCreateLocalisationColumn();
+    cartTableView = new QTableView(this);
+    cartTableView->setGeometry(50, 400, 700, 200); // Position x, y et taille largeur, hauteur
+    cartTableView->setStyleSheet("QTableView { background: white; color: #4B0082; font: 600 10pt 'Segoe UI'; border: 1px solid #FFDDEE; border-radius: 10px; }");
+    cartTableView->horizontalHeader()->setStretchLastSection(true);
+    cartTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    cartTableView->setSelectionMode(QAbstractItemView::SingleSelection);
+    cartTableView->hide(); // Cacher au début
 
     // Connexions
     connect(ui->searchButton, &QPushButton::clicked, this, &studentLibrary::on_searchButton_clicked);
@@ -418,19 +425,38 @@ void studentLibrary::on_btnCart_clicked()
 
 
 }
-// void studentLibrary::removeBookFromCart(int rowIndex)
-// {
-//     int bookId = ui->cartTableView->model()->data(ui->cartTableView->model()->index(rowIndex, 0)).toInt();
-//     QSqlQuery query(db);
-//     query.prepare("DELETE FROM cart WHERE user_id = :user_id AND book_id = :book_id");
-//     query.bindValue(":user_id", getUserId());
-//     query.bindValue(":book_id", bookId);
+void studentLibrary::showCart()
+{
+    QSqlQueryModel *cartModel = new QSqlQueryModel(this);
 
-//     if (query.exec()) {
-//         showCart();  // Rafraîchir l'affichage du panier
-//     } else {
-//         QMessageBox::warning(this, "Erreur", "Impossible de supprimer le livre.");
-//     }
-// }
+    QSqlQuery query(db);
+    query.prepare("SELECT book_id, name, author FROM cart WHERE user_id = :user_id");
+    query.bindValue(":user_id", getUserId());
 
+    if (query.exec()) {
+        cartModel->setQuery(query);
+        cartModel->setHeaderData(0, Qt::Horizontal, "ID Livre");
+        cartModel->setHeaderData(1, Qt::Horizontal, "Nom");
+        cartModel->setHeaderData(2, Qt::Horizontal, "Auteur");
 
+        cartTableView->setModel(cartModel);
+        cartTableView->show();
+    } else {
+        QMessageBox::warning(this, "Erreur", "Impossible d'afficher le panier.");
+    }
+}
+
+void studentLibrary::removeBookFromCart(int rowIndex)
+{
+    int bookId = cartTableView->model()->data(cartTableView->model()->index(rowIndex, 0)).toInt();
+    QSqlQuery query(db);
+    query.prepare("DELETE FROM cart WHERE user_id = :user_id AND book_id = :book_id");
+    query.bindValue(":user_id", getUserId());
+    query.bindValue(":book_id", bookId);
+
+    if (query.exec()) {
+        showCart();  // Rafraîchir l'affichage du panier
+    } else {
+        QMessageBox::warning(this, "Erreur", "Impossible de supprimer le livre.");
+    }
+}
