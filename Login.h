@@ -1,19 +1,13 @@
 #ifndef LOGIN_H
 #define LOGIN_H
-#include <QWidget>
-#include <QMediaPlayer>
-#include <QVideoWidget>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QVBoxLayout>
-#include <QDialog>
-#include <QDir>
-#include <QtSql/QSqlDatabase>
-#include <QSqlQuery>
 
+#include <QDialog>
+#include <QMouseEvent>
 namespace Ui {
 class Login;
 }
+
+class QLineEdit;
 
 class Login : public QDialog
 {
@@ -23,16 +17,23 @@ public:
     explicit Login(QWidget *parent = nullptr);
     ~Login();
 
-    void setValidator();
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+
 
 private slots:
     void on_loginButton_clicked();
-
     void on_signUpButton_clicked();
-
     void on_forgetPasswdBtn_clicked();
-protected:
 
+private:
+    QLineEdit *usernameLineEdit;
+    QLineEdit *passwordLineEdit;
+    bool m_dragging = false;
+    void setValidator();
+    QPoint m_lastMousePosition;
 private:
     Ui::Login *ui;
 };

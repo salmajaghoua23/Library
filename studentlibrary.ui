@@ -21,9 +21,9 @@
   <widget class="QLineEdit" name="searchLineEdit">
    <property name="geometry">
     <rect>
-     <x>200</x>
-     <y>10</y>
-     <width>531</width>
+     <x>0</x>
+     <y>80</y>
+     <width>721</width>
      <height>51</height>
     </rect>
    </property>
@@ -78,308 +78,33 @@ QPushButton:pressed {
     <string>Sc</string>
    </property>
   </widget>
-  <widget class="QFrame" name="buttonLayout">
+  <widget class="QLabel" name="bookDetailsText">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>181</width>
-     <height>561</height>
+     <x>220</x>
+     <y>440</y>
+     <width>171</width>
+     <height>61</height>
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">background-color: rgb(173, 115, 86);
-border-radius: 10px;</string>
+    <string notr="true"/>
    </property>
-   <property name="frameShape">
-    <enum>QFrame::Shape::StyledPanel</enum>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:16pt; color:#aa557f;&quot;&gt;Label de détails ::&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
-   <property name="frameShadow">
-    <enum>QFrame::Shadow::Raised</enum>
+  </widget>
+  <widget class="QPushButton" name="btnCart">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>20</y>
+     <width>131</width>
+     <height>36</height>
+    </rect>
    </property>
-   <widget class="QPushButton" name="backButton">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>260</y>
-      <width>181</width>
-      <height>36</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">/* Base Button Style */
-QPushButton {
-  background-color: rgb(173, 115, 86);
-/* Royal Purple */
-    color: white;            /* Gold Text */
-    border: none;
-    border-radius: 20px;        /* Rounded Corners */
-    padding: 10px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    transition: all 0.3s ease-in-out;
-}
-
-/* Hover Effect */
-QPushButton:hover {
-    background-color: #8A2BE2;  /* Brighter Purple */
-    color: #FFFACD;             /* Lemon Chiffon */
-    border: 1px solid #FFD700;  /* Gold Border */
-}
-
-/* Pressed Effect */
-QPushButton:pressed {
-
-    color: #D4AF37;             /* Metallic Gold */
-    font-size: 15px;            /* Slight Shrink */
-    padding: 11px 21px;         /* Compensates for Shrink */
-}
-
-/* Focus Effect */
-QPushButton:focus {
-    outline: none;
-    border: 2px solid #FFD700;
-}
-
-/* Accent Button Variant */
-QPushButton.accent {
-    background-color: #FFD700;  /* Gold */
-    color: #4B0082;             /* Deep Purple */
-}
-
-QPushButton.accent:hover {
-    background-color: #F0E68C;  /* Khaki */
-    color: #4B0082;
-    border: 1px solid #D4AF37;
-}
-
-QPushButton.accent:pressed {
-    background-color: #D4AF37;  /* Metallic Gold */
-    color: #4B0082;
-    font-size: 15px;
-    padding: 11px 21px;
-}
-</string>
-    </property>
-    <property name="text">
-     <string>Retourn &lt;&lt;&lt;</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btnHistorique">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>80</y>
-      <width>169</width>
-      <height>36</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">/* Base Button Style */
-QPushButton {
-  background-color: rgb(173, 115, 86);
-/* Royal Purple */
-    color: white;            /* Gold Text */
-    border: none;
-    border-radius: 20px;        /* Rounded Corners */
-    padding: 10px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    transition: all 0.3s ease-in-out;
-}
-
-/* Hover Effect */
-QPushButton:hover {
- /* Brighter Purple */
-    color: #FFFACD;             /* Lemon Chiffon */
-    border: 1px solid #FFD700;  /* Gold Border */
-}
-
-/* Pressed Effect */
-QPushButton:pressed {
-    background-color: rgb(255, 164, 89);/* Indigo */
-    color: #D4AF37;             /* Metallic Gold */
-    font-size: 15px;            /* Slight Shrink */
-    padding: 11px 21px;         /* Compensates for Shrink */
-}
-
-/* Focus Effect */
-QPushButton:focus {
-    outline: none;
-    border: 2px solid #FFD700;
-}
-
-/* Accent Button Variant */
-QPushButton.accent {
-    background-color: #FFD700;  /* Gold */
-    color: #4B0082;             /* Deep Purple */
-}
-
-QPushButton.accent:hover {
-    background-color: #F0E68C;  /* Khaki */
-    color: #4B0082;
-    border: 1px solid #D4AF37;
-}
-
-QPushButton.accent:pressed {
-    background-color: #D4AF37;  /* Metallic Gold */
-    color: #4B0082;
-    font-size: 15px;
-    padding: 11px 21px;
-}
-</string>
-    </property>
-    <property name="text">
-     <string>Historique</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="borrowButton">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>200</y>
-      <width>169</width>
-      <height>36</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">/* Base Button Style */
-QPushButton {
-  background-color: rgb(173, 115, 86);
-/* Royal Purple */
-    color: white;            /* Gold Text */
-    border: none;
-    border-radius: 20px;        /* Rounded Corners */
-    padding: 10px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    transition: all 0.3s ease-in-out;
-}
-
-/* Hover Effect */
-QPushButton:hover {
-    background-color: #8A2BE2;  /* Brighter Purple */
-    color: #FFFACD;             /* Lemon Chiffon */
-    border: 1px solid #FFD700;  /* Gold Border */
-}
-
-/* Pressed Effect */
-QPushButton:pressed {
-   
-    color: #D4AF37;             /* Metallic Gold */
-    font-size: 15px;            /* Slight Shrink */
-    padding: 11px 21px;         /* Compensates for Shrink */
-}
-
-/* Focus Effect */
-QPushButton:focus {
-    outline: none;
-    border: 2px solid #FFD700;
-}
-
-/* Accent Button Variant */
-QPushButton.accent {
-    background-color: #FFD700;  /* Gold */
-    color: #4B0082;             /* Deep Purple */
-}
-
-QPushButton.accent:hover {
-    background-color: #F0E68C;  /* Khaki */
-    color: #4B0082;
-    border: 1px solid #D4AF37;
-}
-
-QPushButton.accent:pressed {
-    background-color: #D4AF37;  /* Metallic Gold */
-    color: #4B0082;
-    font-size: 15px;
-    padding: 11px 21px;
-}
-</string>
-    </property>
-    <property name="text">
-     <string>Borrow</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="addToCartButton">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>140</y>
-      <width>171</width>
-      <height>36</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">/* Base Button Style */
-QPushButton {
-  background-color: rgb(173, 115, 86);
-/* Royal Purple */
-    color: white;            /* Gold Text */
-    border: none;
-    border-radius: 20px;        /* Rounded Corners */
-    padding: 10px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    transition: all 0.3s ease-in-out;
-}
-
-/* Hover Effect */
-QPushButton:hover {
-    background-color: #8A2BE2;  /* Brighter Purple */
-    color: #FFFACD;             /* Lemon Chiffon */
-    border: 1px solid #FFD700;  /* Gold Border */
-}
-
-/* Pressed Effect */
-QPushButton:pressed {
- 
-    color: #D4AF37;             /* Metallic Gold */
-    font-size: 15px;            /* Slight Shrink */
-    padding: 11px 21px;         /* Compensates for Shrink */
-}
-
-/* Focus Effect */
-QPushButton:focus {
-    outline: none;
-    border: 2px solid #FFD700;
-}
-
-/* Accent Button Variant */
-QPushButton.accent {
-    background-color: #FFD700;  /* Gold */
-    color: #4B0082;             /* Deep Purple */
-}
-
-QPushButton.accent:hover {
-    background-color: #F0E68C;  /* Khaki */
-    color: #4B0082;
-    border: 1px solid #D4AF37;
-}
-
-QPushButton.accent:pressed {
-    background-color: #D4AF37;  /* Metallic Gold */
-    color: #4B0082;
-    font-size: 15px;
-    padding: 11px 21px;
-}
-</string>
-    </property>
-    <property name="text">
-     <string>Add to cart</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btnCart">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>30</y>
-      <width>171</width>
-      <height>36</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">/* Base Button Style */
+   <property name="styleSheet">
+    <string notr="true">/* Base Button Style */
 QPushButton {
   background-color: rgb(173, 115, 86);
 /* Royal Purple */
@@ -432,50 +157,294 @@ QPushButton.accent:pressed {
     padding: 11px 21px;
 }
 </string>
-    </property>
-    <property name="text">
-     <string>Cart</string>
-    </property>
-   </widget>
+   </property>
+   <property name="text">
+    <string>Cart</string>
+   </property>
   </widget>
   <widget class="QTableView" name="bookListView">
    <property name="geometry">
     <rect>
-     <x>210</x>
-     <y>80</y>
-     <width>581</width>
+     <x>30</x>
+     <y>10</y>
+     <width>691</width>
      <height>421</height>
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">QTableView {
-    background: transparent;
-    color: rgb(85, 0, 127);
-    font: 600 11pt &quot;Segoe UI&quot;;
-    border: #dda0dd;
-    border-radius: 10px;
-}
-</string>
+    <string notr="true"/>
    </property>
   </widget>
-  <widget class="QLabel" name="bookDetailsText">
+  <widget class="QPushButton" name="btnHistorique">
    <property name="geometry">
     <rect>
-     <x>420</x>
-     <y>330</y>
-     <width>171</width>
-     <height>61</height>
+     <x>130</x>
+     <y>20</y>
+     <width>141</width>
+     <height>36</height>
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">QLabel {
-                                       font: 700 italic 9pt 'Segoe UI';
-                                       color: black;
-                                       background: transparent;
-                                       }</string>
+    <string notr="true">/* Base Button Style */
+QPushButton {
+  background-color: rgb(173, 115, 86);
+/* Royal Purple */
+    color: white;            /* Gold Text */
+    border: none;
+    border-radius: 20px;        /* Rounded Corners */
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Hover Effect */
+QPushButton:hover {
+ /* Brighter Purple */
+    color: #FFFACD;             /* Lemon Chiffon */
+    border: 1px solid #FFD700;  /* Gold Border */
+}
+
+/* Pressed Effect */
+QPushButton:pressed {
+    background-color: rgb(255, 164, 89);/* Indigo */
+    color: #D4AF37;             /* Metallic Gold */
+    font-size: 15px;            /* Slight Shrink */
+    padding: 11px 21px;         /* Compensates for Shrink */
+}
+
+/* Focus Effect */
+QPushButton:focus {
+    outline: none;
+    border: 2px solid #FFD700;
+}
+
+/* Accent Button Variant */
+QPushButton.accent {
+    background-color: #FFD700;  /* Gold */
+    color: #4B0082;             /* Deep Purple */
+}
+
+QPushButton.accent:hover {
+    background-color: #F0E68C;  /* Khaki */
+    color: #4B0082;
+    border: 1px solid #D4AF37;
+}
+
+QPushButton.accent:pressed {
+    background-color: #D4AF37;  /* Metallic Gold */
+    color: #4B0082;
+    font-size: 15px;
+    padding: 11px 21px;
+}
+</string>
    </property>
    <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:16pt; color:#aa557f;&quot;&gt;Label de détails ::&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>Historique</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="addToCartButton">
+   <property name="geometry">
+    <rect>
+     <x>270</x>
+     <y>20</y>
+     <width>151</width>
+     <height>36</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">/* Base Button Style */
+QPushButton {
+  background-color: rgb(173, 115, 86);
+/* Royal Purple */
+    color: white;            /* Gold Text */
+    border: none;
+    border-radius: 20px;        /* Rounded Corners */
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Hover Effect */
+QPushButton:hover {
+    background-color: #8A2BE2;  /* Brighter Purple */
+    color: #FFFACD;             /* Lemon Chiffon */
+    border: 1px solid #FFD700;  /* Gold Border */
+}
+
+/* Pressed Effect */
+QPushButton:pressed {
+ 
+    color: #D4AF37;             /* Metallic Gold */
+    font-size: 15px;            /* Slight Shrink */
+    padding: 11px 21px;         /* Compensates for Shrink */
+}
+
+/* Focus Effect */
+QPushButton:focus {
+    outline: none;
+    border: 2px solid #FFD700;
+}
+
+/* Accent Button Variant */
+QPushButton.accent {
+    background-color: #FFD700;  /* Gold */
+    color: #4B0082;             /* Deep Purple */
+}
+
+QPushButton.accent:hover {
+    background-color: #F0E68C;  /* Khaki */
+    color: #4B0082;
+    border: 1px solid #D4AF37;
+}
+
+QPushButton.accent:pressed {
+    background-color: #D4AF37;  /* Metallic Gold */
+    color: #4B0082;
+    font-size: 15px;
+    padding: 11px 21px;
+}
+</string>
+   </property>
+   <property name="text">
+    <string>Add to cart</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="borrowButton">
+   <property name="geometry">
+    <rect>
+     <x>420</x>
+     <y>20</y>
+     <width>141</width>
+     <height>36</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">/* Base Button Style */
+QPushButton {
+  background-color: rgb(173, 115, 86);
+/* Royal Purple */
+    color: white;            /* Gold Text */
+    border: none;
+    border-radius: 20px;        /* Rounded Corners */
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Hover Effect */
+QPushButton:hover {
+    background-color: #8A2BE2;  /* Brighter Purple */
+    color: #FFFACD;             /* Lemon Chiffon */
+    border: 1px solid #FFD700;  /* Gold Border */
+}
+
+/* Pressed Effect */
+QPushButton:pressed {
+   
+    color: #D4AF37;             /* Metallic Gold */
+    font-size: 15px;            /* Slight Shrink */
+    padding: 11px 21px;         /* Compensates for Shrink */
+}
+
+/* Focus Effect */
+QPushButton:focus {
+    outline: none;
+    border: 2px solid #FFD700;
+}
+
+/* Accent Button Variant */
+QPushButton.accent {
+    background-color: #FFD700;  /* Gold */
+    color: #4B0082;             /* Deep Purple */
+}
+
+QPushButton.accent:hover {
+    background-color: #F0E68C;  /* Khaki */
+    color: #4B0082;
+    border: 1px solid #D4AF37;
+}
+
+QPushButton.accent:pressed {
+    background-color: #D4AF37;  /* Metallic Gold */
+    color: #4B0082;
+    font-size: 15px;
+    padding: 11px 21px;
+}
+</string>
+   </property>
+   <property name="text">
+    <string>Borrow</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="backButton">
+   <property name="geometry">
+    <rect>
+     <x>570</x>
+     <y>20</y>
+     <width>111</width>
+     <height>36</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">/* Base Button Style */
+QPushButton {
+  background-color: rgb(173, 115, 86);
+/* Royal Purple */
+    color: white;            /* Gold Text */
+    border: none;
+    border-radius: 20px;        /* Rounded Corners */
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Hover Effect */
+QPushButton:hover {
+    background-color: #8A2BE2;  /* Brighter Purple */
+    color: #FFFACD;             /* Lemon Chiffon */
+    border: 1px solid #FFD700;  /* Gold Border */
+}
+
+/* Pressed Effect */
+QPushButton:pressed {
+
+    color: #D4AF37;             /* Metallic Gold */
+    font-size: 15px;            /* Slight Shrink */
+    padding: 11px 21px;         /* Compensates for Shrink */
+}
+
+/* Focus Effect */
+QPushButton:focus {
+    outline: none;
+    border: 2px solid #FFD700;
+}
+
+/* Accent Button Variant */
+QPushButton.accent {
+    background-color: #FFD700;  /* Gold */
+    color: #4B0082;             /* Deep Purple */
+}
+
+QPushButton.accent:hover {
+    background-color: #F0E68C;  /* Khaki */
+    color: #4B0082;
+    border: 1px solid #D4AF37;
+}
+
+QPushButton.accent:pressed {
+    background-color: #D4AF37;  /* Metallic Gold */
+    color: #4B0082;
+    font-size: 15px;
+    padding: 11px 21px;
+}
+</string>
+   </property>
+   <property name="text">
+    <string>🔙</string>
    </property>
   </widget>
  </widget>

@@ -2,28 +2,23 @@
 #define NEWPASSWD_H
 
 #include <QDialog>
-
-namespace Ui {
-class newPasswd;
-}
+#include <QLineEdit>
 
 class newPasswd : public QDialog
 {
-   Q_OBJECT
+    Q_OBJECT
 
 public:
     explicit newPasswd(QWidget *parent = nullptr);
-    ~newPasswd()override;
-
-    void setValidator();
 
 private slots:
-    void on_submitButton_clicked();
-
+    void resetPassword();
     void on_backButton_clicked();
 
 private:
-    Ui::newPasswd *ui;
+    QLineEdit *usernameEdit;
+    QLineEdit *newPassEdit;
+
 };
 
 #endif // NEWPASSWD_H

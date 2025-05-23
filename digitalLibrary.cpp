@@ -17,28 +17,359 @@
 #include <QSqlError>
 #include <QtConcurrent/QtConcurrent>
 #include <QSqlQuery>
+#include "digitalLibrary.h"
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QFrame>
+#include <QPushButton>
+#include <QSpacerItem>
+#include <QGraphicsDropShadowEffect>
+#include <QFontDatabase>
+#include <QStackedWidget>
 digitalLibrary::digitalLibrary(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::digitalLibrary)
+    m_usernameLabel(new QLabel(this)),
+    booksBtn(nullptr),
+    membersBtn(nullptr)
 {
-    ui->setupUi(this);
-    connectDB();
-    connect(ui->statsButton, &QPushButton::clicked, this, &digitalLibrary::on_statsButton_clicked);
-    setUsername(username);
-    connect(ui->statsButton, &QPushButton::clicked, this, &digitalLibrary::on_statsButton_clicked);
+    connectDB(); // Assurez-vous que la base est connectée
+    m_usernameLabel->setAlignment(Qt::AlignCenter);
+    m_usernameLabel->setStyleSheet("font-weight: bold; color: #2c3e50;");
 
-    showBookNum();
-    showMemberNum();
-    showAuthorNum();
+    // Configuration de la fenêtre
+    setWindowTitle("Bibliothèque Digitale");
+    setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
+    setAttribute(Qt::WA_TranslucentBackground);
+    setFixedSize(900, 700);
+
+    // Couleurs (violet/bleu)
+    QString primaryColor = "#6a5acd";
+    QString secondaryColor = "#9370db";
+    QString darkColor = "#483d8b";
+    QString lightColor = "#e6e6fa";
+    QString accentColor = "#4169e1";
+
+    // Police
+    QFont titleFont("Segoe UI", 24, QFont::Bold);
+    QFont headerFont("Segoe UI", 18, QFont::Bold);
+    QFont normalFont("Segoe UI", 12);
+
+    // Conteneur principal
+    QFrame *mainFrame = new QFrame(this);
+    mainFrame->setStyleSheet("QFrame { background-color: white; border-radius: 15px; }");
+    QGraphicsDropShadowEffect *shadow = new QGraphicsDropShadowEffect();
+    shadow->setBlurRadius(30);
+    shadow->setOffset(0, 5);
+    shadow->setColor(QColor(0, 0, 0, 100));
+    mainFrame->setGraphicsEffect(shadow);
+
+    // Layout principal (horizontal)
+    QHBoxLayout *mainLayout = new QHBoxLayout(mainFrame);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+    mainLayout->setSpacing(0);
+
+    // ========== SIDEBAR ==========
+    QFrame *sidebar = new QFrame();
+    sidebar->setFixedWidth(250);
+    sidebar->setStyleSheet(QString("QFrame { background-color: %1; border-top-left-radius: 15px; border-bottom-left-radius: 15px; }").arg(darkColor));
+
+    QVBoxLayout *sidebarLayout = new QVBoxLayout(sidebar);
+    sidebarLayout->setContentsMargins(20, 30, 20, 30);
+    sidebarLayout->setSpacing(20);
+
+    // Logo et titre
+    QLabel *logo = new QLabel("📚");
+    logo->setStyleSheet("font-size: 40px;");
+    logo->setAlignment(Qt::AlignCenter);
+
+    QLabel *sidebarTitle = new QLabel("Bibliothèque Digitale");
+    sidebarTitle->setFont(titleFont);
+    sidebarTitle->setStyleSheet(QString("color: %1;").arg(lightColor));
+    sidebarTitle->setAlignment(Qt::AlignCenter);
+
+    sidebarLayout->addWidget(logo);
+    sidebarLayout->addWidget(sidebarTitle);
+    sidebarLayout->addSpacing(30);
+
+    // Style des boutons
+    // Style des boutons
+    QString buttonStyle = QString(
+                              "QPushButton { "
+                              "text-align: left; padding: 15px 20px; border-radius: 8px; "
+                              "font-size: 14px; color: %1; background-color: transparent; "
+                              "}"
+                              "QPushButton:hover { background-color: rgba(255,255,255,0.1); }"
+                              ).arg(lightColor);
+    // Boutons sidebar
+    QPushButton *dashboardBtn = createSidebarButton("📊 Tableau de bord", buttonStyle);
+    booksBtn = createSidebarButton("📚 Gestion Livres", buttonStyle);
+    membersBtn = createSidebarButton("👥 Gestion Membres", buttonStyle);
+    QPushButton *authorsBtn = createSidebarButton("✍ Gestion Auteurs", buttonStyle);
+    QPushButton *statsBtn = createSidebarButton("📈 Statistiques", buttonStyle);
+
+    // Sous-menu pour les livres
+    QVBoxLayout *booksSubMenu = new QVBoxLayout();
+    booksSubMenu->setContentsMargins(20, 5, 5, 5);
+    booksSubMenu->setSpacing(5);
+    QString subButtonStyle =
+        "QPushButton {"
+        "   background-color: #584d8b;"
+        "   color: white;"
+        "   border: none;"
+        "   padding: 10px 15px;"
+        "   border-radius: 6px;"
+        "   font-size: 13px;"
+        "   text-align: left;"
+        "}"
+        "QPushButton:hover {"
+        "   background-color: #6a5acd;"
+        "}";
+
+    QPushButton *addBookSubBtn = createSubMenuButton("➕ Ajouter livre");
+    QPushButton *editBookSubBtn = createSubMenuButton("✏ Modifier livre");
+    QPushButton *deleteBookSubBtn = createSubMenuButton("🗑 Supprimer livre");
+    QPushButton *listBooksSubBtn = createSubMenuButton("📋 Liste des livres");
+    QPushButton *issueBookSubBtn = createSubMenuButton("📥 Emprunter livre");
+    QPushButton *returnBookSubBtn = createSubMenuButton("📤 Retourner livre");
+    QPushButton *manageGenreSubBtn = createSubMenuButton("🏷 Gérer genres");
+
+    booksSubMenu->addWidget(addBookSubBtn);
+    booksSubMenu->addWidget(editBookSubBtn);
+    booksSubMenu->addWidget(deleteBookSubBtn);
+    booksSubMenu->addWidget(listBooksSubBtn);
+    booksSubMenu->addWidget(issueBookSubBtn);
+    booksSubMenu->addWidget(returnBookSubBtn);
+    booksSubMenu->addWidget(manageGenreSubBtn);
+
+    QWidget *booksSubMenuWidget = new QWidget();
+    booksSubMenuWidget->setLayout(booksSubMenu);
+    booksSubMenuWidget->hide();
+
+    // Sous-menu pour les membres
+    QVBoxLayout *membersSubMenu = new QVBoxLayout();
+    membersSubMenu->setContentsMargins(20, 5, 5, 5);
+    membersSubMenu->setSpacing(5);
+
+    QPushButton *addMemberSubBtn = createSubMenuButton("➕ Ajouter membre");
+    QPushButton *editMemberSubBtn = createSubMenuButton("✏ Modifier membre");
+    QPushButton *deleteMemberSubBtn = createSubMenuButton("🗑 Supprimer membre");
+    QPushButton *listMembersSubBtn = createSubMenuButton("📋 Liste des membres");
+
+    membersSubMenu->addWidget(addMemberSubBtn);
+    membersSubMenu->addWidget(editMemberSubBtn);
+    membersSubMenu->addWidget(deleteMemberSubBtn);
+    membersSubMenu->addWidget(listMembersSubBtn);
+
+    QWidget *membersSubMenuWidget = new QWidget();
+    membersSubMenuWidget->setLayout(membersSubMenu);
+    membersSubMenuWidget->hide();
+
+    // Ajout des éléments à la sidebar
+    sidebarLayout->addWidget(dashboardBtn);
+    sidebarLayout->addWidget(booksBtn);
+    sidebarLayout->addWidget(booksSubMenuWidget);
+    sidebarLayout->addWidget(membersBtn);
+    sidebarLayout->addWidget(membersSubMenuWidget);
+    sidebarLayout->addWidget(authorsBtn);
+    sidebarLayout->addWidget(statsBtn);
+    sidebarLayout->addStretch();
+
+    // Bouton déconnexion
+    QPushButton *logoutBtn = new QPushButton("🚪 Déconnexion");
+    logoutBtn->setStyleSheet(
+        "QPushButton { "
+        "text-align: left; padding: 15px 20px; border-radius: 8px; "
+        "font-size: 14px; color: #e74c3c; background-color: rgba(231, 76, 60, 0.2); "
+        "}"
+        "QPushButton:hover { background-color: rgba(231, 76, 60, 0.3); }"
+        );
+    sidebarLayout->addWidget(logoutBtn);
+
+    // ========== MAIN CONTENT ==========
+    QFrame *contentFrame = new QFrame();
+    QVBoxLayout *contentLayout = new QVBoxLayout(contentFrame);
+    contentLayout->setContentsMargins(30, 30, 30, 30);
+    contentLayout->setSpacing(20);
+
+    // Header
+    QHBoxLayout *headerLayout = new QHBoxLayout();
+
+    QLabel *welcomeLabel = new QLabel("Bonjour, Admin");
+    welcomeLabel->setFont(headerFont);
+    welcomeLabel->setStyleSheet(QString("color: %1;").arg(darkColor));
+
+    QLabel *userLabel = new QLabel("👤 Admin");
+    userLabel->setFont(normalFont);
+    userLabel->setStyleSheet(
+        "background-color: #f5f5f5; padding: 8px 15px; "
+        "border-radius: 15px; color: #7f8c8d;"
+        );
+
+    headerLayout->addWidget(welcomeLabel);
+    headerLayout->addStretch();
+    headerLayout->addWidget(userLabel);
+    contentLayout->addLayout(headerLayout);
+
+    // Cartes statistiques
+    QHBoxLayout *statsLayout = new QHBoxLayout();
+    statsLayout->setSpacing(20);
+
+    QFrame *bookCard = createStatCard("📚", "Livres", "0", primaryColor);
+    QFrame *memberCard = createStatCard("👥", "Membres", "0", secondaryColor);
+    QFrame *authorCard = createStatCard("✍", "Auteurs", "0", "#8a2be2");
+    QFrame *loanCard = createStatCard("🔄", "Emprunts", "0", "#4169e1");
+
+    statsLayout->addWidget(bookCard);
+    statsLayout->addWidget(memberCard);
+    statsLayout->addWidget(authorCard);
+    statsLayout->addWidget(loanCard);
+    contentLayout->addLayout(statsLayout);
+
+    // Section récentes activités
+    QLabel *activityTitle = new QLabel("Activités Récentes");
+    activityTitle->setFont(headerFont);
+    activityTitle->setStyleSheet(QString("color: %1; margin-top: 20px;").arg(darkColor));
+    contentLayout->addWidget(activityTitle);
+
+    QFrame *activityFrame = new QFrame();
+    activityFrame->setStyleSheet(
+        "QFrame { background-color: white; border-radius: 10px; "
+        "border: 1px solid #e0e0e0; }"
+        );
+    activityFrame->setFixedHeight(200);
+    contentLayout->addWidget(activityFrame);
+
+    // Section rapide actions
+    QLabel *quickActionsTitle = new QLabel("Actions Rapides");
+    quickActionsTitle->setFont(headerFont);
+    quickActionsTitle->setStyleSheet(QString("color: %1; margin-top: 20px;").arg(darkColor));
+    contentLayout->addWidget(quickActionsTitle);
+
+    QHBoxLayout *quickActionsLayout = new QHBoxLayout();
+    quickActionsLayout->setSpacing(15);
+
+    QPushButton *addBookBtn = createQuickActionButton("➕ Ajouter Livre", primaryColor);
+    QPushButton *addMemberBtn = createQuickActionButton("➕ Ajouter Membre", secondaryColor);
+    QPushButton *addAuthorBtn = createQuickActionButton("➕ Ajouter Auteur", "#e67e22");
+    QPushButton *viewAllBtn = createQuickActionButton("👁 Voir Tout", "#9b59b6");
+
+    quickActionsLayout->addWidget(addBookBtn);
+    quickActionsLayout->addWidget(addMemberBtn);
+    quickActionsLayout->addWidget(addAuthorBtn);
+    quickActionsLayout->addWidget(viewAllBtn);
+    contentLayout->addLayout(quickActionsLayout);
+     membersSubMenuWidget->setStyleSheet("background-color: #584d8b;");
+     booksSubMenuWidget->setStyleSheet("background-color: #584d8b;");
+
+    // Ajout des sections au layout principal
+    mainLayout->addWidget(sidebar);
+    mainLayout->addWidget(contentFrame);
+
+    // Positionnement final
+    QHBoxLayout *containerLayout = new QHBoxLayout(this);
+    containerLayout->addWidget(mainFrame);
+
+    // Connexions
+    connect(booksBtn, &QPushButton::clicked, [booksSubMenuWidget]() {
+        booksSubMenuWidget->setVisible(!booksSubMenuWidget->isVisible());
+    });
+
+    connect(membersBtn, &QPushButton::clicked, [membersSubMenuWidget]() {
+        membersSubMenuWidget->setVisible(!membersSubMenuWidget->isVisible());
+    });
+
+    connect(addBookSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_addBookBtn_clicked);
+    connect(editBookSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_editBookBtn_clicked);
+    connect(deleteBookSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_deleteBookBtn_clicked);
+    connect(listBooksSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_booksListBtn_clicked);
+    connect(issueBookSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_issueBookBtn_clicked);
+    connect(returnBookSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_returnBookBtn_clicked);
+    connect(manageGenreSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_manageGenre_clicked);
+
+    connect(addMemberSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_addMemberBtn_clicked);
+    connect(editMemberSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_editMemberBtn_clicked);
+    connect(deleteMemberSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_deleteMemberBtn_clicked);
+    connect(listMembersSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_membersListBtn_clicked);
+
+    connect(addBookBtn, &QPushButton::clicked, this, &digitalLibrary::on_addBookBtn_clicked);
+    connect(addMemberBtn, &QPushButton::clicked, this, &digitalLibrary::on_addMemberBtn_clicked);
+    connect(addAuthorBtn, &QPushButton::clicked, this, &digitalLibrary::on_manageAuthorButton_clicked);
+    connect(viewAllBtn, &QPushButton::clicked, this, &digitalLibrary::on_booksListBtn_clicked);
+    connect(statsBtn, &QPushButton::clicked, this, &digitalLibrary::on_statsButton_clicked);
+    connect(logoutBtn, &QPushButton::clicked, this, &digitalLibrary::close);
+}
+QPushButton* digitalLibrary::createSidebarButton(const QString &text, const QString &style)
+{
+    QPushButton *btn = new QPushButton(text);
+    btn->setStyleSheet(style);
+    return btn;
+}
+QPushButton* digitalLibrary::createSubMenuButton(const QString &text)
+{
+    QPushButton *btn = new QPushButton(text);
+    btn->setStyleSheet(
+        "QPushButton { "
+        "text-align: left; padding: 10px 15px 10px 30px; border-radius: 5px; "
+        "font-size: 13px; color: #f0f0f0; background-color: transparent; "
+        "border: none;"
+        "}"
+        "QPushButton:hover { background-color: rgba(255,255,255,0.1); }"
+        );
+    return btn;
+}
+QFrame* digitalLibrary::createStatCard(const QString &icon, const QString &title, const QString &value, const QString &color)
+{
+    QFrame *card = new QFrame();
+    card->setMinimumHeight(120);
+    card->setStyleSheet(
+        QString("QFrame { background-color: %1; border-radius: 10px; color: white; }").arg(color)
+        );
+
+    QVBoxLayout *cardLayout = new QVBoxLayout(card);
+    cardLayout->setContentsMargins(20, 20, 20, 20);
+
+    QLabel *iconLabel = new QLabel(icon);
+    iconLabel->setStyleSheet("font-size: 24px;");
+
+    QLabel *titleLabel = new QLabel(title);
+    titleLabel->setStyleSheet("font-size: 14px; font-weight: bold;");
+
+    QLabel *valueLabel = new QLabel(value);
+    valueLabel->setStyleSheet("font-size: 28px; font-weight: bold; margin-top: 10px;");
+
+    cardLayout->addWidget(iconLabel);
+    cardLayout->addWidget(titleLabel);
+    cardLayout->addWidget(valueLabel);
+    cardLayout->addStretch();
+
+    return card;
+}
+
+QPushButton* digitalLibrary::createQuickActionButton(const QString &text, const QString &color)
+{
+    QPushButton *btn = new QPushButton(text);
+    btn->setFixedHeight(50);
+    btn->setStyleSheet(
+        QString("QPushButton { "
+                "background-color: %1; color: white; border-radius: 8px; "
+                "font-size: 14px; font-weight: bold; padding: 0 15px; }"
+                "QPushButton:hover { background-color: %2; }"
+                "QPushButton:pressed { background-color: %3; }")
+            .arg(color,
+                 QColor(color).lighter(120).name(),
+                 QColor(color).darker(120).name())
+        );
+    btn->setCursor(Qt::PointingHandCursor);
+    return btn;
 }
 
 void digitalLibrary::connectDB()
 {
     //Add the database with the SQLITE driver
     db = QSqlDatabase::addDatabase("QSQLITE", "SQLITE");
-
     //Set the database path
-    db.setDatabaseName(this->filename);
+    db.setDatabaseName("C:/Users/Pc/OneDrive/Bureau/QT_PROJECT/library.db");
 
     //check if the database is opened
     if(!db.open())
@@ -50,7 +381,7 @@ void digitalLibrary::connectDB()
     //Create a table named accounts
     QString accountTable{"CREATE TABLE IF NOT EXISTS accounts"
                          "(username VARCHAR(20), name VARCHAR(20),"
-                         "password VARCHAR(20))"};
+                         "password VARCHAR(20),ID INTEGER PRIMARY KEY, role varchar(255) )"};
 
     if(!query.exec(accountTable))
         QMessageBox::critical(this,"Info","Cannot create accounts");
@@ -74,7 +405,11 @@ void digitalLibrary::connectDB()
                         "phone VARCHAR(20), email VARCHAR(40), gender VARCHAR(10))"};
     if(!query.exec(memberTable))
         QMessageBox::critical(this,"Info","Cannot create members Table");
-
+    QString member{"CREATE TABLE IF NOT EXISTS accounts"
+                   "(ID INTEGER PRIMARY KEY AUTOINCREMENT, firstName VARCHAR(20), lastName VARCHAR(20),"
+                   "password varchar(255))"};
+    if(!query.exec(member))
+        QMessageBox::critical(this,"Info","Cannot create accounts Table");
     //Create a table named books
     QString bookTable{"CREATE TABLE IF NOT EXISTS books"
                       "(ID INTEGER PRIMARY KEY, ISBN VARCHAR(20), name VARCHAR(20),"
@@ -83,6 +418,107 @@ void digitalLibrary::connectDB()
                       "description VARCHAR(80), cover VARCHAR(50))"};
     if(!query.exec(bookTable))
         QMessageBox::critical(this,"Failed","Cannot create books Table");
+    query.exec("SELECT COUNT(*) FROM accounts");
+    if (query.next() && query.value(0).toInt() == 0) {
+        query.exec("INSERT INTO accounts (username, name, password, ID, role) VALUES "
+                   "('admin', 'Admin Name', 'admin123', 1, 'admin'),"
+                   "('salma', 'Salma Yassine', 'pass123', 2, 'user'),"
+                   "('amine', 'Amine El', '1234', 3, 'user'),"
+                   "('sara', 'Sara K.', 'azerty', 4, 'user'),"
+                   "('yassir', 'Yassir R.', 'yassir2024', 5, 'user'),"
+                   "('fatima', 'Fatima Zahra', 'fatpass', 6, 'user'),"
+                   "('khalid', 'Khalid M.', 'khalidpass', 7, 'user'),"
+                   "('nora', 'Nora B.', 'norapass', 8, 'user'),"
+                   "('zineb', 'Zineb K.', 'z123', 9, 'user'),"
+                   "('hassan', 'Hassan A.', 'haspass', 10, 'user')");
+    }
+
+    if (!query.exec("CREATE TABLE IF NOT EXISTS historique_connexions ("
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    "utilisateur_id INTEGER NOT NULL,"
+                    "date_connexion DATETIME NOT NULL,"
+                    "FOREIGN KEY (utilisateur_id) REFERENCES utilisateur(id))")) {
+        qDebug() << "Erreur création table historique_connexions:" << query.lastError().text();
+    }
+
+    // Création de la table emprunt si elle n'existe pas
+    if (!query.exec("CREATE TABLE IF NOT EXISTS emprunt ("
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    "utilisateur_id INTEGER NOT NULL,"
+                    "livre_id INTEGER NOT NULL,"
+                    "date_emprunt DATETIME NOT NULL,"
+                    "date_retour DATETIME,"
+                    "FOREIGN KEY (utilisateur_id) REFERENCES utilisateur(id),"
+                    "FOREIGN KEY (livre_id) REFERENCES livre(id))")) {
+        qDebug() << "Erreur création table emprunt:" << query.lastError().text();
+    }
+
+    // Vérification des colonnes (pour les éventuelles mises à jour)
+    QSqlQuery columnsQuery;
+    if (!columnsQuery.exec("PRAGMA table_info(emprunt)")) {
+        qDebug() << "Erreur vérification colonnes:" << columnsQuery.lastError().text();
+    } else if (!columnsQuery.next()) {
+        // Si la colonne date_retour n'existe pas, l'ajouter
+        if (!query.exec("ALTER TABLE emprunt ADD COLUMN date_retour DATETIME")) {
+            qDebug() << "Erreur ajout colonne date_retour:" << query.lastError().text();
+        }
+    }
+    query.exec("SELECT COUNT(*) FROM accounts");
+    if (query.next() && query.value(0).toInt() == 0) {
+        query.exec("INSERT INTO accounts (username, name, password, ID, role) VALUES "
+                   "('admin', 'Admin Name', 'admin123', 1, 'admin'),"
+                   "('salma', 'Salma Yassine', 'pass123', 2, 'student'),"
+                   "('amine', 'Amine El', '1234', 3, 'student'),"
+                   "('sara', 'Sara K.', 'azerty', 4, 'student'),"
+                   "('yassir', 'Yassir R.', 'yassir2024', 5, 'student'),"
+                   "('fatima', 'Fatima Zahra', 'fatpass', 6, 'student'),"
+                   "('khalid', 'Khalid M.', 'khalidpass', 7, 'student'),"
+                   "('nora', 'Nora B.', 'norapass', 8, 'student'),"
+                   "('zineb', 'Zineb K.', 'z123', 9, 'student'),"
+                   "('hassan', 'Hassan A.', 'haspass', 10, 'student')");
+    }
+    query.exec("SELECT COUNT(*) FROM authors");
+    if (query.next() && query.value(0).toInt() == 0) {
+        query.exec("INSERT INTO authors (ID, firstName, lastName, expertise, about) VALUES "
+                   "(1, 'Victor', 'Hugo', 'Littérature', 'Auteur de classiques'),"
+                   "(2, 'Marie', 'Curie', 'Physique', 'Pionnière de la radioactivité'),"
+                   "(3, 'Albert', 'Camus', 'Philosophie', 'Existentialisme et absurdité'),"
+                   "(4, 'Jules', 'Verne', 'Science-fiction', 'Voyage extraordinaire'),"
+                   "(5, 'Simone', 'de Beauvoir', 'Féminisme', 'Le Deuxième Sexe'),"
+                   "(6, 'René', 'Descartes', 'Philosophie', 'Cogito ergo sum'),"
+                   "(7, 'Gustave', 'Flaubert', 'Roman', 'Madame Bovary'),"
+                   "(8, 'George', 'Orwell', 'Politique', '1984 et La Ferme des animaux'),"
+                   "(9, 'Stephen', 'Hawking', 'Cosmologie', 'Brief History of Time'),"
+                   "(10, 'Frida', 'Kahlo', 'Art', 'Artiste peintre mexicaine')");
+    }
+    query.exec("SELECT COUNT(*) FROM members");
+    if (query.next() && query.value(0).toInt() == 0) {
+        query.exec("INSERT INTO members (ID, firstName, lastName, phone, email, gender) VALUES "
+                   "(1, 'Ali', 'Ben Ali', '0600000000', 'ali@example.com', 'Homme'),"
+                   "(2, 'Noura', 'Bensalem', '0700000000', 'noura@example.com', 'Femme'),"
+                   "(3, 'Rachid', 'Amrani', '0661000001', 'rachid@ex.com', 'Homme'),"
+                   "(4, 'Lina', 'El Ayoubi', '0662000002', 'lina@ex.com', 'Femme'),"
+                   "(5, 'Samir', 'Tazi', '0663000003', 'samir@ex.com', 'Homme'),"
+                   "(6, 'Salma', 'Alaoui', '0664000004', 'salma@ex.com', 'Femme'),"
+                   "(7, 'Mounir', 'El Idrissi', '0665000005', 'mounir@ex.com', 'Homme'),"
+                   "(8, 'Hiba', 'Rami', '0666000006', 'hiba@ex.com', 'Femme'),"
+                   "(9, 'Youssef', 'Bakkali', '0667000007', 'youssef@ex.com', 'Homme'),"
+                   "(10, 'Najwa', 'Karim', '0668000008', 'najwa@ex.com', 'Femme')");
+    }
+    query.exec("SELECT COUNT(*) FROM books");
+    if (query.next() && query.value(0).toInt() == 0) {
+        query.exec("INSERT INTO books (ID, ISBN, name, author, genre, quantity, publisher, price, date, description, cover) VALUES "
+                   "(1, '978-1234567890', 'Les Misérables', 'Victor Hugo', 'Roman', 5, 'Gallimard', 14.99, '1862-01-01', 'Classique français', 'cover1.jpg'),"
+                   "(2, '978-0987654321', 'La Science pour tous', 'Marie Curie', 'Science', 3, 'CNRS Éditions', 19.99, '1903-01-01', 'Radioactivité', 'cover2.jpg'),"
+                   "(3, '978-1111111111', 'L’Étranger', 'Albert Camus', 'Philosophie', 4, 'Folio', 9.99, '1942-01-01', 'Existentialisme', 'cover3.jpg'),"
+                   "(4, '978-2222222222', '20 000 Lieues sous les mers', 'Jules Verne', 'Science-fiction', 6, 'Hachette', 12.50, '1870-01-01', 'Aventure sous-marine', 'cover4.jpg'),"
+                   "(5, '978-3333333333', 'Le Deuxième Sexe', 'Simone de Beauvoir', 'Féminisme', 2, 'Gallimard', 15.00, '1949-01-01', 'Réflexion féministe', 'cover5.jpg'),"
+                   "(6, '978-4444444444', 'Discours de la méthode', 'René Descartes', 'Philosophie', 3, 'PUF', 8.00, '1637-01-01', 'Rationalisme', 'cover6.jpg'),"
+                   "(7, '978-5555555555', 'Madame Bovary', 'Gustave Flaubert', 'Roman', 5, 'GF Flammarion', 10.00, '1856-01-01', 'Réalisme', 'cover7.jpg'),"
+                   "(8, '978-6666666666', '1984', 'George Orwell', 'Politique', 7, 'Secker & Warburg', 13.99, '1949-01-01', 'Dictature imaginaire', 'cover8.jpg'),"
+                   "(9, '978-7777777777', 'Une brève histoire du temps', 'Stephen Hawking', 'Science', 6, 'Bantam Books', 17.00, '1988-01-01', 'Cosmologie', 'cover9.jpg'),"
+                   "(10, '978-8888888888', 'Le Journal de Frida', 'Frida Kahlo', 'Art', 2, 'Éditions du Chêne', 22.50, '1954-01-01', 'Art et souffrance', 'cover10.jpg')");
+    }
 
     //Create a table named bookStatus
     QString Table{"CREATE TABLE IF NOT EXISTS bookStatus"
@@ -104,7 +540,7 @@ void digitalLibrary::on_statsButton_clicked() {
             statWindow = nullptr;
         });
     }
-     statWindow->loadAndShowStats(); // Charge et affiche
+    statWindow->loadAndShowStats(); // Charge et affiche
     //statWindow->show();
 }
 void digitalLibrary::on_manageGenre_clicked()
@@ -134,7 +570,7 @@ void digitalLibrary::on_editMemberBtn_clicked()
 void digitalLibrary::on_deleteMemberBtn_clicked()
 {
     deleteMember delMember;
-   delMember.exec();
+    delMember.exec();
 }
 
 void digitalLibrary::on_membersListBtn_clicked()
@@ -146,6 +582,7 @@ void digitalLibrary::on_membersListBtn_clicked()
 void digitalLibrary::on_addBookBtn_clicked()
 {
     addBook addBook;
+    //  addBook.setDatabase(db);
     addBook.exec();
 }
 
@@ -168,34 +605,54 @@ void digitalLibrary::on_booksListBtn_clicked()
 }
 
 
-
-void digitalLibrary::setUsername(QString username)
+void digitalLibrary::setUsername(const QString &username)
 {
-    ui->username->setText(username);
+    m_username = username;
+
+    if(!m_usernameLabel) {
+        m_usernameLabel = findChild<QLabel*>("usernameLabel");
+    }
+
+    if(m_usernameLabel) {
+        m_usernameLabel->setText(username);
+
+        // Style optionnel
+        m_usernameLabel->setStyleSheet(
+            "QLabel {"
+            "   color: #2c3e50;"
+            "   font-weight: bold;"
+            "   padding: 5px 15px;"
+            "   background-color: #ecf0f1;"
+            "   border-radius: 10px;"
+            "}"
+            );
+    }
 }
+// void digitalLibrary::showBookNum()
+// {
+//     QSqlQuery query(db);
+//     if(!query.exec("SELECT COUNT(*) FROM books")) {
+//         qDebug() << "Error counting books:" << query.lastError();
+//         return;
+//     }
 
-void digitalLibrary::showBookNum(){
-
-    //define the query on the db and the model
-    auto query = QSqlQuery(db);
-    QString select{"SELECT * FROM books"};
-
-    //execute the query
-    if(!query.exec(select))
-        qDebug() << "Cannot select from books";
-
-    int count = 0;
-    while(query.next())
-        count++;
-
-    ui->bookNum->setText(QString::number(count));
-}
+//     if(query.next()) {
+//         // Trouver la carte livre via son objectName
+//         QFrame bookCard = findChild<QFrame>("bookCard");
+//         if(bookCard) {
+//             QLabel valueLabel = bookCard->findChild<QLabel>();
+//             if(valueLabel) {
+//                 valueLabel->setText(query.value(0).toString());
+//             }
+//         }
+//     }
+// }
 
 void digitalLibrary::showMemberNum(){
 
     //define the query on the db and the model
     auto query = QSqlQuery(db);
-    QString select{"SELECT * FROM members"};
+    QString select{"SELECT * FROM accounts"};
 
     //execute the query
     if(!query.exec(select))
@@ -341,5 +798,10 @@ void digitalLibrary::on_testDataButton_clicked()
 }
 
 
+void digitalLibrary::on_issueBookBtn_clicked() {
+    // Code
+}
 
-
+void digitalLibrary::on_returnBookBtn_clicked() {
+    // Code
+}

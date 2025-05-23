@@ -1,15 +1,11 @@
 #ifndef SIGNUP_H
 #define SIGNUP_H
-
+#include <QLabel>
 #include <QDialog>
-#include <QDir>
-#include <QtSql/QSqlDatabase>
+#include <QSqlDatabase>
 #include <QSqlQuery>
-
-namespace Ui {
-class signUp;
-}
-
+#include <QLineEdit>
+#include <QComboBox>
 class signUp : public QDialog
 {
     Q_OBJECT
@@ -17,16 +13,19 @@ class signUp : public QDialog
 public:
     explicit signUp(QWidget *parent = nullptr);
     ~signUp();
-    void setValidator();
-    void testDatabase();
+
 private slots:
     void on_createButton_clicked();
-
     void on_backButton_clicked();
 
 private:
-    Ui::signUp *ui;
+    void setValidator();
 
+    // Declare your UI elements
+    QLineEdit *nameLineEdit;
+    QLineEdit *usernameLineEdit;
+    QLineEdit *passwordLineEdit;
+    QComboBox *roleComboBox;
 };
 
 #endif // SIGNUP_H

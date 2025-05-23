@@ -6,7 +6,19 @@
 #include <QDateTime>
 #include <QFile>
 #include <QTextStream>
+#include <QVBoxLayout>
 #include <QSqlError>
+#include <QSqlQuery>
+#include <QSqlQueryModel>
+#include <QMessageBox>
+#include <QDateTime>
+#include <QFile>
+#include <QTextStream>
+#include <QVBoxLayout>
+#include <QHeaderView>
+#include <QScreen>
+#include <QApplication>
+
 Cart::Cart(QWidget *parent, QSqlDatabase db, int userId) :
     QDialog(parent),
     ui(new Ui::Cart),
@@ -14,147 +26,174 @@ Cart::Cart(QWidget *parent, QSqlDatabase db, int userId) :
     userId(userId)
 {
     ui->setupUi(this);
-    QString gradientStyle = R"(
-QPushButton {
-    background-color: qlineargradient(
-        x1:0, y1:0, x2:1, y2:0,
-        stop:0 #FF69B4, stop:1 #8A2BE2
-    );
-    color: white;
-    border-radius: 12px;
-    padding: 10px 16px;
-    font-size: 16px;
-    font-weight: bold;
-    border: 1px solid #DA70D6;
-}
 
-QPushButton:hover {
-    background-color: qlineargradient(
-        x1:0, y1:0, x2:1, y2:0,
-        stop:0 #FF85C1, stop:1 #9F5DE2
-    );
-    border: 1px solid #FFD700;
-}
+    // Créer un layout principal si nécessaire
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    mainLayout->setContentsMargins(20, 20, 20, 20);
+    mainLayout->setSpacing(15);
 
-QPushButton:pressed {
-    background-color: #7B1FA2;
-}
+    // Style général de la fenêtre avec dégradé de couleur
+    this->setStyleSheet(R"(
+        QDialog {
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                stop:0 #E0F7FA, stop:1 #B2EBF2);
+        }
+    )");
+    this->setWindowTitle("🛒 Mon Panier de Livres");
+    this->resize(900, 600); // Taille initiale plus grande
 
-QTableView {
-    background-color: #FFF0F5;
-    color: #4A148C;
-    font-size: 14px;
-    font-family: 'Segoe UI', sans-serif;
-    selection-background-color: #FFDDEE;
-    selection-color: #4A148C;
-    gridline-color: #E1BEE7;
-    border: 1px solid #BA55D3;
-    border-radius: 8px;
-}
+    // Titre stylisé avec icône et ombre
+    QLabel *titleLabel = new QLabel("🛒 Mon Panier de Livres", this);
+    titleLabel->setStyleSheet(R"(
+        QLabel {
+            color: #00796B;
+            font-size: 28px;
+            font-weight: bold;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            margin: 10px;
+            qproperty-alignment: AlignCenter;
+        }
+    )");
+    mainLayout->addWidget(titleLabel);
 
-QTableView::item:hover {
-    background-color: #F3E5F5;
-}
+    // Sous-titre animé
+    QLabel *subtitleLabel = new QLabel("✨ Prêt à emprunter ? Voici votre sélection ✨", this);
+    subtitleLabel->setStyleSheet(R"(
+        QLabel {
+            color: #00897B;
+            font-size: 16px;
+            font-style: italic;
+            padding: 10px;
+            qproperty-alignment: AlignCenter;
+        }
+    )");
+    mainLayout->addWidget(subtitleLabel);
 
-QHeaderView::section {
-    background-color: #DA70D6;
-    color: white;
-    font-weight: bold;
-    padding: 6px;
-    border: 1px solid #BA55D3;
-}
-)";
+    // Ajouter le tableau existant de l'UI au layout
+    mainLayout->addWidget(ui->tableView);
+    // Créer un layout horizontal pour les boutons
+    QHBoxLayout *buttonLayout = new QHBoxLayout();
+    buttonLayout->addWidget(ui->btnRemoveSelected);
+    buttonLayout->addWidget(ui->borrowButton);
+    buttonLayout->addWidget(ui->btnBorrowAll);
+    buttonLayout->addWidget(ui->btnClearCart);
+    buttonLayout->addWidget(ui->voirMonPanierButton);
+    buttonLayout->setSpacing(10);
 
-    ui->btnRemoveSelected->setStyleSheet(gradientStyle);
-    ui->btnClearCart->setStyleSheet(gradientStyle);
-    ui->btnBorrowAll->setStyleSheet(gradientStyle);
-    ui->borrowButton->setStyleSheet(gradientStyle);
-    ui->voirMonPanierButton->setStyleSheet(gradientStyle);
-    ui->tableView->setStyleSheet(gradientStyle);
-    chargerPanier();
-   // showCart(); // Charger le panier à l'ouverture
-    QLabel *welcomeLabel = new QLabel("📚 Ready to borrow? Review your selected books below!", this);
-    welcomeLabel->setStyleSheet("color: #8A2BE2; font-size: 16px; font-style: italic; padding: 8px;");
-    // Style pour les boutons
+    mainLayout->addLayout(buttonLayout);
+
+    // Style moderne pour les boutons avec effets
     QString buttonStyle = R"(
-QPushButton {
-    background-color: #2C5E2A;  /* Violet foncé */
-    color: white;
-    border-radius: 10px;
-    font-size: 16px;
-    padding: 10px;
-    border: 2px solid #FFD700;  /* Doré */
-    background-size: cover;  /* Couvre toute la zone du bouton */
-    background-position: center;  /* Centre l'image */
-    background-repeat: no-repeat;  /* Empêche l'image de se répéter */
-    transition: all 0.3s ease;  /* Pour des transitions douces */
-}
-
-QPushButton:hover {
-    background-color: rgba(142, 36, 170, 0.7);  /* Violet clair avec transparence */
-    border: 2px solid #8A9B68;  /* Doré clair */
-}
-
-QPushButton:pressed {
-    background-color: #8A9B68;  /* Violet foncé */
-    background-image: none;  /* Enlève l'image de fond quand pressé */
-}
-
+        QPushButton {
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                stop:0 #26A69A, stop:1 #00897B);
+            color: white;
+            border-radius: 10px;
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            min-width: 150px;
+            border: 2px solid #00796B;
+        }
+        QPushButton:hover {
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                stop:0 #4DB6AC, stop:1 #26A69A);
+            border: 2px solid #00695C;
+        }
+        QPushButton:pressed {
+            background: #00897B;
+        }
+        QPushButton#btnRemoveSelected {
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                stop:0 #EF5350, stop:1 #E53935);
+            border: 2px solid #C62828;
+        }
+        QPushButton#btnRemoveSelected:hover {
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                stop:0 #E57373, stop:1 #EF5350);
+        }
+        QPushButton#btnBorrowAll {
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                stop:0 #66BB6A, stop:1 #43A047);
+            border: 2px solid #2E7D32;
+        }
+        QPushButton#btnBorrowAll:hover {
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                stop:0 #81C784, stop:1 #66BB6A);
+        }
     )";
+
     ui->btnRemoveSelected->setStyleSheet(buttonStyle);
     ui->btnClearCart->setStyleSheet(buttonStyle);
     ui->btnBorrowAll->setStyleSheet(buttonStyle);
     ui->borrowButton->setStyleSheet(buttonStyle);
     ui->voirMonPanierButton->setStyleSheet(buttonStyle);
-    // Style pour QTableView
+    QPushButton *btnRetour = new QPushButton("🔙 Retour", this);
+    btnRetour->setObjectName("btnRetour");
+    btnRetour->setStyleSheet(buttonStyle);
+   buttonLayout->addWidget(btnRetour);
+    // Style moderne pour le tableau (prend plus d'espace)
     QString tableStyle = R"(
-QTableView {
-    background-color: beige;  /* Violet très clair */
-    color: #4A148C;  /* Violet foncé */
-    border: 1px solid #6A1B9A;  /* Violet foncé pour la bordure */
-    font-size: 14px;
-    font-family: Arial, sans-serif;
-    selection-background-color: #FFEB3B;  /* Doré clair pour la sélection */
-    selection-color: #4A148C;  /* Violet foncé pour le texte sélectionné */
-}
-
-QTableView::item {
-    padding: 8px;
-    border-bottom: 1px solid #6A1B9A;  /* Bordure entre les lignes */
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-QTableView::item:selected {
-    background-color: #FFEB3B;  /* Doré clair */
-    color: #4A148C;  /* Violet foncé */
-}
-
-QHeaderView::section {
-    background-color: #6A1B9A;  /* Violet foncé */
-    color: white;  /* Texte blanc pour une meilleure lisibilité */
-    font-size: 16px;
-    padding: 5px;
-    font-weight: bold;  /* Pour donner un peu plus de présence aux titres de colonnes */
-}
-
-QHeaderView::section:horizontal {
-    border: 1px solid #6A1B9A;  /* Bordure entre les colonnes */
-}
-
-/* Effet de survol pour les lignes */
-QTableView::item:hover {
-    background-color: #D1C4E9;  /* Violet clair quand on survole une ligne */
-    color: #4A148C;  /* Violet foncé pour le texte */
-}
-
+        QTableView {
+            background-color: white;
+            border: 2px solid #B2DFDB;
+            border-radius: 10px;
+            alternate-background-color: #E0F2F1;
+            selection-background-color: #4DB6AC;
+            selection-color: white;
+            font-size: 14px;
+            gridline-color: #B2DFDB;color:black;
+        }
+        QTableView QTableCornerButton::section {
+            background: #00897B;
+            border: 1px solid #B2DFDB;
+        }
+        QHeaderView::section {
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                stop:0 #00897B, stop:1 #00796B);
+            color: white;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            border-radius: 0px;
+        }
+        QTableView::item {
+            padding: 10px;
+            border-bottom: 1px solid #B2DFDB;
+        }
+        QTableView::item:hover {
+            background: #B2EBF2;
+color:black;
+        }
     )";
+
+    ui->tableView->setStyleSheet(tableStyle);
+    ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
+    ui->tableView->horizontalHeader()->setDefaultSectionSize(300);
+    ui->tableView->verticalHeader()->setDefaultSectionSize(60);
+    ui->tableView->verticalHeader()->setVisible(false);
+    ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
+
+    // Redimensionner pour occuper plus d'espace
+    QSize screenSize = QApplication::primaryScreen()->availableSize();
+    ui->tableView->setMinimumHeight(screenSize.height() * 0.6);
+    // Créer un nouveau bouton Retour
+    // Ajouter le bouton Retour au layout des boutons
+    buttonLayout->addWidget(btnRetour);
+
+    // Connexions des boutons
     connect(ui->btnRemoveSelected, &QPushButton::clicked, this, &Cart::on_btnRemoveSelected_clicked);
     connect(ui->btnClearCart, &QPushButton::clicked, this, &Cart::on_btnClearCart_clicked);
     connect(ui->btnBorrowAll, &QPushButton::clicked, this, &Cart::on_btnBorrowAll_clicked);
     connect(ui->borrowButton, &QPushButton::clicked, this, &Cart::on_borrowButton_clicked);
     connect(ui->voirMonPanierButton, &QPushButton::clicked, this, &Cart::on_voirMonPanierButton_clicked);
-
-    ui->tableView->setStyleSheet(tableStyle);
+    connect(btnRetour, &QPushButton::clicked, this, &Cart::on_btnRetour_clicked);
+    // Charger le panier initial
+    //chargerPanier();
 }
 
 Cart::~Cart()
@@ -188,8 +227,10 @@ void Cart::chargerPanier()
 
     ui->tableView->setModel(cartModel);
 }
-
-
+void Cart::on_btnRetour_clicked()
+{
+    this->close(); // Ferme la fenêtre du panier
+}
 
 void Cart::on_btnRemoveSelected_clicked()
 {
@@ -281,7 +322,7 @@ void Cart::on_voirMonPanierButton_clicked()
 void Cart::showCart()
 {
     QSqlQuery query(db);
-    query.prepare("SELECT name, author, added_at FROM cart WHERE user_id = :user_id");
+    query.prepare("SELECT id  name, author, added_at FROM cart WHERE user_id = :user_id");
 
     query.bindValue(":user_id", userId);
 
@@ -289,9 +330,10 @@ void Cart::showCart()
         QSqlQueryModel *cartModel = new QSqlQueryModel(this);
         cartModel->setQuery(query);
 
-        cartModel->setHeaderData(0, Qt::Horizontal, "Titre");
+        cartModel->setHeaderData(0, Qt::Horizontal, "id");
         cartModel->setHeaderData(1, Qt::Horizontal, "Auteur");
         cartModel->setHeaderData(2, Qt::Horizontal, "Date ajoutée");
+        cartModel->setHeaderData(3, Qt::Horizontal, "Titre");
 
     } else {
         QMessageBox::warning(this, "Erreur", "Impossible d'afficher le panier.");
@@ -314,36 +356,36 @@ void Cart::on_borrowButton_clicked()
 
     int row = selectedIndex.row();
     int bookId = model->data(model->index(row, 0)).toInt(); // Colonne 0 = ID
-    QString nomLivre = model->data(model->index(row, 1)).toString(); // Colonne 1 = title
+    QString nomLivre = model->data(model->index(row, 1)).toString(); // Colonne 1 = Nom
 
-    QSqlQuery query(db);
-    query.prepare("UPDATE cart SET borrowed = 1 WHERE user_id = :userId AND book_id = :bookId AND borrowed = 0");
-    query.bindValue(":userId", userId);
-    query.bindValue(":bookId", bookId);
+    // Mettre à jour la base de données pour marquer le livre comme emprunté
+    QSqlQuery updateQuery(db);
+    updateQuery.prepare("UPDATE cart SET borrowed = 1 WHERE user_id = :userId AND book_id = :bookId AND borrowed = 0");
+    updateQuery.bindValue(":userId", userId);
+    updateQuery.bindValue(":bookId", bookId);
 
-    if (query.exec() && query.numRowsAffected() > 0) {
-        QMessageBox::information(this, "Succès", "Livre emprunté avec succès.");
-
-        // Enregistrer l'historique dans un fichier
-        QFile file("historique_reservations.txt");
-        if (file.open(QIODevice::Append | QIODevice::Text)) {
-            QTextStream out(&file);
-            QString date = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
-            out << date << " - " << nomLivre << " emprunté par l'utilisateur " << userId << "\n";
-            file.close();
-        }
-
-        // Rafraîchir le panier pour refléter l'emprunt
-        chargerPanier();
-    } else {
-        QMessageBox::warning(this, "Erreur", "Ce livre est déjà emprunté ou indisponible.");
+    if (!updateQuery.exec() || updateQuery.numRowsAffected() == 0) {
+        QMessageBox::warning(this, "Erreur", "Échec de l'emprunt du livre.");
+        return;
     }
+
+    // Enregistrer dans le fichier historique
+    QFile file("historique_reservations.txt");
+    if (file.open(QIODevice::Append | QIODevice::Text)) {
+        QTextStream out(&file);
+        QString date = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
+        out << date << " - " << nomLivre << " emprunté par l'utilisateur " << userId << "\n";
+        file.close();
+    }
+
+    // Rafraîchir l'affichage
+    chargerPanier();
+    QMessageBox::information(this, "Succès", "Le livre a été emprunté avec succès.");
 }
 
 int Cart::getUserId()
 {
-    // Exemple statique, tu devras adapter selon ton système d'authentification
-    return 1;  // ID fictif de l'utilisateur
+    return userId;  // ID fictif de l'utilisateur
 }
 void Cart::removeBookFromCart(int rowIndex)
 {

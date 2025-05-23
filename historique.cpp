@@ -1,5 +1,4 @@
 #include "historique.h"
-#include "historique.h"
 #include <QFile>
 #include <QTextStream>
 #include <QDateTime>
@@ -9,113 +8,211 @@
 #include <QGraphicsOpacityEffect>
 #include <QPropertyAnimation>
 #include <QDate>
+#include <QSqlError>
+#include<QSqlQuery>
 #include <algorithm>
 #include <QStandardPaths>
 #include <QDir>
+#include <QTimer>
+#include <QGraphicsOpacityEffect>
+#include <QPropertyAnimation>
 #include <QDebug>
 #include <QMessageBox>
+#include <QtCharts/QBarSeries>
+#include <QtCharts/QBarSet>
+#include <QtCharts/QChartView>
+#include <QtCharts/QBarCategoryAxis>
+#include <QtCharts/QValueAxis>
 
-Historique::Historique(QWidget *parent) : QDialog(parent)
+Historique::Historique(int userId, QSqlDatabase database, QWidget *parent)
+    : QDialog(parent), currentUserId(userId), db(database)
 {
-    // Configuration de la fenêtre principale
-    setWindowTitle("Historique et Statistiques");
-    setMinimumSize(600, 600);  // Taille minimale
-    resize(900, 750);         // Taille initiale recommandée
-    setStyleSheet("background-color: #f5f7fa;");
+    // Configuration de la fenêtre principale avec style moderne
+    setWindowTitle("📊 Historique & Statistiques");
+    setMinimumSize(800, 650);
+    resize(1000, 800);
+    setStyleSheet("QDialog {"
+                  "background-color: #f5f9f5;"
+                  "border-radius: 12px;"
+                  "}");
 
-    // Layout principal avec marges réduites
+    // Effet d'ombre portée pour la fenêtre
+    QGraphicsDropShadowEffect *shadowEffect = new QGraphicsDropShadowEffect(this);
+    shadowEffect->setBlurRadius(20);
+    shadowEffect->setColor(QColor(0, 0, 0, 60));
+    shadowEffect->setOffset(0, 4);
+    setGraphicsEffect(shadowEffect);
+
+    // Layout principal avec espacement optimal
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
-    mainLayout->setContentsMargins(12, 12, 12, 12);
-    mainLayout->setSpacing(12);
+    mainLayout->setContentsMargins(16, 16, 16, 16);
+    mainLayout->setSpacing(20);
 
-    // Label des statistiques (taille fixe)
+    /* ------------------- WIDGET DE STATISTIQUES ------------------- */
+    QWidget *statsWidget = new QWidget(this);
+    statsWidget->setStyleSheet("background: qlineargradient(x1:0, y1:0, x2:1, y2:0,"
+                               "stop:0 #81C784, stop:1 #66BB6A);"
+                               "border-radius: 10px;"
+                               "padding: 16px;");
+
+    QHBoxLayout *statsLayout = new QHBoxLayout(statsWidget);
+    statsLayout->setContentsMargins(0, 0, 0, 0);
+    statsLayout->setSpacing(20);
+
+    // Icône décorative
+    QLabel *statsIcon = new QLabel(this);
+    statsIcon->setPixmap(QPixmap(":/icons/stats.png").scaled(48, 48, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    statsLayout->addWidget(statsIcon);
+
+    // Label des statistiques avec style moderne
     labelConnexions = new QLabel(this);
-    labelConnexions->setFixedHeight(70);
+    labelConnexions->setFixedHeight(80);
     labelConnexions->setAlignment(Qt::AlignCenter);
     labelConnexions->setStyleSheet(
-        "background: white;"
-        "border-radius: 8px;"
-        "padding: 10px;"
-        "border: 1px solid #dfe3e8;"
-        "font-size: 14px;"
-        );
-    mainLayout->addWidget(labelConnexions);
+        "QLabel {"
+        "   color: white;"
+        "   font-size: 14px;"
+        "   font-weight: 500;"
+        "}");
+    statsLayout->addWidget(labelConnexions);
 
-    // Configuration des onglets
+    mainLayout->addWidget(statsWidget);
+
+    /* ------------------- SYSTEME D'ONGLETS MODERNE ------------------- */
     QTabWidget *tabWidget = new QTabWidget(this);
     tabWidget->setStyleSheet(
+        "QTabWidget::pane {"
+        "   border: none;"
+        "   margin-top: 4px;"
+        "}"
         "QTabBar::tab {"
-        "   padding: 8px 12px;"
-        "   background: #f0f2f5;"
-        "   border: 1px solid #dfe3e8;"
-        "   border-bottom: none;"
-        "   border-top-left-radius: 4px;"
-        "   border-top-right-radius: 4px;"
+        "   background: #e8f5e9;"
+        "   color: #2e7d32;"
+        "   padding: 10px 20px;"
+        "   border: none;"
+        "   border-top-left-radius: 6px;"
+        "   border-top-right-radius: 6px;"
+        "   margin-right: 4px;"
+        "   font-size: 13px;"
+        "   font-weight: 500;"
         "}"
         "QTabBar::tab:selected {"
         "   background: white;"
-        "   border-color: #d1d9e6;"
+        "   color: #1b5e20;"
+        "   border-bottom: 3px solid #4CAF50;"
         "}"
-        "QTabWidget::pane {"
-        "   border: 1px solid #dfe3e8;"
-        "   border-top: none;"
-        "   border-radius: 0 0 4px 4px;"
-        "   background: white;"
-        "}"
-        );
+        "QTabBar::tab:hover {"
+        "   background: #c8e6c9;"
+        "}");
 
-    /* ------------------- ONGLET RÉSERVATIONS ------------------- */
-    QWidget *reservationsTab = new QWidget();
-    QVBoxLayout *reservationsLayout = new QVBoxLayout(reservationsTab);
-    reservationsLayout->setContentsMargins(0, 0, 0, 0);
+    /* ------------------- ONGLET EMPRUNTS (AMÉLIORÉ) ------------------- */
+    QWidget *empruntsTab = new QWidget();
+    empruntsTab->setStyleSheet("background: white; border-radius: 6px;");
 
-    // Configuration du tableau avec scroll area
+    QVBoxLayout *empruntsLayout = new QVBoxLayout(empruntsTab);
+    empruntsLayout->setContentsMargins(0, 0, 0, 0);
+    empruntsLayout->setSpacing(0);
+
+    // En-tête du tableau
+    QLabel *empruntsHeader = new QLabel("📖 Historique des Emprunts");
+    empruntsHeader->setStyleSheet(
+        "QLabel {"
+        "   font-size: 16px;"
+        "   font-weight: bold;"
+        "   color: #212529;"
+        "   padding: 12px 16px;"
+        "   border-bottom: 1px solid #e9ecef;"
+        "}");
+    empruntsLayout->addWidget(empruntsHeader);
+
+    // Configuration du tableau avec style amélioré
     tableReservations = new QTableWidget(this);
     setupReservationsTable();
 
     QScrollArea *tableScroll = new QScrollArea();
     tableScroll->setWidget(tableReservations);
     tableScroll->setWidgetResizable(true);
-    tableScroll->setFrameShape(QFrame::NoFrame);
-    reservationsLayout->addWidget(tableScroll);
+    tableScroll->setStyleSheet("QScrollArea { border: none; background: transparent; }");
+    empruntsLayout->addWidget(tableScroll);
 
-    tabWidget->addTab(reservationsTab, "📚 Réservations");
+    tabWidget->addTab(empruntsTab, "📚 Emprunts");
 
-    /* ------------------- ONGLET STATISTIQUES ------------------- */
+    /* ------------------- ONGLET STATISTIQUES (AMÉLIORÉ) ------------------- */
     QWidget *statsTab = new QWidget();
-    QVBoxLayout *statsLayout = new QVBoxLayout(statsTab);
-    statsLayout->setContentsMargins(0, 0, 0, 0);
-    statsLayout->setSpacing(15);
+    statsTab->setStyleSheet("background: white; border-radius: 6px;");
 
-    // Conteneur scrollable pour les graphiques
+    QVBoxLayout *statsTabLayout = new QVBoxLayout(statsTab);
+    statsTabLayout->setContentsMargins(0, 0, 0, 0);
+    statsTabLayout->setSpacing(0);
+
+    // En-tête des statistiques
+    QLabel *chartsHeader = new QLabel("📈 Statistiques d'Utilisation");
+    chartsHeader->setStyleSheet(
+        "QLabel {"
+        "   font-size: 16px;"
+        "   font-weight: bold;"
+        "   color: #212529;"
+        "   padding: 12px 16px;"
+        "   border-bottom: 1px solid #e9ecef;"
+        "}");
+    statsTabLayout->addWidget(chartsHeader);
+
+    // Conteneur scrollable avec style
     QScrollArea *chartsScroll = new QScrollArea();
     chartsScroll->setWidgetResizable(true);
+    chartsScroll->setStyleSheet("QScrollArea { border: none; background: transparent; }");
     chartsScroll->setFrameShape(QFrame::NoFrame);
 
     QWidget *chartsContainer = new QWidget();
     QVBoxLayout *chartsLayout = new QVBoxLayout(chartsContainer);
-    chartsLayout->setSpacing(20);
-    chartsLayout->setContentsMargins(10, 10, 10, 10);
+    chartsLayout->setSpacing(25);
+    chartsLayout->setContentsMargins(16, 16, 16, 16);
 
-    // Graphique des connexions
+    // Graphiques avec effets
     QChartView *connexionsChart = createConnexionsChart();
-    connexionsChart->setMinimumHeight(300);
+    connexionsChart->setMinimumHeight(350);
+    connexionsChart->setStyleSheet("background: white; border-radius: 8px;");
     chartsLayout->addWidget(connexionsChart);
 
-    // Graphique des réservations
-    QChartView *reservationsChart = createReservationsChart();
-    reservationsChart->setMinimumHeight(300);
-    chartsLayout->addWidget(reservationsChart);
+    QChartView *empruntsChart = createEmpruntsChart();
+    empruntsChart->setMinimumHeight(350);
+    empruntsChart->setStyleSheet("background: white; border-radius: 8px;");
+    chartsLayout->addWidget(empruntsChart);
 
     chartsScroll->setWidget(chartsContainer);
-    statsLayout->addWidget(chartsScroll);
+    statsTabLayout->addWidget(chartsScroll);
     tabWidget->addTab(statsTab, "📊 Statistiques");
 
     mainLayout->addWidget(tabWidget);
 
-    // Initialisation
-    initReservationFile();
-    chargerDonnees();
+    /* ------------------- BOUTON DE RETOUR ------------------- */
+    btnRetour = new QPushButton("← Retour", this);
+    btnRetour->setStyleSheet(
+        "QPushButton {"
+        "   background-color: #4CAF50;"
+        "   color: white;"
+        "   border: none;"
+        "   border-radius: 6px;"
+        "   padding: 8px 16px;"
+        "   font-size: 14px;"
+        "   font-weight: bold;"
+        "}"
+        "QPushButton:hover {"
+        "   background-color: #45a049;"
+        "}"
+        "QPushButton:pressed {"
+        "   background-color: #3d8b40;"
+        "}");
+    btnRetour->setCursor(Qt::PointingHandCursor);
+    connect(btnRetour, &QPushButton::clicked, this, &Historique::retourArriere);
+
+    mainLayout->insertWidget(0, btnRetour, 0, Qt::AlignLeft);
+
+    // Initialisation avec animation
+    QTimer::singleShot(100, this, [this]() {
+        chargerDonnees();
+        appliquerAnimation(this);
+    });
 }
 
 Historique::~Historique()
@@ -123,58 +220,73 @@ Historique::~Historique()
     // Libération des ressources si nécessaire
 }
 
+void Historique::retourArriere()
+{
+    this->close();
+}
+
 void Historique::setupReservationsTable()
 {
-    tableReservations->setColumnCount(3);
+    tableReservations->setColumnCount(5);
     tableReservations->setHorizontalHeaderLabels(
-        QStringList() << "Date/Heure" << "Livre" << "Utilisateur");
+        QStringList() << "📅 Date emprunt" << "📚 Livre" << "👤 Utilisateur" << "🔄 Date retour" << "✅ Retour effectif");
 
-    // Style optimisé pour le tableau
+    // Style moderne pour le tableau
     tableReservations->setStyleSheet(
         "QTableWidget {"
         "   background-color: white;"
         "   border: none;"
-        "   font-size: 12px;"
+        "   font-size: 13px;"
+        "   gridline-color: #e8f5e9;"
+        "   selection-background-color: #c8e6c9;"
+        "   selection-color: #1b5e20;"
         "}"
         "QHeaderView::section {"
-        "   background-color: #5d6d7e;"
-        "   color: white;"
-        "   padding: 10px;"
-        "   font-weight: bold;"
+        "   background-color: #e8f5e9;"
+        "   color: #2e7d32;"
+        "   padding: 12px 16px;"
+        "   font-weight: 600;"
         "   border: none;"
+        "   border-bottom: 2px solid #c8e6c9;"
         "}"
         "QTableWidget::item {"
-        "   padding: 8px;"
-        "   border-bottom: 1px solid #f0f2f5;"
-        "color:black;"
+        "   padding: 12px 16px;"
+        "   border-bottom: 1px solid #e9ecef;"
+        "   color: #212529;"
         "}"
-        );
+        "QTableWidget::item:selected {"
+        "   background: #e3f2fd;"
+        "   color: #1976d2;"
+        "}");
 
     tableReservations->setEditTriggers(QAbstractItemView::NoEditTriggers);
     tableReservations->setSelectionBehavior(QAbstractItemView::SelectRows);
     tableReservations->setAlternatingRowColors(true);
     tableReservations->setSelectionMode(QAbstractItemView::SingleSelection);
+    tableReservations->setSortingEnabled(true);
 
-    // Configuration des colonnes
+    // Configuration responsive des colonnes
     tableReservations->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     tableReservations->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
-    tableReservations->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
-    tableReservations->verticalHeader()->setDefaultSectionSize(36);
+    tableReservations->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Interactive);
+    tableReservations->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+    tableReservations->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
+    tableReservations->verticalHeader()->setDefaultSectionSize(48);
+    tableReservations->verticalHeader()->setVisible(false);
 }
 
 void Historique::chargerDonnees()
-{ createConnexionsChart();
-
-    chargerReservations();
+{
+    chargerEmpruntsFromDB();
     chargerStatsConnexions();
-    chargerStatsReservations();
+    chargerStatsEmprunts();
 }
 
 QChartView* Historique::createConnexionsChart()
 {
     QBarSeries *series = new QBarSeries();
     QBarSet *set = new QBarSet("Connexions");
-    set->setColor(QColor("#4e73df"));
+    set->setColor(QColor("#66BB6A"));
 
     QMap<QString, int> data = getConnexionsDataLast7Days();
     QStringList categories;
@@ -222,31 +334,39 @@ QChartView* Historique::createConnexionsChart()
     return chartView;
 }
 
-QChartView* Historique::createReservationsChart()
+QChartView* Historique::createEmpruntsChart()
 {
     QBarSeries *series = new QBarSeries();
-    QBarSet *set = new QBarSet("Réservations");
-    set->setColor(QColor("#e74c3c"));
 
-    QMap<QString, int> data = getReservationsDataLast7Days();
+    // Emprunts
+    QBarSet *empruntsSet = new QBarSet("Emprunts");
+    empruntsSet->setColor(QColor("#81C784"));
+
+    // Retours
+    QBarSet *retoursSet = new QBarSet("Retours");
+    retoursSet->setColor(QColor("#4CAF50"));
+
+    QMap<QString, int> empruntsData = getEmpruntsDataLast7Days();
+    QMap<QString, int> retoursData = getRetoursDataLast7Days();
     QStringList categories;
 
-    for (const auto &[date, count] : data.asKeyValueRange()) {
-        *set << count;
-        categories << QDate::fromString(date, "yyyy-MM-dd").toString("ddd\ndd");
+    QDate currentDate = QDate::currentDate();
+    for (int i = 6; i >= 0; --i) {
+        QDate date = currentDate.addDays(-i);
+        QString dateStr = date.toString("yyyy-MM-dd");
+        QString dayStr = date.toString("ddd\ndd");
+
+        *empruntsSet << empruntsData[dateStr];
+        *retoursSet << retoursData[dateStr];
+        categories << dayStr;
     }
 
-    // Données de démo si vide
-    if (set->count() == 0) {
-        *set << 2 << 3 << 1 << 4 << 2 << 0 << 1;
-        categories << "Lun" << "Mar" << "Mer" << "Jeu" << "Ven" << "Sam" << "Dim";
-    }
-
-    series->append(set);
+    series->append(empruntsSet);
+    series->append(retoursSet);
 
     QChart *chart = new QChart();
     chart->addSeries(series);
-    chart->setTitle("Réservations des 7 derniers jours");
+    chart->setTitle("Emprunts et retours des 7 derniers jours");
     chart->setTitleFont(QFont("Arial", 12, QFont::Bold));
     chart->setAnimationOptions(QChart::SeriesAnimations);
     chart->setBackgroundBrush(QBrush(Qt::white));
@@ -265,8 +385,9 @@ QChartView* Historique::createReservationsChart()
     axisY->setLabelsFont(QFont("Arial", 9));
 
     int maxValue = 0;
-    for (int i = 0; i < set->count(); ++i) {
-        if (set->at(i) > maxValue) maxValue = set->at(i);
+    for (int i = 0; i < empruntsSet->count(); ++i) {
+        if (empruntsSet->at(i) > maxValue) maxValue = empruntsSet->at(i);
+        if (retoursSet->at(i) > maxValue) maxValue = retoursSet->at(i);
     }
     axisY->setRange(0, maxValue * 1.2);
     chart->addAxis(axisY, Qt::AlignLeft);
@@ -279,86 +400,72 @@ QChartView* Historique::createReservationsChart()
     return chartView;
 }
 
-void Historique::initReservationFile()
+void Historique::chargerEmpruntsFromDB()
 {
-    QString dirPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-    QDir().mkpath(dirPath);
+    tableReservations->clearContents();
+    tableReservations->setRowCount(0);
 
-    QString filePath = dirPath + "/reservations.dat";
-    QFile file(filePath);
-
-    if (!file.exists() && file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        QTextStream out(&file);
-        QDateTime now = QDateTime::currentDateTime();
-
-        // // Données de démo
-        // out << now.toString("yyyy-MM-dd HH:mm:ss") << "|1984|George Orwell\n";
-        // out << now.addDays(-1).toString("yyyy-MM-dd HH:mm:ss") << "|Le Petit Prince|Antoine de Saint-Exupéry\n";
-        // out << now.addDays(-2).toString("yyyy-MM-dd HH:mm:ss") << "|L'Étranger|Albert Camus\n";
-
-        file.close();
-    }
-}
-
-void Historique::enregistrerReservation(const QString& livre, const QString& utilisateur)
-{
-    QString filePath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/reservations.dat";
-    QFile file(filePath);
-
-    if (file.open(QIODevice::Append | QIODevice::Text)) {
-        QTextStream out(&file);
-        out << QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss")
-            << "|" << livre << "|" << utilisateur << "\n";
-        file.close();
-    }
-}
-
-void Historique::chargerReservations()
-{
-    QString filePath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/reservations.dat";
-    QFile file(filePath);
-
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        tableReservations->setRowCount(1);
-        tableReservations->setItem(0, 0, new QTableWidgetItem("Aucune donnée disponible"));
+    QSqlQuery query(db);
+    if (!db.isOpen()) {
+        qDebug() << "La base de données n'est pas ouverte";
         return;
     }
+    query.prepare("SELECT e.borrow_date, b.name, a.username, e.return_date, e.actual_return_date "
+                  "FROM emprunts e "
+                  "JOIN books b ON e.book_id = b.ID "
+                  "JOIN accounts a ON e.user_id = a.ID "
+                  "WHERE e.user_id = :userId "
+                  "ORDER BY e.borrow_date DESC");
+    query.bindValue(":userId", currentUserId);  // Liaison de la valeur
 
-    QVector<QStringList> reservations;
-    QTextStream in(&file);
-
-    while (!in.atEnd()) {
-        QString line = in.readLine();
-        QStringList parts = line.split("|");
-        if (parts.size() >= 3) {
-            reservations.append(parts);
-        }
+    if (!query.exec()) {
+        qDebug() << "Erreur lors de l a récupération des emprunts:" << query.lastError().text();
+        qDebug() << "Requête exécutée:" << query.lastQuery(); // Affiche la requête finale
+        qDebug() << "Valeur de userId:" << currentUserId; // Vérifie la valeur du paramètre
+        tableReservations->setRowCount(1);
+        tableReservations->setItem(0, 0, new QTableWidgetItem("Erreur de chargement des données"));
+        return;
     }
+    if (!query.next()) {
+        tableReservations->setRowCount(1);
+        tableReservations->setItem(0, 0, new QTableWidgetItem("Aucun emprunt trouvé"));
+        return;
+    }
+    while (query.next()) {
+        int row = tableReservations->rowCount();
+        tableReservations->insertRow(row);
 
-    // Tri par date décroissante
-    std::sort(reservations.begin(), reservations.end(), [](const QStringList &a, const QStringList &b) {
-        return QDateTime::fromString(a[0], "yyyy-MM-dd HH:mm:ss") > QDateTime::fromString(b[0], "yyyy-MM-dd HH:mm:ss");
-    });
+        QDate borrowDate = QDate::fromString(query.value(0).toString(), "yyyy-MM-dd");
+        QDate returnDate = QDate::fromString(query.value(3).toString(), "yyyy-MM-dd");
+        QDate actualReturnDate = query.value(4).isNull() ? QDate() : QDate::fromString(query.value(4).toString(), "yyyy-MM-dd");
 
-    tableReservations->setRowCount(reservations.size());
+        QTableWidgetItem *borrowItem = new QTableWidgetItem(borrowDate.toString("dd/MM/yyyy"));
+        QTableWidgetItem *bookItem = new QTableWidgetItem(query.value(1).toString());
+        QTableWidgetItem *userItem = new QTableWidgetItem(query.value(2).toString());
+        QTableWidgetItem *returnItem = new QTableWidgetItem(returnDate.toString("dd/MM/yyyy"));
+        QTableWidgetItem *actualReturnItem = new QTableWidgetItem(
+            actualReturnDate.isValid() ? actualReturnDate.toString("dd/MM/yyyy") : "Non retourné");
 
-    for (int i = 0; i < reservations.size(); ++i) {
-        QDateTime dt = QDateTime::fromString(reservations[i][0], "yyyy-MM-dd HH:mm:ss");
+        // Style pour les retards
+        if (actualReturnDate.isNull() && QDate::currentDate() > returnDate) {
+            returnItem->setBackground(QColor("#FFF3CD"));
+            actualReturnItem->setBackground(QColor("#FFF3CD"));
+        } else if (actualReturnDate.isValid() && actualReturnDate > returnDate) {
+            actualReturnItem->setBackground(QColor("#F8D7DA"));
+        }
 
-        QTableWidgetItem *dateItem = new QTableWidgetItem(dt.toString("dd/MM/yyyy HH:mm"));
-        QTableWidgetItem *bookItem = new QTableWidgetItem(reservations[i][1]);
-        QTableWidgetItem *userItem = new QTableWidgetItem(reservations[i][2]);
-
-        dateItem->setTextAlignment(Qt::AlignCenter);
+        borrowItem->setTextAlignment(Qt::AlignCenter);
         bookItem->setTextAlignment(Qt::AlignCenter);
         userItem->setTextAlignment(Qt::AlignCenter);
+        returnItem->setTextAlignment(Qt::AlignCenter);
+        actualReturnItem->setTextAlignment(Qt::AlignCenter);
 
-        tableReservations->setItem(i, 0, dateItem);
-        tableReservations->setItem(i, 1, bookItem);
-        tableReservations->setItem(i, 2, userItem);
+        tableReservations->setItem(row, 0, borrowItem);
+        tableReservations->setItem(row, 1, bookItem);
+        tableReservations->setItem(row, 2, userItem);
+        tableReservations->setItem(row, 3, returnItem);
+        tableReservations->setItem(row, 4, actualReturnItem);
     }
-
-    file.close();
 }
 
 QMap<QString, int> Historique::getConnexionsDataLast7Days()
@@ -371,50 +478,95 @@ QMap<QString, int> Historique::getConnexionsDataLast7Days()
         data[currentDate.addDays(-i).toString("yyyy-MM-dd")] = 0;
     }
 
-    // Remplir avec les données réelles
-    QFile file("historique_connexions.txt");
-    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        QTextStream in(&file);
-        while (!in.atEnd()) {
-            QString line = in.readLine();
-            QDateTime dt = QDateTime::fromString(line, "yyyy-MM-dd HH:mm:ss");
-            if (dt.isValid() && dt.date() >= currentDate.addDays(-6)) {
-                QString dateStr = dt.date().toString("yyyy-MM-dd");
-                data[dateStr]++;
-            }
+    // Requête SQL pour récupérer les connexions de l'utilisateur
+    QSqlQuery query(db);
+    query.prepare("SELECT DATE(date_connexion), COUNT(*) "
+                  "FROM historique_connexions "
+                  "WHERE user_id = :userId "
+                  "AND DATE(date_connexion) >= DATE('now', '-6 days') "
+                  "GROUP BY DATE(date_connexion)");
+    query.bindValue(":userId", currentUserId);
+
+    if (query.exec()) {
+        while (query.next()) {
+            QString dateStr = query.value(0).toString();
+            int count = query.value(1).toInt();
+            data[dateStr] = count;
         }
-        file.close();
+    } else {
+        qDebug() << "Erreur lors de la récupération des stats connexions:" << query.lastError().text();
+    }
+
+    return data;
+}
+void Historique::enregistrerConnexion(int userId, QSqlDatabase db)
+{
+    QSqlQuery query(db);
+    query.prepare("INSERT INTO historique_connexions (user_id, date_connexion) "
+                  "VALUES (:userId, datetime('now'))");
+    query.bindValue(":userId", userId);
+
+    if (!query.exec()) {
+        qDebug() << "Erreur lors de l'enregistrement de la connexion:" << query.lastError().text();
+    }
+}
+QMap<QString, int> Historique::getEmpruntsDataLast7Days()
+{
+    QMap<QString, int> data;
+    QDate currentDate = QDate::currentDate();
+
+    for (int i = 0; i < 7; ++i) {
+        data[currentDate.addDays(-i).toString("yyyy-MM-dd")] = 0;
+    }
+
+    QSqlQuery query(db);
+    query.prepare("SELECT DATE(borrow_date), COUNT(*) "
+                  "FROM emprunts "
+                  "WHERE DATE(borrow_date) >= DATE('now', '-6 days') "
+                  "AND user_id = :userId "  // Ajout de cette condition
+                  "GROUP BY DATE(borrow_date)");
+
+    query.bindValue(":userId", currentUserId);
+
+    if (query.exec()) {
+        while (query.next()) {
+            QString dateStr = query.value(0).toString();
+            int count = query.value(1).toInt();
+            data[dateStr] = count;
+        }
+    } else {
+        qDebug() << "Erreur lors de la récupération des stats emprunts:" << query.lastError().text();
     }
 
     return data;
 }
 
-QMap<QString, int> Historique::getReservationsDataLast7Days()
+QMap<QString, int> Historique::getRetoursDataLast7Days()
 {
     QMap<QString, int> data;
     QDate currentDate = QDate::currentDate();
 
-    // Initialiser les 7 derniers jours
     for (int i = 0; i < 7; ++i) {
         data[currentDate.addDays(-i).toString("yyyy-MM-dd")] = 0;
     }
 
-    // Remplir avec les données réelles
-    QFile file(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/reservations.dat");
-    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        QTextStream in(&file);
-        while (!in.atEnd()) {
-            QString line = in.readLine();
-            QStringList parts = line.split("|");
-            if (parts.size() >= 1) {
-                QDateTime dt = QDateTime::fromString(parts[0], "yyyy-MM-dd HH:mm:ss");
-                if (dt.isValid() && dt.date() >= currentDate.addDays(-6)) {
-                    QString dateStr = dt.date().toString("yyyy-MM-dd");
-                    data[dateStr]++;
-                }
-            }
+    QSqlQuery query(db);
+    query.prepare("SELECT DATE(actual_return_date), COUNT(*) "
+                  "FROM emprunts "
+                  "WHERE actual_return_date IS NOT NULL "
+                  "AND DATE(actual_return_date) >= DATE('now', '-6 days') "
+                  "AND user_id = :userId "  // Ajout de cette condition
+                  "GROUP BY DATE(actual_return_date)");
+
+    query.bindValue(":userId", currentUserId);
+    if (query.exec()) {
+        while (query.next()) {
+            QString dateStr = query.value(0).toString();
+            int count = query.value(1).toInt();
+            data[dateStr] = count;
         }
-        file.close();
+    } else {
+        qDebug() << "Erreur lors de la récupération des stats retours:" << query.lastError().text();
     }
 
     return data;
@@ -425,7 +577,7 @@ void Historique::chargerStatsConnexions()
     QMap<QString, int> connexionsData = getConnexionsDataLast7Days();
     int totalConnexions = 0;
     int maxConnexions = 0;
-    QString jourMax;
+    QString jourMax = "Aucune donnée";
 
     for (auto it = connexionsData.constBegin(); it != connexionsData.constEnd(); ++it) {
         totalConnexions += it.value();
@@ -467,24 +619,62 @@ void Historique::chargerStatsConnexions()
     appliquerAnimation(labelConnexions);
 }
 
-void Historique::chargerStatsReservations()
+void Historique::chargerStatsEmprunts()
 {
-    QMap<QString, int> reservationsData = getReservationsDataLast7Days();
-    int totalReservations = 0;
-    int maxReservations = 0;
+    QMap<QString, int> empruntsData = getEmpruntsDataLast7Days();
+    QMap<QString, int> retoursData = getRetoursDataLast7Days();
+
+    int totalEmprunts = 0;
+    int totalRetours = 0;
+    int maxEmprunts = 0;
     QString jourMax;
 
-    for (auto it = reservationsData.constBegin(); it != reservationsData.constEnd(); ++it) {
-        totalReservations += it.value();
-        if (it.value() > maxReservations) {
-            maxReservations = it.value();
+    for (auto it = empruntsData.constBegin(); it != empruntsData.constEnd(); ++it) {
+        totalEmprunts += it.value();
+        if (it.value() > maxEmprunts) {
+            maxEmprunts = it.value();
             jourMax = QDate::fromString(it.key(), "yyyy-MM-dd").toString("dddd dd MMMM");
         }
     }
 
-    qDebug() << "Statistiques des réservations:";
-    qDebug() << "Total cette semaine:" << totalReservations;
-    qDebug() << "Jour avec le plus de réservations:" << jourMax << "(" << maxReservations << "réservations)";
+    for (auto it = retoursData.constBegin(); it != retoursData.constEnd(); ++it) {
+        totalRetours += it.value();
+    }
+
+    QString statsText = QString(
+                            "<div style='text-align: center;'>"
+                            "<div style='font-size: 16px; color: #4e73df; font-weight: bold; margin-bottom: 8px;'>"
+                            "📊 Statistiques des Emprunts"
+                            "</div>"
+                            "<table style='width: 100%; border-collapse: collapse;'>"
+                            "<tr>"
+                            "<td style='text-align: center; padding: 5px; border-right: 1px solid #eee;'>"
+                            "<div style='font-size: 14px;'><b>Emprunts aujourd'hui</b></div>"
+                            "<div style='font-size: 18px;'>%1</div>"
+                            "</td>"
+                            "<td style='text-align: center; padding: 5px; border-right: 1px solid #eee;'>"
+                            "<div style='font-size: 14px;'><b>Emprunts cette semaine</b></div>"
+                            "<div style='font-size: 18px;'>%2</div>"
+                            "</td>"
+                            "<td style='text-align: center; padding: 5px; border-right: 1px solid #eee;'>"
+                            "<div style='font-size: 14px;'><b>Retours cette semaine</b></div>"
+                            "<div style='font-size: 18px;'>%3</div>"
+                            "</td>"
+                            "<td style='text-align: center; padding: 5px;'>"
+                            "<div style='font-size: 14px;'><b>Pic d'emprunts</b></div>"
+                            "<div style='font-size: 16px;'>%4 le<br>%5</div>"
+                            "</td>"
+                            "</tr>"
+                            "</table>"
+                            "</div>"
+                            ).arg(empruntsData[QDate::currentDate().toString("yyyy-MM-dd")])
+                            .arg(totalEmprunts)
+                            .arg(totalRetours)
+                            .arg(maxEmprunts)
+                            .arg(jourMax);
+
+    labelConnexions->setText(statsText);
+    labelConnexions->setTextFormat(Qt::RichText);
 }
 
 void Historique::appliquerAnimation(QWidget *widget)

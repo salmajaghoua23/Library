@@ -26,6 +26,8 @@ public:
     void createAnotherChart(const QMap<QString, int>& data);
     void createMembersChart(const QMap<QString, int>& data);
 
+private:
+    QDialog *statsDialog = nullptr;
 
 private:
     void setupUI();

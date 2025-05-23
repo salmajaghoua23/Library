@@ -32,6 +32,9 @@ private:
     Ui::Cart *ui;
     QSqlDatabase db;    // Déclare un membre pour la base de données
     int userId;  // 🔹 Ajoute ceci
+private slots:
+    void on_btnRetour_clicked();
+
 };
 
 #endif // CART_H

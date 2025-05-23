@@ -6,7 +6,7 @@
 #include <QSqlQuery>
 #include<QSqlQueryModel>
 #include <QDir>
-
+#include <QLabel>
 namespace Ui {
 class membersList;
 }
@@ -22,9 +22,13 @@ public:
 private slots:
 
     void on_value_textEdited(const QString &arg1);
-
+    // membersList.h
+private slots:
+    void setupTableView();  // Ajoutez cette ligne
+   // void on_value_textEdited(const QString &text);
 private:
     Ui::membersList *ui;
+    QLabel *statusLabel;
 };
 
 #endif // MEMBERSLIST_H

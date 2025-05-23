@@ -19,9 +19,9 @@
   <widget class="QTableView" name="tableView">
    <property name="geometry">
     <rect>
-     <x>230</x>
+     <x>30</x>
      <y>80</y>
-     <width>381</width>
+     <width>581</width>
      <height>321</height>
     </rect>
    </property>
@@ -39,20 +39,95 @@
     <string>TextLabel</string>
    </property>
   </widget>
-  <widget class="QWidget" name="verticalLayoutWidget">
+  <widget class="QPushButton" name="btnRemoveSelected">
+   <property name="geometry">
+    <rect>
+     <x>480</x>
+     <y>40</y>
+     <width>81</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton{
+font: 63 14pt &quot;georgia&quot;;
+color: white;
+padding : 0 8px;
+
+}
+QPushButton:hover:!pressed
+{
+background:#FFD700;
+border-radius:5px;
+}</string>
+   </property>
+   <property name="text">
+    <string>Delete</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnBorrowAll">
+   <property name="geometry">
+    <rect>
+     <x>240</x>
+     <y>40</y>
+     <width>101</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton{
+font: 63 14pt &quot;georgia&quot;;
+color: white;
+padding : 0 8px;
+
+}
+QPushButton:hover:!pressed
+{
+background:#FFD700;
+border-radius:5px;
+}</string>
+   </property>
+   <property name="text">
+    <string>Borrow all</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="borrowButton">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>40</y>
+     <width>91</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton{
+font: 63 14pt &quot;georgia&quot;;
+color: white;
+padding : 0 8px;
+
+}
+QPushButton:hover:!pressed
+{
+background:#FFD700;
+border-radius:5px;
+}</string>
+   </property>
+   <property name="text">
+    <string>Borrow </string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnClearCart">
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>80</y>
-     <width>161</width>
-     <height>311</height>
+     <y>40</y>
+     <width>81</width>
+     <height>20</height>
     </rect>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <widget class="QPushButton" name="btnRemoveSelected">
-      <property name="styleSheet">
-       <string notr="true">QPushButton{
+   <property name="styleSheet">
+    <string notr="true">QPushButton{
 font: 63 14pt &quot;georgia&quot;;
 color: white;
 padding : 0 8px;
@@ -63,16 +138,22 @@ QPushButton:hover:!pressed
 background:#FFD700;
 border-radius:5px;
 }</string>
-      </property>
-      <property name="text">
-       <string>Delete</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="btnBorrowAll">
-      <property name="styleSheet">
-       <string notr="true">QPushButton{
+   </property>
+   <property name="text">
+    <string>Vider</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="voirMonPanierButton">
+   <property name="geometry">
+    <rect>
+     <x>370</x>
+     <y>40</y>
+     <width>91</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton{
 font: 63 14pt &quot;georgia&quot;;
 color: white;
 padding : 0 8px;
@@ -83,16 +164,22 @@ QPushButton:hover:!pressed
 background:#FFD700;
 border-radius:5px;
 }</string>
-      </property>
-      <property name="text">
-       <string>Borrow all</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="borrowButton">
-      <property name="styleSheet">
-       <string notr="true">QPushButton{
+   </property>
+   <property name="text">
+    <string>cart</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnRetour">
+   <property name="geometry">
+    <rect>
+     <x>570</x>
+     <y>40</y>
+     <width>81</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton{
 font: 63 14pt &quot;georgia&quot;;
 color: white;
 padding : 0 8px;
@@ -103,53 +190,10 @@ QPushButton:hover:!pressed
 background:#FFD700;
 border-radius:5px;
 }</string>
-      </property>
-      <property name="text">
-       <string>Borrow </string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="btnClearCart">
-      <property name="styleSheet">
-       <string notr="true">QPushButton{
-font: 63 14pt &quot;georgia&quot;;
-color: white;
-padding : 0 8px;
-
-}
-QPushButton:hover:!pressed
-{
-background:#FFD700;
-border-radius:5px;
-}</string>
-      </property>
-      <property name="text">
-       <string>Vider</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="voirMonPanierButton">
-      <property name="styleSheet">
-       <string notr="true">QPushButton{
-font: 63 14pt &quot;georgia&quot;;
-color: white;
-padding : 0 8px;
-
-}
-QPushButton:hover:!pressed
-{
-background:#FFD700;
-border-radius:5px;
-}</string>
-      </property>
-      <property name="text">
-       <string>cart</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
+   </property>
+   <property name="text">
+    <string>Delete</string>
+   </property>
   </widget>
  </widget>
  <resources/>

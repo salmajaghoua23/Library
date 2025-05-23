@@ -96,7 +96,7 @@ font: 10pt &quot;Comic Sans MS&quot;;</string>
 	 border: 2px  solid;
      border-radius: 4px;
 	font: 24px;
-color:white;
+color:black;
 }</string>
               </property>
              </widget>
@@ -124,7 +124,7 @@ font: 10pt &quot;Comic Sans MS&quot;;</string>
 	 border: 2px  solid;
      border-radius: 4px;
 	font: 24px;
-color:white;
+color:black;
 }</string>
               </property>
              </widget>
@@ -152,7 +152,7 @@ font: 10pt &quot;Comic Sans MS&quot;;</string>
 	 border: 2px  solid;
      border-radius: 4px;
 	font: 24px;
-color:white;
+color:black;
 }</string>
               </property>
              </widget>
@@ -179,7 +179,7 @@ font: 15pt &quot;georgie&quot;;</string>
 	background-color: rgb(255, 255, 255);
 	 border: 2px  solid;
      border-radius: 4px;
-	font: 24px
+	font: 24px;color:black;
 }</string>
               </property>
              </widget>

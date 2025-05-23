@@ -12,22 +12,25 @@
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QDebug>
+#include <QRandomGenerator>
+#include <QtCharts/QHorizontalBarSeries>
+#include <QtCharts/QBarSet>
+#include <QtCharts/QChart>
+#include <QtCharts/QBarCategoryAxis>
+#include <QtCharts/QValueAxis>
 
 Statistic::Statistic(QSqlDatabase db, QWidget *parent) : QWidget(parent),
     m_db(db),
     popularityChartView(new QChartView),
     quantityChartView(new QChartView),
     statButton(new QPushButton("Afficher les statistiques")),
-    bookStatsWindow(nullptr),membersChartView(new QChartView),
-    memberStatsWindow(nullptr)
+    bookStatsWindow(nullptr), membersChartView(new QChartView),
+    memberStatsWindow(nullptr), chartWindow(nullptr)
 {
-    membersChartView = new QChartView(this);
     membersChartView->setRenderHint(QPainter::Antialiasing);
-
     setupUI();
-    connect(statButton, &QPushButton::clicked, this, &Statistic::on_statsButton_clicked);
+    //connect(statButton, &QPushButton::clicked, this, &Statistic::loadAndShowStats);
 }
-
 
 void Statistic::setupUI() {
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
@@ -43,22 +46,9 @@ void Statistic::updateStats(const QMap<QString, int>& bookPopularity,
     createPopularityChart(bookPopularity);
     createQuantityChart(quantityByCategory);
 }
+#include <QDialog>
+#include <QDialogButtonBox>
 
-
-void Statistic::on_statsButton_clicked()
-{
-    if (!chartWindow) {
-        chartWindow = new QWidget();
-        chartWindow->setWindowTitle("Fenêtre de statistiques");
-        chartWindow->resize(800, 600);
-        QVBoxLayout *layout = new QVBoxLayout(chartWindow);
-        layout->addWidget(popularityChartView);
-        layout->addWidget(quantityChartView);
-        chartWindow->setLayout(layout);
-    }
-
-    chartWindow->show();
-}
 void Statistic::loadAndShowStats() {
     if (!m_db.isOpen()) {
         if (!m_db.open()) {
@@ -71,22 +61,18 @@ void Statistic::loadAndShowStats() {
     QMap<QString, int> quantityByCategory;
     QMap<QString, int> membersByType;
     QSqlQuery query(m_db);
-    // 1️⃣ Statistiques membres
-    query.prepare("SELECT type, COUNT(*) FROM accounts GROUP BY type");
+
+    // Récupérer les données (comme avant)...
+    query.prepare("SELECT role, COUNT(*) FROM accounts GROUP BY role");
     if (!query.exec()) {
         qDebug() << "❌ Erreur requête membres:" << query.lastError();
     } else {
         while (query.next()) {
-            QString type = query.value(0).toString();
-            int count = query.value(1).toInt();
-            membersByType[type] = count;
+            membersByType[query.value(0).toString()] = query.value(1).toInt();
         }
     }
 
-    // 2️⃣ Popularité des livres
-    query.prepare("SELECT l.titre, COUNT(e.id) AS emprunts "
-                  "FROM livres l LEFT JOIN emprunts e ON l.id = e.livre_id "
-                  "GROUP BY l.titre ORDER BY emprunts DESC LIMIT 5");
+    query.prepare("SELECT name, COUNT(bookStatus.Book) FROM books LEFT JOIN bookStatus ON books.ID = bookStatus.Book GROUP BY books.name ORDER BY COUNT(bookStatus.Book) DESC LIMIT 5");
     if (!query.exec()) {
         qDebug() << "❌ Erreur requête popularité:" << query.lastError();
     } else {
@@ -95,8 +81,7 @@ void Statistic::loadAndShowStats() {
         }
     }
 
-    // 3️⃣ Quantité par catégorie
-    query.prepare("SELECT categorie, COUNT(*) AS count FROM livres GROUP BY categorie");
+    query.prepare("SELECT genre, SUM(quantity) FROM books GROUP BY genre");
     if (!query.exec()) {
         qDebug() << "❌ Erreur requête catégories:" << query.lastError();
     } else {
@@ -105,57 +90,86 @@ void Statistic::loadAndShowStats() {
         }
     }
 
-    // 🧠 Création des charts
     createPopularityChart(bookPopularity);
     createQuantityChart(quantityByCategory);
     createMembersChart(membersByType);
 
-    // 📚 Fenêtre des livres
-    if (!bookStatsWindow) {
-        bookStatsWindow = new QWidget();
-        bookStatsWindow->setWindowTitle("📚 Statistiques des livres");
-        QVBoxLayout *layout = new QVBoxLayout(bookStatsWindow);
-        layout->addWidget(popularityChartView);
-        layout->addWidget(quantityChartView);
-    }
+    // Création d'un dialog pour afficher tout côte à côte
+    QDialog *statsDialog = new QDialog(this);
+    statsDialog->setWindowTitle("Statistiques");
 
-    // // 👥 Fenêtre des membres
-    // if (!memberStatsWindow) {
-    //     memberStatsWindow = new QWidget();
-    //     memberStatsWindow->setWindowTitle("👥 Statistiques des membres");
-    //     QVBoxLayout *layout = new QVBoxLayout(memberStatsWindow);
-    //     layout->addWidget(membersChartView);
-    // }
+    QHBoxLayout *chartsLayout = new QHBoxLayout();
 
-    bookStatsWindow->show();
-    bookStatsWindow->raise();
+    // Ajouter les graphiques côte à côte
+    chartsLayout->addWidget(popularityChartView);
+    chartsLayout->addWidget(quantityChartView);
+    chartsLayout->addWidget(membersChartView);
 
-    // memberStatsWindow->show();
-    // memberStatsWindow->raise();
+    // Bouton retour
+    QPushButton *backButton = new QPushButton("Retour à la bibliothèque");
+    connect(backButton, &QPushButton::clicked, statsDialog, &QDialog::accept); // Ferme le dialog
+
+    // Layout principal vertical
+    QVBoxLayout *mainLayout = new QVBoxLayout(statsDialog);
+    mainLayout->addLayout(chartsLayout);
+    mainLayout->addWidget(backButton);
+
+    statsDialog->setLayout(mainLayout);
+    statsDialog->resize(900, 500);
+    statsDialog->exec();  // Modal, bloque l'accès tant que pas fermé
 }
-
 void Statistic::createPopularityChart(const QMap<QString, int>& data) {
-    QPieSeries *series = new QPieSeries();
+    QHorizontalBarSeries *series = new QHorizontalBarSeries();
+    QBarSet *barSet = new QBarSet("Nombre d'emprunts");
+
+    QStringList categories;
     for (auto it = data.constBegin(); it != data.constEnd(); ++it) {
-        QPieSlice *slice = series->append(it.key(), it.value());
-        slice->setBrush(QColor("#FdD600"));
+        *barSet << it.value();
+        categories << it.key();
     }
+
+    series->append(barSet);
+
     QChart *chart = new QChart();
     chart->addSeries(series);
-    chart->setTitle("Popularité des livres");
-    chart->setTitleBrush(QBrush(QColor("#7A288A")));
+    chart->setTitle("📊 Top 5 des livres les plus empruntés");
+    chart->setTitleBrush(QBrush(QColor("#6A0DAD")));
+    chart->setBackgroundBrush(QColor("#fefefe"));
+
+    // Titre
     QFont titleFont = chart->titleFont();
-    titleFont.setPointSize(16); // Taille du titre
+    titleFont.setPointSize(14);
+    titleFont.setBold(true);
     chart->setTitleFont(titleFont);
 
+    // Axe vertical = Noms des livres
+    QBarCategoryAxis *axisY = new QBarCategoryAxis();
+    axisY->append(categories);
+    chart->addAxis(axisY, Qt::AlignLeft);
+    series->attachAxis(axisY);
+    barSet->setColor(QColor("#FF69B4")); // rose pastel
+
+    // Axe horizontal = Nombre d’emprunts
+    QValueAxis *axisX = new QValueAxis();
+    axisX->setTitleText("Nombre d'emprunts");
+    chart->addAxis(axisX, Qt::AlignBottom);
+    series->attachAxis(axisX);
+
+    // Légende
+    chart->legend()->setVisible(false);
+    chart->setAnimationOptions(QChart::SeriesAnimations);
+
+    // Appliquer le rendu
+    popularityChartView->setRenderHint(QPainter::Antialiasing);
     popularityChartView->setChart(chart);
 }
+
 
 
 void Statistic::createQuantityChart(const QMap<QString, int>& data) {
     QBarSeries *series = new QBarSeries();
     QBarSet *set = new QBarSet("Quantité");
-    set->setColor(QColor("#FFD700"));
+    set->setColor(QColor("#FF69B4"));
 
     QStringList categories;
     for (auto it = data.constBegin(); it != data.constEnd(); ++it) {
@@ -167,36 +181,37 @@ void Statistic::createQuantityChart(const QMap<QString, int>& data) {
     QChart *chart = new QChart();
     chart->addSeries(series);
     chart->setTitle("Quantité par catégorie");
-    chart->setTitleBrush(QBrush(QColor("#7A288A")));
+    chart->setTitleBrush(QBrush(QColor("#FF69B4")));
     QFont titleFont = chart->titleFont();
-    titleFont.setPointSize(16); // Taille du titre
+    titleFont.setPointSize(16);
     chart->setTitleFont(titleFont);
 
     QBarCategoryAxis *axisX = new QBarCategoryAxis();
     axisX->append(categories);
     QFont labelsFont;
-    labelsFont.setPointSize(12); // Taille des étiquettes
+    labelsFont.setPointSize(12);
     axisX->setLabelsFont(labelsFont);
     chart->addAxis(axisX, Qt::AlignBottom);
     series->attachAxis(axisX);
 
     QValueAxis *axisY = new QValueAxis();
-    axisY->setLabelsFont(labelsFont); // Taille des nombres sur l'axe Y
+    axisY->setLabelsFont(labelsFont);
     chart->addAxis(axisY, Qt::AlignLeft);
     series->attachAxis(axisY);
     quantityChartView->setChart(chart);
 }
+
 void Statistic::createMembersChart(const QMap<QString, int>& data) {
     if (data.isEmpty()) {
         qDebug() << "Aucune donnée disponible pour les membres.";
-        return; // Arrêter si les données sont vides
+        return;
     }
 
     QPieSeries *series = new QPieSeries();
     for (auto it = data.constBegin(); it != data.constEnd(); ++it) {
         QPieSlice *slice = series->append(it.key(), it.value());
         slice->setLabelVisible(true);
-        slice->setBrush(QColor::fromHsv(rand() % 360, 255, 200)); // Couleurs aléatoires
+        slice->setBrush(QColor::fromHsv(rand() % 360, 255, 200));
     }
 
     QChart *chart = new QChart();
@@ -205,26 +220,12 @@ void Statistic::createMembersChart(const QMap<QString, int>& data) {
     chart->setTitleBrush(QBrush(QColor("#7A288A")));
 
     QFont titleFont = chart->titleFont();
-    titleFont.setPointSize(16); // Ajuste la taille du titre
+    titleFont.setPointSize(16);
     chart->setTitleFont(titleFont);
 
-    // Assurer que le membersChartView est bien attaché
     membersChartView->setChart(chart);
     membersChartView->setRenderHint(QPainter::Antialiasing);
-
-    // Vérifier que la fenêtre d'affichage est bien configurée et montrée
-    if (!chartWindow) {
-        chartWindow = new QWidget();
-        chartWindow->setWindowTitle("📊 Statistiques des membres");
-        // chartWindow->resize(800, 600);
-        QVBoxLayout *layout = new QVBoxLayout(chartWindow);
-        layout->addWidget(membersChartView);
-        chartWindow->setLayout(layout);
-    }
-    chartWindow->show();
 }
-
-
 
 void Statistic::createAnotherChart(const QMap<QString, int>& data) {
     QPieSeries *series = new QPieSeries();
@@ -238,27 +239,25 @@ void Statistic::createAnotherChart(const QMap<QString, int>& data) {
     chart->setTitle("Autre statistique");
     chart->setTitleBrush(QBrush(QColor("#7A288A")));
 
-QFont titleFont = chart->titleFont();
-titleFont.setPointSize(16);
-chart->setTitleFont(titleFont);
+    QFont titleFont = chart->titleFont();
+    titleFont.setPointSize(16);
+    chart->setTitleFont(titleFont);
 
-QChartView *chartView = new QChartView(chart);
-chartView->setRenderHint(QPainter::Antialiasing);
+    QChartView *chartView = new QChartView(chart);
+    chartView->setRenderHint(QPainter::Antialiasing);
 
-// Ajoutez chartView à votre layout
-
-if (!chartWindow) {
-    chartWindow = new QWidget();
-    chartWindow->setWindowTitle("Fenêtre de statistiques");
-    QVBoxLayout *layout = new QVBoxLayout(chartWindow);
-    layout->addWidget(popularityChartView);
-    layout->addWidget(quantityChartView);
-    layout->addWidget(chartView); // Ajoutez le nouveau chartView
-    chartWindow->setLayout(layout);
-} else {
-    QVBoxLayout *layout = qobject_cast<QVBoxLayout*>(chartWindow->layout());
-    if (layout) {
-        layout->addWidget(chartView); // Ajoutez le nouveau chartView
+    if (!chartWindow) {
+        chartWindow = new QWidget();
+        chartWindow->setWindowTitle("Fenêtre de statistiques");
+        QVBoxLayout *layout = new QVBoxLayout(chartWindow);
+        layout->addWidget(popularityChartView);
+        layout->addWidget(quantityChartView);
+        layout->addWidget(chartView);
+        chartWindow->setLayout(layout);
+    } else {
+        QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(chartWindow->layout());
+        if (layout) {
+            layout->addWidget(chartView);
+        }
     }
-}
 }

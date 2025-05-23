@@ -49,6 +49,13 @@ color: #e0777d;</string>
            </widget>
           </item>
           <item>
+           <widget class="QLabel" name="statusLabel">
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:16pt; font-weight:700; color:#550000;&quot;&gt;status&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QLineEdit" name="value">
             <property name="styleSheet">
              <string notr="true">QLineEdit {

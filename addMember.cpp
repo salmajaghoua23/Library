@@ -29,13 +29,14 @@ addMember::~addMember()
 void addMember::on_addMemberButton_clicked()
 {
     // Récupération des valeurs
+    QString id = ui->id->text().trimmed();
     QString firstName = ui->firstName->text().trimmed();
     QString lastName = ui->lastName->text().trimmed();
     QString phone = ui->phone->text().trimmed();
     QString gender = ui->gender->currentText();
 
     // Vérification des champs avec ET logique (&&)
-    if(firstName.isEmpty() || lastName.isEmpty() || phone.isEmpty() || gender.isEmpty())
+    if(id.isEmpty() ||firstName.isEmpty() || lastName.isEmpty() || phone.isEmpty() || gender.isEmpty())
     {
         QMessageBox::warning(this, "Empty Fields", "All fields are required!");
         return;
@@ -53,9 +54,9 @@ void addMember::on_addMemberButton_clicked()
 
     // Requête préparée (plus sécurisée)
     QSqlQuery query(db);
-    query.prepare("INSERT INTO accounts (username, name, password, role) "
-                  "VALUES (:firstname, :lastname, :phone, :gender)");
-
+    query.prepare("INSERT INTO accounts (username, name, password, role,ID) "
+                  "VALUES (:firstname, :lastname, :phone, :gender,:id)");
+    query.bindValue(":ID", id);
     query.bindValue(":firstname", firstName);
     query.bindValue(":lastname", lastName);
     query.bindValue(":phone", phone);
