@@ -177,78 +177,60 @@ void Login::mouseReleaseEvent(QMouseEvent *event)
 
 void Login::on_loginButton_clicked()
 {
-    // Call the main Database
     digitalLibrary lib;
     auto db = lib.db;
 
-    // Get the username
     QString username = usernameLineEdit->text();
-    // Get the password
     QString password = passwordLineEdit->text();
-    // Check if the db is opened
+
     if (!db.isOpen()) {
         qDebug() << "Failed to open the database";
+        return;
     }
-    // Define the query
-    auto query = QSqlQuery(db);
+
+    QSqlQuery query(db);
 
     if (!username.isEmpty() && !password.isEmpty()) {
-        // Create the body of the query to include the role field
         QString checkLogin = "SELECT * FROM accounts WHERE username='" + username + "' AND password='" + password + "'";
 
         if (query.exec(checkLogin)) {
             int count = 0;
             QString role;
+            int userId = -1;
 
-            int userId = -1;  // Initialisé par défaut
             while (query.next()) {
                 count++;
                 role = query.value("role").toString();
-                userId = query.value("id").toInt();  // "id" doit être le nom de la colonne dans ta base
+                userId = query.value("id").toInt();
             }
-
 
             if (count == 1) {
                 lib.setUsername(username);
-                //✅ Enregistrer la date/heure de connexion dans un fichier
-                QFile file("historique_connexions.txt");
-                if (file.open(QIODevice::Append | QIODevice::Text)) {
-                    QTextStream out(&file);
-                    QString date = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
-                    out << date << "\n";
-                    file.close();
-                }
-                // Hide the current window
+
+                // Enregistrer la connexion dans la table historique_connexions
+                Historique historique(userId,db);                      // Instancie ton objet Historique
+                historique.enregistrerConnexion(userId, db); // Enregistre la connexion dans la base
+
                 this->hide();
 
-                // Redirection en fonction du rôle
                 if (role == "admin") {
-                    lib.exec();  // Appel à la fenêtre principale pour l'admin
-                } else if (role == "student" ) {
+                    lib.exec();
+                } else if (role == "student") {
                     studentLibrary *studentPage = new studentLibrary(this, db);
-                    studentPage->setCurrentUserId(userId);  // ✅ Déjà bien fait !
+                    studentPage->setCurrentUserId(userId);
                     studentPage->exec();
-                    qDebug() << "Welcome Student!";
                 }
             } else {
-                QMessageBox msgBox;
-                msgBox.setText("You are not registered or incorrect credentials!");
-                msgBox.setStyleSheet("QMessageBox { color:  #FF69B4; }");  // Changer la couleur du texte en noir
-                msgBox.exec();
-
-                // QMessageBox::warning(this, "Failed", "You are not registered or incorrect credentials!");
+                QMessageBox::warning(this, "Failed", "You are not registered or incorrect credentials!");
             }
         } else {
             qDebug() << "Cannot execute the query";
         }
     } else {
-        QMessageBox msgBox;
-        msgBox.setText("Empty,Fields are empty!");
-        msgBox.setStyleSheet("QMessageBox { color:  #FF69B4; }");  // Changer la couleur du texte en noir
-        msgBox.exec();
-
+        QMessageBox::warning(this, "Empty Fields", "Fields cannot be empty!");
     }
 }
+
 
 
 void Login::on_signUpButton_clicked()

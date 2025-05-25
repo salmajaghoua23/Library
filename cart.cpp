@@ -40,7 +40,8 @@ Cart::Cart(QWidget *parent, QSqlDatabase db, int userId) :
         }
     )");
     this->setWindowTitle("🛒 Mon Panier de Livres");
-    this->resize(900, 600); // Taille initiale plus grande
+    this->resize(600, 400); // Taille initiale réduite
+  //  this->setMinimumSize(500, 500); // Taille minimale
 
     // Titre stylisé avec icône et ombre
     QLabel *titleLabel = new QLabel("🛒 Mon Panier de Livres", this);
@@ -57,8 +58,6 @@ Cart::Cart(QWidget *parent, QSqlDatabase db, int userId) :
         }
     )");
     mainLayout->addWidget(titleLabel);
-
-    // Sous-titre animé
     QLabel *subtitleLabel = new QLabel("✨ Prêt à emprunter ? Voici votre sélection ✨", this);
     subtitleLabel->setStyleSheet(R"(
         QLabel {
@@ -166,7 +165,7 @@ Cart::Cart(QWidget *parent, QSqlDatabase db, int userId) :
         }
         QTableView::item:hover {
             background: #B2EBF2;
-color:black;
+            color:black;
         }
     )";
 
@@ -177,14 +176,11 @@ color:black;
     ui->tableView->verticalHeader()->setVisible(false);
     ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
-
+    ui->tableView->setMinimumHeight(200);
     // Redimensionner pour occuper plus d'espace
     QSize screenSize = QApplication::primaryScreen()->availableSize();
     ui->tableView->setMinimumHeight(screenSize.height() * 0.6);
-    // Créer un nouveau bouton Retour
-    // Ajouter le bouton Retour au layout des boutons
     buttonLayout->addWidget(btnRetour);
-
     // Connexions des boutons
     connect(ui->btnRemoveSelected, &QPushButton::clicked, this, &Cart::on_btnRemoveSelected_clicked);
     connect(ui->btnClearCart, &QPushButton::clicked, this, &Cart::on_btnClearCart_clicked);
@@ -266,39 +262,30 @@ void Cart::on_btnClearCart_clicked()
 // Emprunter tous les livres
 void Cart::on_btnBorrowAll_clicked()
 {
-    QSqlQuery select(db), update(db);
-    select.prepare("SELECT book_id, name FROM cart WHERE user_id = :userId AND borrowed = 0");
-
+    QSqlQuery select(db), deleteQuery(db);
+    select.prepare("SELECT book_id, name FROM cart WHERE user_id = :userId");
     select.bindValue(":userId", userId);
 
     if (select.exec()) {
-        bool success = true;  // Variable pour suivre si toutes les opérations ont réussi
+        bool success = true;
 
         while (select.next()) {
             int bookId = select.value("book_id").toInt();
             QString title = select.value("name").toString();
 
-            // Marquer le livre comme emprunté dans la table cart
-            update.prepare("UPDATE cart SET borrowed = 1 WHERE user_id = :userId AND book_id = :bookId AND borrowed = 0");
-            update.bindValue(":userId", userId);
-            update.bindValue(":bookId", bookId);
+            // Supprimer le livre du panier (car il est "emprunté")
+            deleteQuery.prepare("DELETE FROM cart WHERE user_id = :userId AND book_id = :bookId");
+            deleteQuery.bindValue(":userId", userId);
+            deleteQuery.bindValue(":bookId", bookId);
 
-            if (!update.exec() || update.numRowsAffected() == 0) {
-                success = false;  // Si l'opération échoue pour un livre, on garde la variable en échec
+            if (!deleteQuery.exec() || deleteQuery.numRowsAffected() == 0) {
+                success = false;
                 break;
             }
 
-            // Enregistrer l'emprunt dans l'historique
-            QFile file("historique_reservations.txt");
-            if (file.open(QIODevice::Append | QIODevice::Text)) {
-                QTextStream out(&file);
-                QString date = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
-                out << date << " - " << title << " emprunté par l'utilisateur " << userId << "\n";
-                file.close();
-            }
+            // Tu peux ajouter une insertion dans une table historique ici si nécessaire
         }
 
-        // Rafraîchir le panier si tout a été emprunté avec succès
         if (success) {
             chargerPanier();
             QMessageBox::information(this, "Succès", "Tous les livres ont été empruntés.");
@@ -339,7 +326,6 @@ void Cart::showCart()
         QMessageBox::warning(this, "Erreur", "Impossible d'afficher le panier.");
     }
 }
-
 void Cart::on_borrowButton_clicked()
 {
     QAbstractItemModel* model = ui->tableView->model();
@@ -348,44 +334,49 @@ void Cart::on_borrowButton_clicked()
         return;
     }
 
-    QModelIndex selectedIndex = ui->tableView->selectionModel()->currentIndex();
-    if (!selectedIndex.isValid()) {
+    QModelIndexList selectedIndexes = ui->tableView->selectionModel()->selectedRows();
+    if (selectedIndexes.isEmpty()) {
         QMessageBox::warning(this, "Erreur", "Veuillez sélectionner un livre.");
         return;
     }
 
-    int row = selectedIndex.row();
-    int bookId = model->data(model->index(row, 0)).toInt(); // Colonne 0 = ID
-    QString nomLivre = model->data(model->index(row, 1)).toString(); // Colonne 1 = Nom
+    int row = selectedIndexes.first().row();
 
-    // Mettre à jour la base de données pour marquer le livre comme emprunté
-    QSqlQuery updateQuery(db);
-    updateQuery.prepare("UPDATE cart SET borrowed = 1 WHERE user_id = :userId AND book_id = :bookId AND borrowed = 0");
-    updateQuery.bindValue(":userId", userId);
-    updateQuery.bindValue(":bookId", bookId);
+  int bookId = model->data(model->index(row, 0)).toInt();
+    QString bookName = model->data(model->index(row, 1)).toString();
 
-    if (!updateQuery.exec() || updateQuery.numRowsAffected() == 0) {
-        QMessageBox::warning(this, "Erreur", "Échec de l'emprunt du livre.");
+    QSqlQuery deleteQuery(db);
+    qDebug() << "Ligne sélectionnée: " << row;
+    for (int i = 0; i < model->columnCount(); ++i) {
+        qDebug() << "Colonne" << i << ":" << model->data(model->index(row, i)).toString();
+    }
+
+    deleteQuery.prepare("DELETE FROM cart WHERE user_id = :userId AND book_id = :bookId");
+    deleteQuery.bindValue(":userId", userId);
+    deleteQuery.bindValue(":bookId", bookId);
+
+    if (!deleteQuery.exec() || deleteQuery.numRowsAffected() == 0) {
+        QMessageBox::warning(this, "Erreur", "Aucun livre supprimé. Vérifiez les ID.");
         return;
     }
 
-    // Enregistrer dans le fichier historique
-    QFile file("historique_reservations.txt");
-    if (file.open(QIODevice::Append | QIODevice::Text)) {
-        QTextStream out(&file);
-        QString date = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
-        out << date << " - " << nomLivre << " emprunté par l'utilisateur " << userId << "\n";
-        file.close();
-    }
+    // Historique
+    QSqlQuery insertQuery(db);
+    insertQuery.prepare("INSERT INTO borrow_history (user_id, book_id, book_name, borrowed_at) "
+                        "VALUES (:userId, :bookId, :bookName, :borrowedAt)");
+    insertQuery.bindValue(":userId", userId);
+    insertQuery.bindValue(":bookId", bookId);
+    insertQuery.bindValue(":bookName", bookName);
+    insertQuery.bindValue(":borrowedAt", QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss"));
+    insertQuery.exec(); // Optionnel : ajouter vérification
 
-    // Rafraîchir l'affichage
-    chargerPanier();
+    chargerPanier(); // ou showCart()
     QMessageBox::information(this, "Succès", "Le livre a été emprunté avec succès.");
 }
 
 int Cart::getUserId()
 {
-    return userId;  // ID fictif de l'utilisateur
+    return userId;
 }
 void Cart::removeBookFromCart(int rowIndex)
 {
