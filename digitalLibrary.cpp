@@ -259,26 +259,27 @@ digitalLibrary::digitalLibrary(QWidget *parent) :
     containerLayout->addWidget(mainFrame);
 
     // === Connexions ===
-
-    connect(booksBtn, &QPushButton::toggled, booksSubMenu, &QWidget::setVisible);
-    connect(membersBtn, &QPushButton::toggled, membersSubMenu, &QWidget::setVisible);
-
-    connect(addBookSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_addBookBtn_clicked);
-    connect(editBookSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_editBookBtn_clicked);
-    connect(deleteBookSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_deleteBookBtn_clicked);
-    connect(listBooksSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_booksListBtn_clicked);
-    //connect(issueBookSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_issueBookBtn_clicked);
-    //connect(returnBookSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_returnBookBtn_clicked);
-    //connect(manageGenreSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_manageGenre_clicked);
-
     connect(addMemberSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_addMemberBtn_clicked);
     connect(editMemberSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_editMemberBtn_clicked);
     connect(deleteMemberSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_deleteMemberBtn_clicked);
     connect(listMembersSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_membersListBtn_clicked);
 
     connect(authorsBtn, &QPushButton::clicked, this, &digitalLibrary::on_manageAuthorButton_clicked);
-    // connect(statsBtn, &QPushButton::clicked, this, &digitalLibrary::on_statsButton_clicked);
-    //connect(logoutBtn, &QPushButton::clicked, this, close);
+    connect(addBookBtn, &QPushButton::clicked, this, &digitalLibrary::on_addBookBtn_clicked);
+    connect(addMemberBtn, &QPushButton::clicked, this, &digitalLibrary::on_addMemberBtn_clicked);
+    connect(addAuthorBtn, &QPushButton::clicked, this, &digitalLibrary::on_manageAuthorButton_clicked);
+    // ========== CONNEXIONS ==========
+    connect(booksBtn, &QPushButton::toggled, booksSubMenu, &QWidget::setVisible);
+    connect(membersBtn, &QPushButton::toggled, membersSubMenu, &QWidget::setVisible);
+    connect(logoutBtn, &QPushButton::clicked, this, &digitalLibrary::close);
+    connect(viewAllBtn, &QPushButton::clicked, this, &digitalLibrary::on_booksListBtn_clicked);
+
+    // Connexions des sous-menus
+    connect(addBookSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_addBookBtn_clicked);
+    connect(editBookSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_editBookBtn_clicked);
+    connect(deleteBookSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_deleteBookBtn_clicked);
+    connect(listBooksSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_booksListBtn_clicked);
+
 }
 
 QPushButton* digitalLibrary::createSidebarButton(const QString &text, const QString &style)
