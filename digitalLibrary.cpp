@@ -27,35 +27,32 @@
 #include <QGraphicsDropShadowEffect>
 #include <QFontDatabase>
 #include <QStackedWidget>
+QSqlDatabase digitalLibrary::db;
 digitalLibrary::digitalLibrary(QWidget *parent) :
     QDialog(parent),
     m_usernameLabel(new QLabel(this)),
     booksBtn(nullptr),
     membersBtn(nullptr)
 {
-    connectDB(); // Assurez-vous que la base est connectée
+    connectDB(); // Connexion base de données
+
     m_usernameLabel->setAlignment(Qt::AlignCenter);
     m_usernameLabel->setStyleSheet("font-weight: bold; color: #2c3e50;");
 
-    // Configuration de la fenêtre
     setWindowTitle("Bibliothèque Digitale");
     setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
     setAttribute(Qt::WA_TranslucentBackground);
     setFixedSize(900, 700);
 
-    // Couleurs (violet/bleu)
     QString primaryColor = "#6a5acd";
     QString secondaryColor = "#9370db";
     QString darkColor = "#483d8b";
     QString lightColor = "#e6e6fa";
-    QString accentColor = "#4169e1";
 
-    // Police
     QFont titleFont("Segoe UI", 24, QFont::Bold);
     QFont headerFont("Segoe UI", 18, QFont::Bold);
     QFont normalFont("Segoe UI", 12);
 
-    // Conteneur principal
     QFrame *mainFrame = new QFrame(this);
     mainFrame->setStyleSheet("QFrame { background-color: white; border-radius: 15px; }");
     QGraphicsDropShadowEffect *shadow = new QGraphicsDropShadowEffect();
@@ -64,21 +61,19 @@ digitalLibrary::digitalLibrary(QWidget *parent) :
     shadow->setColor(QColor(0, 0, 0, 100));
     mainFrame->setGraphicsEffect(shadow);
 
-    // Layout principal (horizontal)
     QHBoxLayout *mainLayout = new QHBoxLayout(mainFrame);
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(0);
 
-    // ========== SIDEBAR ==========
+    // Sidebar
     QFrame *sidebar = new QFrame();
     sidebar->setFixedWidth(250);
     sidebar->setStyleSheet(QString("QFrame { background-color: %1; border-top-left-radius: 15px; border-bottom-left-radius: 15px; }").arg(darkColor));
 
     QVBoxLayout *sidebarLayout = new QVBoxLayout(sidebar);
     sidebarLayout->setContentsMargins(20, 30, 20, 30);
-    sidebarLayout->setSpacing(20);
+    sidebarLayout->setSpacing(10);
 
-    // Logo et titre
     QLabel *logo = new QLabel("📚");
     logo->setStyleSheet("font-size: 40px;");
     logo->setAlignment(Qt::AlignCenter);
@@ -90,92 +85,83 @@ digitalLibrary::digitalLibrary(QWidget *parent) :
 
     sidebarLayout->addWidget(logo);
     sidebarLayout->addWidget(sidebarTitle);
-    sidebarLayout->addSpacing(30);
+    sidebarLayout->addSpacing(20);
 
-    // Style des boutons
-    // Style des boutons
-    QString buttonStyle = QString(
-                              "QPushButton { "
-                              "text-align: left; padding: 15px 20px; border-radius: 8px; "
-                              "font-size: 14px; color: %1; background-color: transparent; "
-                              "}"
-                              "QPushButton:hover { background-color: rgba(255,255,255,0.1); }"
-                              ).arg(lightColor);
-    // Boutons sidebar
-    QPushButton *dashboardBtn = createSidebarButton("📊 Tableau de bord", buttonStyle);
-    booksBtn = createSidebarButton("📚 Gestion Livres", buttonStyle);
-    membersBtn = createSidebarButton("👥 Gestion Membres", buttonStyle);
-    QPushButton *authorsBtn = createSidebarButton("✍ Gestion Auteurs", buttonStyle);
-    QPushButton *statsBtn = createSidebarButton("📈 Statistiques", buttonStyle);
+    QString buttonStyle =
+        "QPushButton {"
+        " text-align: left; padding: 15px 20px; border-radius: 8px;"
+        " font-size: 14px; color: white; background-color: transparent;"
+        "}"
+        "QPushButton:hover { background-color: rgba(255,255,255,0.1); }"
+        "QPushButton:checked { background-color: rgba(255,255,255,0.2); }";
 
-    // Sous-menu pour les livres
-    QVBoxLayout *booksSubMenu = new QVBoxLayout();
-    booksSubMenu->setContentsMargins(20, 5, 5, 5);
-    booksSubMenu->setSpacing(5);
     QString subButtonStyle =
         "QPushButton {"
-        "   background-color: #584d8b;"
-        "   color: white;"
-        "   border: none;"
-        "   padding: 10px 15px;"
-        "   border-radius: 6px;"
-        "   font-size: 13px;"
-        "   text-align: left;"
+        " text-align: left; padding: 13px 40px; border-radius: 4px;"
+        " font-size: 13px; color: black; background-color: transparent;"
+        "background-color:white"
         "}"
-        "QPushButton:hover {"
-        "   background-color: #6a5acd;"
-        "}";
+        "QPushButton:hover { background-color: rgba(255,255,255,0.15); }";
 
-    QPushButton *addBookSubBtn = createSubMenuButton("➕ Ajouter livre");
-    QPushButton *editBookSubBtn = createSubMenuButton("✏ Modifier livre");
-    QPushButton *deleteBookSubBtn = createSubMenuButton("🗑 Supprimer livre");
-    QPushButton *listBooksSubBtn = createSubMenuButton("📋 Liste des livres");
-    QPushButton *issueBookSubBtn = createSubMenuButton("📥 Emprunter livre");
-    QPushButton *returnBookSubBtn = createSubMenuButton("📤 Retourner livre");
-    QPushButton *manageGenreSubBtn = createSubMenuButton("🏷 Gérer genres");
+    // === Boutons principaux ===
 
-    booksSubMenu->addWidget(addBookSubBtn);
-    booksSubMenu->addWidget(editBookSubBtn);
-    booksSubMenu->addWidget(deleteBookSubBtn);
-    booksSubMenu->addWidget(listBooksSubBtn);
-    booksSubMenu->addWidget(issueBookSubBtn);
-    booksSubMenu->addWidget(returnBookSubBtn);
-    booksSubMenu->addWidget(manageGenreSubBtn);
+    // Tableau de bord (sans sous-menu)
+    QPushButton *dashboardBtn = new QPushButton("📊 Tableau de bord");
+    dashboardBtn->setStyleSheet(buttonStyle);
 
-    QWidget *booksSubMenuWidget = new QWidget();
-    booksSubMenuWidget->setLayout(booksSubMenu);
-    booksSubMenuWidget->hide();
+    // Livres
+    booksBtn = new QPushButton("📚 Gestion Livres");
+    booksBtn->setCheckable(true);
+    booksBtn->setStyleSheet(buttonStyle);
 
-    // Sous-menu pour les membres
-    QVBoxLayout *membersSubMenu = new QVBoxLayout();
-    membersSubMenu->setContentsMargins(20, 5, 5, 5);
-    membersSubMenu->setSpacing(5);
+    QWidget *booksSubMenu = new QWidget();
+    QVBoxLayout *booksSubLayout = new QVBoxLayout(booksSubMenu);
+    booksSubLayout->setContentsMargins(20, 0, 0, 0);
+    booksSubLayout->setSpacing(5);
+    booksSubMenu->setVisible(false);
 
-    QPushButton *addMemberSubBtn = createSubMenuButton("➕ Ajouter membre");
-    QPushButton *editMemberSubBtn = createSubMenuButton("✏ Modifier membre");
-    QPushButton *deleteMemberSubBtn = createSubMenuButton("🗑 Supprimer membre");
-    QPushButton *listMembersSubBtn = createSubMenuButton("📋 Liste des membres");
+    QPushButton *addBookSubBtn = new QPushButton("➕ Ajouter livre");
+    QPushButton *editBookSubBtn = new QPushButton("✏ Modifier livre");
+    QPushButton *deleteBookSubBtn = new QPushButton("🗑 Supprimer livre");
+    QPushButton *listBooksSubBtn = new QPushButton("📋 Liste des livres");
+    QPushButton *issueBookSubBtn = new QPushButton("📥 Emprunter livre");
+    QPushButton *returnBookSubBtn = new QPushButton("📤 Retourner livre");
 
-    membersSubMenu->addWidget(addMemberSubBtn);
-    membersSubMenu->addWidget(editMemberSubBtn);
-    membersSubMenu->addWidget(deleteMemberSubBtn);
-    membersSubMenu->addWidget(listMembersSubBtn);
+    for (auto btn : {addBookSubBtn, editBookSubBtn, deleteBookSubBtn, listBooksSubBtn}) {
+        btn->setStyleSheet(subButtonStyle);
+        booksSubLayout->addWidget(btn);
+    }
 
-    QWidget *membersSubMenuWidget = new QWidget();
-    membersSubMenuWidget->setLayout(membersSubMenu);
-    membersSubMenuWidget->hide();
+    // Membres
+    membersBtn = new QPushButton("👥 Gestion Membres");
+    membersBtn->setCheckable(true);
+    membersBtn->setStyleSheet(buttonStyle);
 
-    // Ajout des éléments à la sidebar
-    sidebarLayout->addWidget(dashboardBtn);
-    sidebarLayout->addWidget(booksBtn);
-    sidebarLayout->addWidget(booksSubMenuWidget);
-    sidebarLayout->addWidget(membersBtn);
-    sidebarLayout->addWidget(membersSubMenuWidget);
-    sidebarLayout->addWidget(authorsBtn);
-    sidebarLayout->addWidget(statsBtn);
-    sidebarLayout->addStretch();
+    QWidget *membersSubMenu = new QWidget();
+    QVBoxLayout *membersSubLayout = new QVBoxLayout(membersSubMenu);
+    membersSubLayout->setContentsMargins(20, 0, 0, 0);
+    membersSubLayout->setSpacing(5);
+    membersSubMenu->setVisible(false);
 
-    // Bouton déconnexion
+    QPushButton *addMemberSubBtn = new QPushButton("➕ Ajouter membre");
+    QPushButton *editMemberSubBtn = new QPushButton("✏ Modifier membre");
+    QPushButton *deleteMemberSubBtn = new QPushButton("🗑 Supprimer membre");
+    QPushButton *listMembersSubBtn = new QPushButton("📋 Liste des membres");
+
+    for (auto btn : {addMemberSubBtn, editMemberSubBtn, deleteMemberSubBtn, listMembersSubBtn}) {
+        btn->setStyleSheet(subButtonStyle);
+        membersSubLayout->addWidget(btn);
+    }
+
+    // Auteurs (sans sous-menu)
+    QPushButton *authorsBtn = new QPushButton("✍ Gestion Auteurs");
+    authorsBtn->setStyleSheet(buttonStyle);
+
+    // Statistiques (sans sous-menu)
+    QPushButton *statsBtn = new QPushButton("📈 Statistiques");
+    statsBtn->setStyleSheet(buttonStyle);
+    QPushButton *manageGenreSubBtn = new QPushButton("🏷 Gérer genres");
+    manageGenreSubBtn->setStyleSheet(buttonStyle);
     QPushButton *logoutBtn = new QPushButton("🚪 Déconnexion");
     logoutBtn->setStyleSheet(
         "QPushButton { "
@@ -184,15 +170,24 @@ digitalLibrary::digitalLibrary(QWidget *parent) :
         "}"
         "QPushButton:hover { background-color: rgba(231, 76, 60, 0.3); }"
         );
+
+    // Ajouter boutons à la sidebar
+    sidebarLayout->addWidget(dashboardBtn);
+    sidebarLayout->addWidget(booksBtn);
+    sidebarLayout->addWidget(booksSubMenu);
+    sidebarLayout->addWidget(membersBtn);
+    sidebarLayout->addWidget(membersSubMenu);
+    sidebarLayout->addWidget(authorsBtn);
+    sidebarLayout->addWidget(statsBtn);
+    sidebarLayout->addStretch();
     sidebarLayout->addWidget(logoutBtn);
 
-    // ========== MAIN CONTENT ==========
+    // === Partie contenu principale ===
     QFrame *contentFrame = new QFrame();
     QVBoxLayout *contentLayout = new QVBoxLayout(contentFrame);
     contentLayout->setContentsMargins(30, 30, 30, 30);
     contentLayout->setSpacing(20);
 
-    // Header
     QHBoxLayout *headerLayout = new QHBoxLayout();
 
     QLabel *welcomeLabel = new QLabel("Bonjour, Admin");
@@ -211,7 +206,6 @@ digitalLibrary::digitalLibrary(QWidget *parent) :
     headerLayout->addWidget(userLabel);
     contentLayout->addLayout(headerLayout);
 
-    // Cartes statistiques
     QHBoxLayout *statsLayout = new QHBoxLayout();
     statsLayout->setSpacing(20);
 
@@ -226,7 +220,6 @@ digitalLibrary::digitalLibrary(QWidget *parent) :
     statsLayout->addWidget(loanCard);
     contentLayout->addLayout(statsLayout);
 
-    // Section récentes activités
     QLabel *activityTitle = new QLabel("Activités Récentes");
     activityTitle->setFont(headerFont);
     activityTitle->setStyleSheet(QString("color: %1; margin-top: 20px;").arg(darkColor));
@@ -240,7 +233,6 @@ digitalLibrary::digitalLibrary(QWidget *parent) :
     activityFrame->setFixedHeight(200);
     contentLayout->addWidget(activityFrame);
 
-    // Section rapide actions
     QLabel *quickActionsTitle = new QLabel("Actions Rapides");
     quickActionsTitle->setFont(headerFont);
     quickActionsTitle->setStyleSheet(QString("color: %1; margin-top: 20px;").arg(darkColor));
@@ -259,46 +251,36 @@ digitalLibrary::digitalLibrary(QWidget *parent) :
     quickActionsLayout->addWidget(addAuthorBtn);
     quickActionsLayout->addWidget(viewAllBtn);
     contentLayout->addLayout(quickActionsLayout);
-     membersSubMenuWidget->setStyleSheet("background-color: #584d8b;");
-     booksSubMenuWidget->setStyleSheet("background-color: #584d8b;");
 
-    // Ajout des sections au layout principal
     mainLayout->addWidget(sidebar);
     mainLayout->addWidget(contentFrame);
 
-    // Positionnement final
     QHBoxLayout *containerLayout = new QHBoxLayout(this);
     containerLayout->addWidget(mainFrame);
 
-    // Connexions
-    connect(booksBtn, &QPushButton::clicked, [booksSubMenuWidget]() {
-        booksSubMenuWidget->setVisible(!booksSubMenuWidget->isVisible());
-    });
+    // === Connexions ===
 
-    connect(membersBtn, &QPushButton::clicked, [membersSubMenuWidget]() {
-        membersSubMenuWidget->setVisible(!membersSubMenuWidget->isVisible());
-    });
+    connect(booksBtn, &QPushButton::toggled, booksSubMenu, &QWidget::setVisible);
+    connect(membersBtn, &QPushButton::toggled, membersSubMenu, &QWidget::setVisible);
 
     connect(addBookSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_addBookBtn_clicked);
     connect(editBookSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_editBookBtn_clicked);
     connect(deleteBookSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_deleteBookBtn_clicked);
     connect(listBooksSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_booksListBtn_clicked);
-    connect(issueBookSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_issueBookBtn_clicked);
-    connect(returnBookSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_returnBookBtn_clicked);
-    connect(manageGenreSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_manageGenre_clicked);
+    //connect(issueBookSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_issueBookBtn_clicked);
+    //connect(returnBookSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_returnBookBtn_clicked);
+    //connect(manageGenreSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_manageGenre_clicked);
 
     connect(addMemberSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_addMemberBtn_clicked);
     connect(editMemberSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_editMemberBtn_clicked);
     connect(deleteMemberSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_deleteMemberBtn_clicked);
     connect(listMembersSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_membersListBtn_clicked);
 
-    connect(addBookBtn, &QPushButton::clicked, this, &digitalLibrary::on_addBookBtn_clicked);
-    connect(addMemberBtn, &QPushButton::clicked, this, &digitalLibrary::on_addMemberBtn_clicked);
-    connect(addAuthorBtn, &QPushButton::clicked, this, &digitalLibrary::on_manageAuthorButton_clicked);
-    connect(viewAllBtn, &QPushButton::clicked, this, &digitalLibrary::on_booksListBtn_clicked);
-    connect(statsBtn, &QPushButton::clicked, this, &digitalLibrary::on_statsButton_clicked);
-    connect(logoutBtn, &QPushButton::clicked, this, &digitalLibrary::close);
+    connect(authorsBtn, &QPushButton::clicked, this, &digitalLibrary::on_manageAuthorButton_clicked);
+    // connect(statsBtn, &QPushButton::clicked, this, &digitalLibrary::on_statsButton_clicked);
+    //connect(logoutBtn, &QPushButton::clicked, this, close);
 }
+
 QPushButton* digitalLibrary::createSidebarButton(const QString &text, const QString &style)
 {
     QPushButton *btn = new QPushButton(text);
@@ -533,24 +515,32 @@ digitalLibrary::~digitalLibrary()
     delete ui;
 }
 
-void digitalLibrary::on_statsButton_clicked() {
-    if (!statWindow) {
-        statWindow = new Statistic(db, this); // 'this' pour parentage
-        connect(statWindow, &QObject::destroyed, [this]() {
-            statWindow = nullptr;
-        });
-    }
-    statWindow->loadAndShowStats(); // Charge et affiche
-    //statWindow->show();
-}
-void digitalLibrary::on_manageGenre_clicked()
-{
-    manageBooks manage;
-    manage.exec();
-}
+// void digitalLibrary::on_statsButton_clicked() {
+//     if (!statWindow) {
+//         statWindow = new Statistic(db, this); // 'this' pour parentage
+//         connect(statWindow, &QObject::destroyed, [this]() {
+//             statWindow = nullptr;
+//         });
+//     }
+//     statWindow->loadAndShowStats(); // Charge et affiche
+//     //statWindow->show();
+// }
+// void digitalLibrary::on_manageGenre_clicked()
+// {
+//     manageBooks manage;
+//     manage.exec();
+// }
 
 void digitalLibrary::on_manageAuthorButton_clicked()
-{
+{    qDebug() << "Gestion des auteurs";
+
+    QSqlDatabase db = QSqlDatabase::database(); // réutilise la connexion
+    if (!db.isOpen()) {
+        if (!db.open()) {
+            qDebug() << "Erreur: impossible d'ouvrir la base de données";
+            return;
+        }
+    }
     ManageAuthors manage;
     manage.exec();
 }
@@ -798,10 +788,10 @@ void digitalLibrary::on_testDataButton_clicked()
 }
 
 
-void digitalLibrary::on_issueBookBtn_clicked() {
-    // Code
-}
+// void digitalLibrary::on_issueBookBtn_clicked() {
+//     // Code
+// }
 
-void digitalLibrary::on_returnBookBtn_clicked() {
-    // Code
-}
+// void digitalLibrary::on_returnBookBtn_clicked() {
+//     // Code
+// }

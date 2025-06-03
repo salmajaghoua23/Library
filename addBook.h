@@ -1,12 +1,9 @@
 #ifndef ADDBOOK_H
 #define ADDBOOK_H
+
 #include <QDialog>
-#include <QWidget>
-#include <QtSql/QSqlDatabase>
 #include <QSqlQuery>
-#include<QSqlQueryModel>
-#include <QDir>
-#include <QObject>
+#include <QMessageBox>
 
 namespace Ui {
 class addBook;
@@ -20,23 +17,18 @@ public:
     explicit addBook(QWidget *parent = nullptr);
     ~addBook();
 
-    void setValidator();
-
 private slots:
-
     void on_cancelBtn_clicked();
-
     void on_addBookBtn_clicked();
-
     void on_selectImgBtn_clicked();
-
     void on_chooseAuthBtn_clicked();
-
     void on_chooseGenreBtn_clicked();
 
 private:
     Ui::addBook *ui;
     QString coverFilename;
+
+    void setValidator();
 };
 
 #endif // ADDBOOK_H

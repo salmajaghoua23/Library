@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>163</height>
+    <width>695</width>
+    <height>282</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -58,7 +58,7 @@ color: #e0777d;</string>
 { 
 	border-radius:15px;
 	font: 16pt &quot;georgia&quot;;
-	background-color:rgb(168, 0, 252);
+	background-color:#6a5acd;
 	padding : 0 4px;
 	border-radius:20px;
 	color:rgb(255, 255, 0)

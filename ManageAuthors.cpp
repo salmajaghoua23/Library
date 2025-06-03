@@ -3,29 +3,242 @@
 #include "digitalLibrary.h"
 #include <QDebug>
 #include <QMessageBox>
+#include "ManageAuthors.h"
+#include "ui_ManageAuthors.h"
+#include <QGraphicsDropShadowEffect>
+#include <QLinearGradient>
+#include <QStyledItemDelegate>
+
+// Délegate personnalisé pour la table
+class AuthorTableDelegate : public QStyledItemDelegate {
+public:
+    using QStyledItemDelegate::QStyledItemDelegate;
+
+    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override {
+        QStyleOptionViewItem opt = option;
+        initStyleOption(&opt, index);
+
+        painter->save();
+
+        // Fond alterné pour les lignes
+        if (index.row() % 2 == 0) {
+            painter->fillRect(opt.rect, QColor(250, 245, 255));
+        } else {
+            painter->fillRect(opt.rect, QColor(240, 235, 255));
+        }
+
+        // Style pour la sélection
+        if (opt.state & QStyle::State_Selected) {
+            painter->fillRect(opt.rect, QColor(106, 90, 205, 50));
+            painter->setPen(QPen(QColor(106, 90, 205), 2));
+            painter->drawRect(opt.rect.adjusted(1, 1, -1, -1));
+        }
+
+        painter->restore();
+        QStyledItemDelegate::paint(painter, opt, index);
+    }
+};
 
 ManageAuthors::ManageAuthors(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ManageAuthors)
 {
     ui->setupUi(this);
-    this->setWindowTitle("Manage Authors");
 
-    model = new QSqlQueryModel;
+    // Configuration de base
+    this->setWindowTitle("Gestion des Auteurs • Bibliothèque Digitale");
+    this->setMinimumSize(1000, 700);
+    this->setStyleSheet("background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #f5f0ff, stop:1 #eef2ff);");
 
-    //call the mail Database
-    digitalLibrary lib;
-    auto db = lib.db;
+    // Conteneur principal
+    QFrame *mainContainer = new QFrame(this);
+    mainContainer->setGeometry(25, 25, this->width()-50, this->height()-50);
+    mainContainer->setStyleSheet(
+        "background: white;"
+        "color:black;"
+        "border-radius: 15px;"
+        "border: 1px solid #e0d4ff;"
+        );
+
+    // Effet d'ombre
+    QGraphicsDropShadowEffect *shadow = new QGraphicsDropShadowEffect(mainContainer);
+    shadow->setBlurRadius(30);
+    shadow->setOffset(0, 5);
+    shadow->setColor(QColor(106, 90, 205, 80));
+    mainContainer->setGraphicsEffect(shadow);
+
+    // Header avec dégradé
+    QFrame *header = new QFrame(mainContainer);
+    header->setGeometry(0, 0, mainContainer->width(), 80);
+    header->setStyleSheet(
+        "background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #6a5acd, stop:1 #9575cd);"
+        "border-top-left-radius: 15px;"
+        "border-top-right-radius: 15px;"
+        );
+
+    // Titre
+    QLabel *title = new QLabel("Gestion des Auteurs", header);
+    title->setGeometry(30, 15, header->width()-60, 50);
+    title->setStyleSheet(
+        "color: white;"
+        "font-family: 'Segoe UI';"
+        "font-size: 24px;"
+        "font-weight: bold;"
+        );
+
+    // Zone de formulaire
+    QFrame *formContainer = new QFrame(mainContainer);
+    formContainer->setGeometry(30, 100, 400, mainContainer->height()-180);
+    formContainer->setStyleSheet("background: transparent;");
+
+    // Style des champs
+    QString fieldStyle =
+        "QLineEdit, QTextEdit {"
+        "   border: 2px solid #d1c4e9;"
+        "   border-radius: 8px;"
+        "   padding: 10px 15px;"
+        "   font-size: 14px;"
+        "   background: #fafaff;"
+        "   font-family: 'Segoe UI';"
+        "}"
+        "QLineEdit:focus, QTextEdit:focus {"
+        "   border: 2px solid #7e57c2;"
+        "   background: white;"
+        "}";
+
+    // Positionnement des champs
+    int yPos = 0;
+    const int fieldHeight = 45;
+    const int margin = 20;
+
+    // ID
+    QLabel *idLabel = new QLabel("ID Auteur:", formContainer);
+    idLabel->setGeometry(0, yPos, 380, 20);
+    idLabel->setStyleSheet("color: #5e4d9b; font-weight: bold;");
+    ui->ID->setParent(formContainer);
+    ui->ID->setGeometry(0, yPos+25, 380, fieldHeight);
+    ui->ID->setStyleSheet(fieldStyle);
+    yPos += fieldHeight + margin + 25;
+
+    // Prénom
+    QLabel *firstNameLabel = new QLabel("Prénom:", formContainer);
+    firstNameLabel->setGeometry(0, yPos, 380, 20);
+    firstNameLabel->setStyleSheet("color: #5e4d9b; font-weight: bold;");
+    ui->firstName->setParent(formContainer);
+    ui->firstName->setGeometry(0, yPos+25, 380, fieldHeight);
+    ui->firstName->setStyleSheet(fieldStyle);
+    yPos += fieldHeight + margin + 25;
+
+    // Nom
+    QLabel *lastNameLabel = new QLabel("Nom:", formContainer);
+    lastNameLabel->setGeometry(0, yPos, 380, 20);
+    lastNameLabel->setStyleSheet("color: #5e4d9b; font-weight: bold;");
+    ui->lastName->setParent(formContainer);
+    ui->lastName->setGeometry(0, yPos+25, 380, fieldHeight);
+    ui->lastName->setStyleSheet(fieldStyle);
+    yPos += fieldHeight + margin + 25;
+
+    // Expertise
+    QLabel *expertiseLabel = new QLabel("Domaine d'expertise:", formContainer);
+    expertiseLabel->setGeometry(0, yPos, 380, 20);
+    expertiseLabel->setStyleSheet("color: #5e4d9b; font-weight: bold;");
+    ui->expertise->setParent(formContainer);
+    ui->expertise->setGeometry(0, yPos+25, 380, fieldHeight);
+    ui->expertise->setStyleSheet(fieldStyle);
+    yPos += fieldHeight + margin + 25;
+
+    // À propos
+    QLabel *aboutLabel = new QLabel("Biographie:", formContainer);
+    aboutLabel->setGeometry(0, yPos, 380, 20);
+    aboutLabel->setStyleSheet("color: #5e4d9b; font-weight: bold;");
+    ui->about->setParent(formContainer);
+    ui->about->setGeometry(0, yPos+25, 380, 120);
+    ui->about->setStyleSheet(fieldStyle + "min-height: 120px;");
+
+    // Boutons d'action
+    int buttonY = formContainer->height() - 60;
+    ui->addButtton->setParent(formContainer);
+    ui->addButtton->setGeometry(0, buttonY, 120, 45);
+    ui->addButtton->setStyleSheet(
+        "QPushButton {"
+        "   background: #6a5acd;"
+        "   border-radius: 8px;"
+        "   color: white;"
+        "   font-weight: bold;"
+        "}"
+        "QPushButton:hover { background: #7e57c2; }"
+        );
+    ui->addButtton->setText("Ajouter");
+
+    ui->editButton->setParent(formContainer);
+    ui->editButton->setGeometry(140, buttonY, 120, 45);
+    ui->editButton->setStyleSheet(
+        "QPushButton {"
+        "   background: #9575cd;"
+        "   border-radius: 8px;"
+        "   color: white;"
+        "   font-weight: bold;"
+        "}"
+        "QPushButton:hover { background: #a188d6; }"
+        );
+    ui->editButton->setText("Modifier");
+
+    ui->deleteButton->setParent(formContainer);
+    ui->deleteButton->setGeometry(280, buttonY, 120, 45);
+    ui->deleteButton->setStyleSheet(
+        "QPushButton {"
+        "   background: #d32f2f;"
+        "   border-radius: 8px;"
+        "   color: white;"
+        "   font-weight: bold;"
+        "}"
+        "QPushButton:hover { background: #f44336; }"
+        );
+    ui->deleteButton->setText("Supprimer");
+
+    // TableView
+    ui->authorTableView->setParent(mainContainer);
+    ui->authorTableView->setGeometry(450, 100, mainContainer->width()-490, mainContainer->height()-180);
+    ui->authorTableView->setStyleSheet(
+        "QTableView {"
+        "   border: 2px solid #d1c4e9;"
+        "   border-radius: 8px;"
+        "   background: #fafaff;"
+        "   alternate-background-color: #f5f0ff;"
+        "   selection-background-color: #b39ddb;"
+        "color:black;"
+        "}"
+        "QHeaderView::section {"
+        "   background: #6a5acd;"
+        "   color: blue;"
+        "   padding: 8px;"
+        "   border: none;"
+        "}"
+        );
+
+    // Appliquer le delegate personnalisé
+    ui->authorTableView->setItemDelegate(new AuthorTableDelegate(this));
+    ui->authorTableView->horizontalHeader()->setDefaultAlignment(Qt::AlignLeft);
+    ui->authorTableView->verticalHeader()->setVisible(false);
+    ui->authorTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->authorTableView->setSelectionMode(QAbstractItemView::SingleSelection);
+
+    // Initialisation du modèle
+    model = new QSqlQueryModel(this);
+    auto db = digitalLibrary::db;
 
     auto select = QSqlQuery(db);
-    QString selectAll = {"SELECT * FROM authors"};
+    QString selectAll = "SELECT * FROM authors";
     if(!select.exec(selectAll))
         qDebug() << "Cannot select from authors";
-   // model->setQuery(select);
+
+    model->setQuery(select);
     ui->authorTableView->setModel(model);
 
     setValidator();
 }
+
+// [Les autres méthodes restent inchangées]
 
 ManageAuthors::~ManageAuthors()
 {

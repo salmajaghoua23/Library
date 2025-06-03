@@ -39,7 +39,18 @@ private slots:
 
 private:
     Ui::editBook *ui;
+    // Déclaration correcte des fonctions
+        QWidget* createAuthorField(QWidget *parent);
+    QWidget* createGenreField(QWidget *parent);
+    void setupUI();
+    //void setValidator();
 
+    // Structure FieldConfig doit être déclarée dans la classe
+    struct FieldConfig {
+        QWidget* widget;
+        QString label;
+        int yPos;
+    };
     QString coverFilename;
     bool clicked = false;
 };

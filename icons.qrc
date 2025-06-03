@@ -12,7 +12,6 @@
         <file>back_pink.jpg</file>
         <file>studentpage.jpg</file>
         <file>readingbook.jpg</file>
-        <file>back.jpg</file>
         <file>pink.jpg</file>
         <file>fleurBook.jpg</file>
         <file>buttrfly.jpg</file>
@@ -20,10 +19,12 @@
         <file>forgot.jpg</file>
         <file>bureau.jpg</file>
         <file>auth.jpg</file>
-        <file>plan_bibliotheque.jpeg</file>
         <file>cartLocalisation.png</file>
         <file>book2.jpg</file>
-        <file>back.jpeg</file>
+        <file>users.png</file>
+        <file>remove_book.png</file>
+        <file>add_book.png</file>
+        <file>edit_book.png</file>
     </qresource>
     <qresource prefix="/video"/>
 </RCC>

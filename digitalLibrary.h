@@ -13,7 +13,10 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QWidget>
-
+#include <QSpacerItem>
+#include <QGraphicsDropShadowEffect>
+#include <QFontDatabase>
+#include <QStackedWidget>
 namespace Ui {
 class digitalLibrary;
 }
@@ -25,10 +28,10 @@ class digitalLibrary : public QDialog
 public:
     explicit digitalLibrary(QWidget *parent = nullptr);
     ~digitalLibrary();
-    QSqlDatabase db;
+    static QSqlDatabase db;
     void connectDB();
     void on_testDataButton_clicked();
-    // void setUsername(QString username);
+    QWidget* createSubMenu(const QVector<QPair<QString, QString>> &items);
     void showBookNum();
     void showMemberNum();
     void showAuthorNum();
@@ -38,12 +41,13 @@ public:
 private:
     QMap<QString, int> getBookPopularityData();
     QMap<QString, int> getQuantityByCategoryData();
+    QGraphicsDropShadowEffect* createShadowEffect();
+    QPushButton* createSidebarButton(const QString &text, bool hasSubMenu);
     void insertTestData();
     addBook *m_addBookDialog;
     manageBooks *m_manageBooksDialog;
-private slots:
-
-    void on_manageGenre_clicked();
+public slots:
+    //void on_manageGenre_clicked();
 
     void on_manageAuthorButton_clicked();
 
@@ -63,17 +67,13 @@ private slots:
 
     void on_booksListBtn_clicked();
 
-    void on_issueBookBtn_clicked();
+   // void on_issueBookBtn_clicked();
 
-    void on_statsButton_clicked();
-    void on_returnBookBtn_clicked();
+    //void on_statsButton_clicked();
+   // void on_returnBookBtn_clicked();
 private:
     QString m_username;  // Variable membre pour stocker le nom d'utilisateur
     QLabel* m_usernameLabel;  // Pointeur vers le QLabel qui affichera le nom
-private slots:
-    void updateStatsCards(); // Nouvelle méthode pour mettre à jour les stats
-    void showAdminProfile(); // Afficher le profil admin
-    void saveAdminProfile(); // Sauvegarder les modifications
 private:
     QPushButton *booksBtn;
     QPushButton *membersBtn;
@@ -97,6 +97,27 @@ private:
     QLabel *m_memberCountLabel;
     QLabel *m_authorCountLabel;
     QLabel *m_loanCountLabel;
+private:
+    // Sidebar main buttons
+    QPushButton *dashboardBtn;
+    QPushButton *authorsBtn;
+    QPushButton *statsBtn;
+    QPushButton *logoutBtn;
+
+    // Books submenu buttons
+    QPushButton *addBookSubBtn;
+    QPushButton *editBookSubBtn;
+    QPushButton *deleteBookSubBtn;
+    QPushButton *listBooksSubBtn;
+    QPushButton *issueBookSubBtn;
+    QPushButton *returnBookSubBtn;
+    QPushButton *manageGenreSubBtn;
+
+    // Members submenu buttons
+    QPushButton *addMemberSubBtn;
+    QPushButton *editMemberSubBtn;
+    QPushButton *deleteMemberSubBtn;
+    QPushButton *listMembersSubBtn;
 
 private:
     Ui::digitalLibrary *ui;

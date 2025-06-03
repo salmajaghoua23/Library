@@ -15,8 +15,6 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     Login w;
-    // Historique historique;
-    // historique.initReservationFile();
     w.show();
     return a.exec();
 }

@@ -138,16 +138,17 @@ studentLibrary::studentLibrary(QWidget *parent, QSqlDatabase db, int userId) :
 
     QVBoxLayout *detailsLayout = new QVBoxLayout(detailsGroup);
     ui->bookDetailsText->setStyleSheet(R"(
-        QLabel {
-            background: white;
-            border: 2px solid #d6e4ff;
-            border-radius: 10px;
-            padding: 15px;
-            font-size: 14px;
-            color: blue;
-            min-height: 200px;
-        }
-    )");
+    QLabel {
+        background: white;
+        border: 2px solid #d6e4ff;
+        border-radius: 10px;
+        padding: 15px;
+        font-size: 14px;
+        color: #333;
+    }
+)");
+    ui->bookDetailsText->setWordWrap(true);
+    ui->bookDetailsText->setAlignment(Qt::AlignLeft | Qt::AlignTop);
     detailsLayout->addWidget(ui->bookDetailsText);
 
     // Boutons d'action
@@ -216,20 +217,14 @@ studentLibrary::studentLibrary(QWidget *parent, QSqlDatabase db, int userId) :
     navButtons->addWidget(ui->btnCart);
     navButtons->addWidget(ui->backButton);
     rightLayout->addLayout(navButtons);
-
-
     mainLayout->addLayout(leftLayout, 50);
     mainLayout->addLayout(rightLayout, 40);
     // Configuration du panier (caché par défaut)
     cartTableView = new QTableView(this);
     cartTableView->setStyleSheet(ui->bookListView->styleSheet());
     cartTableView->hide();
-    //  connect(ui->borrowButton, &QPushButton::clicked, this, &studentLibrary::on_borrowButton_clicked);
-    // Connexions
     connect(ui->searchButton, &QPushButton::clicked, this, &studentLibrary::on_searchButton_clicked);
     connect(ui->backButton, &QPushButton::clicked, this, &studentLibrary::on_backButton_clicked);
-    // connect(ui->btnHistorique, &QPushButton::clicked, this, &studentLibrary::on_btnHistorique_clicked);
-    // connect(ui->btnCart, &QPushButton::clicked, this, &studentLibrary::on_btnCart_clicked);
     connect(ui->bookListView, &QTableView::clicked, this, &studentLibrary::on_bookListView_clicked);
 }
 void studentLibrary::on_borrowButton_clicked()
@@ -496,9 +491,6 @@ void studentLibrary::on_searchButton_clicked()
         QMessageBox::critical(this, "Erreur", "Échec de la récupération des données.");
     }
 }
-
-
-
 void studentLibrary::on_bookListView_clicked(const QModelIndex &index)
 {
     int bookId = model->data(model->index(index.row(), 0)).toInt();
@@ -514,7 +506,7 @@ void studentLibrary::on_bookListView_clicked(const QModelIndex &index)
 void studentLibrary::showBookDetails(int bookId)
 {
     QSqlQuery query(db);
-    query.prepare("SELECT name, author, genre, publisher, description, price, quantity FROM books WHERE ID = :bookId");
+    query.prepare("SELECT name, author, genre, publisher, description, price, quantity, resume FROM books WHERE ID = :bookId");
     query.bindValue(":bookId", bookId);
 
     if (query.exec() && query.next()) {
@@ -525,16 +517,37 @@ void studentLibrary::showBookDetails(int bookId)
         QString description = query.value("description").toString();
         double price = query.value("price").toDouble();
         int quantity = query.value("quantity").toInt();
+        QString resume = query.value("resume").toString();
 
-        // Afficher dans le label de l'interface si tu en as
-        ui->bookDetailsText->setText(
-            "Titre : " + name + "\nAuteur : " + author + "\nGenre : " + genre +
-            "\nÉditeur : " + publisher + "\nPrix : " + QString::number(price) +
-            "\nDisponible : " + QString::number(quantity) +
-            "\nDescription :\n" + description
-            );
+        // Formatage du texte avec HTML pour une meilleure présentation
+        QString details = QString(
+                              "<h3 style='color:#3498DB;'>%1</h3>"
+                              "<p><b>Auteur:</b> %2</p>"
+                              "<p><b>Genre:</b> %3</p>"
+                              "<p><b>Éditeur:</b> %4</p>"
+                              "<p><b>Prix:</b> %5 €</p>"
+                              "<p><b>Disponibilité:</b> %6 exemplaire(s)</p>"
+                              "<hr>"
+                              "<h4 style='color:#2ECC71;'>Description:</h4>"
+                              "<p>%7</p>"
+                              "<hr>"
+                              "<h4 style='color:#E74C3C;'>Résumé:</h4>"
+                              "<p>%8</p>"
+                              ).arg(
+                                  name.toHtmlEscaped(),
+                                  author.toHtmlEscaped(),
+                                  genre.toHtmlEscaped(),
+                                  publisher.toHtmlEscaped(),
+                                  QString::number(price, 'f', 2),
+                                  QString::number(quantity),
+                                  description.toHtmlEscaped(),
+                                  resume.toHtmlEscaped()
+                                  );
+
+        ui->bookDetailsText->setTextFormat(Qt::RichText);
+        ui->bookDetailsText->setText(details);
     } else {
-        QMessageBox::critical(this, "Erreur", "Impossible d'afficher les détails du livre.");
+        QMessageBox::critical(this, "Erreur", "Impossible d'afficher les détails du livre: " + query.lastError().text());
     }
 }
 
@@ -564,43 +577,6 @@ void studentLibrary::on_addToCartButton_clicked()
         }
     }
 }
-
-// void studentLibrary::on_voirMonPanierButton_clicked()
-// {
-//     // Affiche le panier
-//     showCart();
-
-//     // Masque le bouton "Voir mon panier" après l'avoir cliqué
-//     ui->voirMonPanierButton->setVisible(false);
-// }
-
-// void studentLibrary::showCart()
-// {
-//     QSqlQuery query(db);
-//     query.prepare("SELECT name, author, added_at FROM cart WHERE user_id = :user_id");
-
-//     int userId = getUserId();
-//     query.bindValue(":user_id", userId);
-
-//     if (query.exec()) {
-//         QSqlQueryModel *cartModel = new QSqlQueryModel(this);
-//         cartModel->setQuery(query);
-
-//         cartModel->setHeaderData(0, Qt::Horizontal, "Titre");
-//         cartModel->setHeaderData(1, Qt::Horizontal, "Auteur");
-//         cartModel->setHeaderData(2, Qt::Horizontal, "Date ajoutée");
-
-//         ui->cartTableView->setModel(cartModel);
-
-//         // Masquer les autres boutons
-//         ui->searchButton->setVisible(false);
-
-//         // Afficher le bouton retour
-//         ui->backButton->setVisible(true);
-//     } else {
-//         QMessageBox::warning(this, "Erreur", "Impossible d'afficher le panier.");
-//     }
-// }
 void studentLibrary::on_btnCart_clicked()
 {
     int userId = getUserId();  // Assure-toi que cette fonction retourne le bon ID
