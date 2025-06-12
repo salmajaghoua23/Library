@@ -26,7 +26,7 @@ class digitalLibrary : public QDialog
     Q_OBJECT
 
 public:
-    explicit digitalLibrary(QWidget *parent = nullptr);
+   explicit digitalLibrary(QWidget *parent = nullptr, int userId = 1);
     ~digitalLibrary();
     static QSqlDatabase db;
     void connectDB();
@@ -46,6 +46,11 @@ private:
     void insertTestData();
     addBook *m_addBookDialog;
     manageBooks *m_manageBooksDialog;
+public:
+    int getCountFromDB(const QString &table);
+    void updateCard(QFrame *card, int value);
+     void  updateStatsCards();
+
 public slots:
     //void on_manageGenre_clicked();
 
@@ -78,7 +83,6 @@ private:
     QPushButton *booksBtn;
     QPushButton *membersBtn;
     QPushButton* createSubMenuButton(const QString &text);
-
 private:
     // Pour les cartes statistiques
     QFrame *bookCard;
@@ -118,13 +122,14 @@ private:
     QPushButton *editMemberSubBtn;
     QPushButton *deleteMemberSubBtn;
     QPushButton *listMembersSubBtn;
-
+public:
+    QFrame* createModernStatCard(const QString &icon, const QString &title, const QString &value, const QString &gradient, const QString &accentColor);
+    QPushButton* createModernActionButton(const QString &icon, const QString &title, const QString &subtitle, const QString &gradient);
 private:
     Ui::digitalLibrary *ui;
     QString filename = QDir::homePath()+ "/library.db";
     QPushButton* createSidebarButton(const QString& text, const QString& style);
-    QFrame* createStatCard(const QString& icon, const QString& title,
-                           const QString& value, const QString& color);
+    QFrame* createStatCard(const QString& icon, const QString& title, const QString& value, const QString& color, QLabel **valueLabelPtr);
     QPushButton* createQuickActionButton(const QString& text, const QString& color);
     // Widgets principaux
     QLabel *bookCountLabel;
@@ -133,6 +138,8 @@ private:
     QString username;
 private:
     Statistic* statWindow = nullptr;
+    QLabel *loanCountLabel;
+    int m_userId;
 };
 
 #endif // DIGITALLIBRARY_H

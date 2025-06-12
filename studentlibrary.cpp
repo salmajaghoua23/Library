@@ -8,15 +8,9 @@
 #include <QMessageBox>
 #include <QSqlQuery>
 #include <QSqlQueryModel>
-#include <QMessageBox>
-#include <QDebug>
 #include <QSqlError>
 #include <QtConcurrent/QtConcurrent>
-#include <QSqlQuery>
 #include <QSqlDatabase>
-#include <QSqlQuery>
-#include <QSqlError>
-#include <QMessageBox>
 #include <QDebug>
 #include <QDialog>
 #include <QGraphicsView>
@@ -24,7 +18,9 @@
 #include <QGraphicsPixmapItem>
 #include <QGraphicsEllipseItem>
 #include <QVBoxLayout>
-#include<QWidget>
+#include <QHBoxLayout>
+#include <QGroupBox>
+#include <QWidget>
 
 studentLibrary::studentLibrary(QWidget *parent, QSqlDatabase db, int userId) :
     QDialog(parent),
@@ -35,225 +31,407 @@ studentLibrary::studentLibrary(QWidget *parent, QSqlDatabase db, int userId) :
     userId(userId)
 {
     ui->setupUi(this);
+
     if (!db.isOpen()) {
         qDebug() << "Database connection is not open!";
         if (!db.open()) {
             qDebug() << "Failed to reopen database:" << db.lastError();
         }
     }
-    // Style général avec fond dégradé et ombres
+    setupModernUI();
+    setupConnections();
+}
+void studentLibrary::setupModernUI()
+{
+    // Fenêtre plus compacte
+    this->setWindowTitle("📚 Bibliothèque Numérique - Espace Étudiant");
+    this->resize(1000, 650);
+    this->setMinimumSize(800, 500);
+
     this->setStyleSheet(R"(
-        QDialog {
-            background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
-                stop:0 #E0F7FA, stop:1 #B2EBF2);
-        }
-    )");
-    this->setWindowTitle("📚 Bibliothèque Étudiante - Explorer les Livres");
-    this->resize(800, 600);
+    QDialog {
+        background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+            stop:0 #fbeffb, stop:1 #a18cd1);
+        color: #3d246c;
+        font-family: 'Segoe UI', Arial, sans-serif;
+    }
 
-    // Réorganiser le layout principal
+    QGroupBox {
+        background: rgba(255, 255, 255, 0.85);
+        border: 2px solid #d291bc;
+        border-radius: 15px;
+        margin-top: 15px;
+        padding-top: 18px;
+        font-size: 15px;
+        font-weight: 600;
+        color: #7c3aed;
+    }
+
+    QGroupBox::title {
+        subcontrol-origin: margin;
+        left: 15px;
+        padding: 0 10px;
+        background: #fbc2eb;
+        border-radius: 8px;
+        color: #a21caf;
+    }
+
+    QLabel {
+        background: transparent;
+        border: none;
+        font-size: 15px;
+        color: #a21caf;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+
+    QLineEdit {
+        background: #fbeffb;
+        border: 2px solid #d291bc;
+        border-radius: 10px;
+        padding: 12px 16px;
+        font-size: 16px;
+        color: #7c3aed;
+        min-height: 32px;
+        font-weight: 600;
+    }
+
+    QLineEdit:focus {
+        border: 2px solid #a18cd1;
+        background: #fff0f6;
+        color: #a21caf;
+    }
+
+    QLineEdit::placeholder {
+        color: #d291bc;
+        font-style: italic;
+    }
+
+    QPushButton {
+        background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+            stop:0 #fbc2eb, stop:1 #a18cd1);
+        color: #7c3aed;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 18px;
+        font-size: 15px;
+        font-weight: 700;
+        min-width: 110px;
+        transition: all 0.3s ease;
+    }
+
+    QPushButton:hover {
+        background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+            stop:0 #a18cd1, stop:1 #fbc2eb);
+        color: #a21caf;
+        box-shadow: 0 4px 12px #d291bc;
+    }
+
+    QPushButton#searchButton {
+        background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+            stop:0 #fbc2eb, stop:1 #a18cd1);
+        color: #a21caf;
+    }
+
+    QPushButton#searchButton:hover {
+        background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+            stop:0 #a18cd1, stop:1 #fbc2eb);
+        color: #7c3aed;
+    }
+
+    QPushButton#borrowButton, QPushButton#addToCartButton {
+        background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+            stop:0 #fbc2eb, stop:1 #a18cd1);
+        color: #fff;
+    }
+
+    QPushButton#borrowButton:hover, QPushButton#addToCartButton:hover {
+        background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+            stop:0 #a18cd1, stop:1 #fbc2eb);
+        color: #fff0f6;
+    }
+
+    QPushButton#backButton, QPushButton#btnCart, QPushButton#btnHistorique {
+        background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+            stop:0 #fbeffb, stop:1 #d291bc);
+        color: #a21caf;
+    }
+
+    QPushButton#backButton:hover, QPushButton#btnCart:hover, QPushButton#btnHistorique:hover {
+        background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+            stop:0 #d291bc, stop:1 #fbeffb);
+        color: #7c3aed;
+    }
+
+    QTableView {
+        background: #fbeffb;
+        border: 1px solid #d291bc;
+        border-radius: 10px;
+        alternate-background-color: #fbc2eb;
+        selection-background-color: #a18cd1;
+        selection-color: #a21caf;
+        font-size: 14px;
+        color: #7c3aed;
+        gridline-color: #fbc2eb;
+    }
+
+    QHeaderView::section {
+        background: #a18cd1;
+        color: #fff;
+        padding: 10px;
+        font-size: 15px;
+        font-weight: 600;
+        border: none;
+        border-right: 1px solid #fbc2eb;
+    }
+
+    QTableView::item {
+        padding: 8px;
+        border-bottom: 1px solid #fbc2eb;
+    }
+
+    QTableView::item:hover {
+        background: #fbc2eb;
+    }
+
+    QTableView::item:selected {
+        background: #a18cd1;
+        color: #fff0f6;
+    }
+
+    QScrollBar:vertical {
+        background: #fbc2eb;
+        width: 10px;
+        border-radius: 5px;
+    }
+
+    QScrollBar::handle:vertical {
+        background: #a18cd1;
+        border-radius: 5px;
+        min-height: 20px;
+    }
+
+    QScrollBar::handle:vertical:hover {
+        background: #d291bc;
+    }
+)");
+    // Layout principal avec espacement moderne
     QHBoxLayout *mainLayout = new QHBoxLayout(this);
+    mainLayout->setContentsMargins(16, 16, 16, 16);
+    mainLayout->setSpacing(16);
+
+    // Partie gauche - Recherche et liste
     QVBoxLayout *leftLayout = new QVBoxLayout();
-    QVBoxLayout *rightLayout = new QVBoxLayout();
+    leftLayout->setSpacing(12);
 
-    // Zone de recherche (côté gauche)
-    QGroupBox *searchGroup = new QGroupBox("🔍 Recherche Avancée", this);
-    searchGroup->setStyleSheet(R"(
-        QGroupBox {
-            background: rgba(255,255,255,0.9);
-            border: 2px solid #a5d8ff;
-            border-radius: 15px;
-            margin-top: 10px;
-            padding-top: 15px;
-            font-size: 16px;
-            font-weight: bold;
-            color: #3a4a5a;
-        }
-    )");
-
+    // Groupe de recherche avec icône
+    QGroupBox *searchGroup = new QGroupBox("🔍 Rechercher dans la collection", this);
     QHBoxLayout *searchLayout = new QHBoxLayout(searchGroup);
-    ui->searchLineEdit->setPlaceholderText("Titre, Auteur, Genre...");
-    ui->searchLineEdit->setStyleSheet(R"(
-        QLineEdit {
-            background: white;
-            border: 2px solid #d6e4ff;
-            border-radius: 12px;
-            padding: 10px;
-            font-size: 14px;
-            min-width: 250px;color:black;
-        }
-    )");
+    searchLayout->setSpacing(8);
 
-    ui->searchButton->setText("Rechercher");
-    ui->searchButton->setStyleSheet(R"(
-        QPushButton {
-            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                stop:0 #4facfe, stop:1 #00f2fe);
-            color: white;
-            border-radius: 12px;
-            padding: 10px 20px;
-            font-size: 14px;
-            font-weight: bold;
-            border: none;
-        }
-        QPushButton:hover {
-            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                stop:0 #3aa0f6, stop:1 #00d2ff);
-        }
-    )");
+    ui->searchLineEdit->setPlaceholderText("Rechercher par titre, auteur, genre ou ID...");
+    ui->searchButton->setText("🔎");
+    ui->searchButton->setObjectName("searchButton");
 
-    searchLayout->addWidget(ui->searchLineEdit);
+    searchLayout->addWidget(ui->searchLineEdit, 3);
     searchLayout->addWidget(ui->searchButton);
     leftLayout->addWidget(searchGroup);
 
-    // Liste des livres (côté gauche)
-    QGroupBox *booksGroup = new QGroupBox("📖 Résultats de Recherche", this);
-    booksGroup->setStyleSheet(searchGroup->styleSheet());
-
+    // Groupe de la liste des livres
+    QGroupBox *booksGroup = new QGroupBox("📚 Catalogue des ouvrages", this);
     QVBoxLayout *booksLayout = new QVBoxLayout(booksGroup);
-    ui->bookListView->setStyleSheet(R"(
-        QTableView {
-            background: white;
-            border: 1px solid #d6e4ff;
-            border-radius: 10px;
-            alternate-background-color:white;
-            selection-background-color:white ;
-            font-size: 10px; color:blue;
-        }
-        QHeaderView::section {
-           background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
-                stop:0 #E0F7FA, stop:1 #B2EBF2);
-            color: black;
-            padding: 10px;
-            font-weight: bold;
-            border: none;
-        }
-    )");
+
+    ui->bookListView->setAlternatingRowColors(true);
+    ui->bookListView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->bookListView->setSelectionMode(QAbstractItemView::SingleSelection);
+    ui->bookListView->setSortingEnabled(true);
+
     booksLayout->addWidget(ui->bookListView);
-    leftLayout->addWidget(booksGroup);
+    leftLayout->addWidget(booksGroup, 1);
 
-    // Détails du livre (côté droit)
-    QGroupBox *detailsGroup = new QGroupBox("📚 Détails du Livre", this);
-    detailsGroup->setStyleSheet(searchGroup->styleSheet());
+    // Partie droite - Détails et actions
+    QVBoxLayout *rightLayout = new QVBoxLayout();
+    rightLayout->setSpacing(12);
 
+    // Groupe des détails du livre
+    QGroupBox *detailsGroup = new QGroupBox("📖 Détails du livre sélectionné", this);
     QVBoxLayout *detailsLayout = new QVBoxLayout(detailsGroup);
-    ui->bookDetailsText->setStyleSheet(R"(
-    QLabel {
-        background: white;
-        border: 2px solid #d6e4ff;
-        border-radius: 10px;
-        padding: 15px;
-        font-size: 14px;
-        color: #333;
-    }
-)");
+
     ui->bookDetailsText->setWordWrap(true);
     ui->bookDetailsText->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-    detailsLayout->addWidget(ui->bookDetailsText);
+    ui->bookDetailsText->setMinimumHeight(220);
+    ui->bookDetailsText->setText(
+        "<div style='text-align: center; padding: 30px; color: #b0b0c3;'>"
+        "<h3>📚 Sélectionnez un livre</h3>"
+        "<p>Cliquez sur un livre dans la liste pour voir ses détails complets</p>"
+        "</div>"
+        );
 
-    // Boutons d'action
-    QHBoxLayout *actionButtons = new QHBoxLayout();
+    detailsLayout->addWidget(ui->bookDetailsText, 1);
 
-    QString actionButtonStyle = R"(
-        QPushButton {
-            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                stop:0 #38ef7d, stop:1 #11998e);
-            color: white;
-            border-radius: 10px;
-            padding: 10px 15px;
-            font-size: 14px;
-            font-weight: bold;
-            min-width: 120px;
-            border: none;
-            margin: 5px;
-        }
-        QPushButton:hover {
-            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                stop:0 #2fd673, stop:1 #0d857a);
-        }
-    )";
+    // Boutons d'action principaux
+    QHBoxLayout *actionLayout = new QHBoxLayout();
+    actionLayout->setSpacing(8);
 
-    ui->addToCartButton->setText("🛒 Ajouter au Panier");
-    ui->borrowButton->setText("📖 Emprunter");
-    ui->addToCartButton->setStyleSheet(actionButtonStyle);
-    ui->borrowButton->setStyleSheet(actionButtonStyle);
+    ui->addToCartButton->setText("🛒 Ajouter au panier");
+    ui->addToCartButton->setObjectName("addToCartButton");
+    ui->borrowButton->setText("📖 Emprunter maintenant");
+    ui->borrowButton->setObjectName("borrowButton");
 
-    actionButtons->addWidget(ui->addToCartButton);
-    actionButtons->addWidget(ui->borrowButton);
-    detailsLayout->addLayout(actionButtons);
+    // Initialement cachés
+    ui->addToCartButton->setVisible(false);
+    ui->borrowButton->setVisible(false);
 
-    rightLayout->addWidget(detailsGroup);
+    actionLayout->addWidget(ui->addToCartButton);
+    actionLayout->addWidget(ui->borrowButton);
+    actionLayout->addStretch();
+    detailsLayout->addLayout(actionLayout);
+
+    rightLayout->addWidget(detailsGroup, 1);
 
     // Boutons de navigation
-    QHBoxLayout *navButtons = new QHBoxLayout();
+    QHBoxLayout *navLayout = new QHBoxLayout();
+    navLayout->setSpacing(8);
 
-    QString navButtonStyle = R"(
-        QPushButton {
-    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-            stop:0 #3498DB, stop:1 #2ECC71);
-            color:white;
-            border-radius: 10px;
-            padding: 10px 20px;
-            font-size: 14px;
-            font-weight: bold;
-            min-width: 150px;
-            border: none;
-        }
-        QPushButton:hover {
-            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                stop:0 #e67e00, stop:1 #e03000);
-        }
-    )";
+    ui->btnHistorique->setText("📜 Mon historique");
+    ui->btnHistorique->setObjectName("btnHistorique");
+    ui->btnCart->setText("🛍️ Mon panier");
+    ui->btnCart->setObjectName("btnCart");
+    ui->backButton->setText("🏠 Retour accueil");
+    ui->backButton->setObjectName("backButton");
 
-    ui->btnHistorique->setText("🕒 Historique");
-    ui->btnCart->setText("🛍 Voir le Panier");
-    ui->backButton->setText("🔙 Retour");
+    navLayout->addWidget(ui->btnHistorique);
+    navLayout->addWidget(ui->btnCart);
+    navLayout->addStretch();
+    navLayout->addWidget(ui->backButton);
 
-    ui->btnHistorique->setStyleSheet(navButtonStyle);
-    ui->btnCart->setStyleSheet(navButtonStyle);
-    ui->backButton->setStyleSheet(navButtonStyle);
+    rightLayout->addLayout(navLayout);
 
-    navButtons->addWidget(ui->btnHistorique);
-    navButtons->addWidget(ui->btnCart);
-    navButtons->addWidget(ui->backButton);
-    rightLayout->addLayout(navButtons);
-    mainLayout->addLayout(leftLayout, 50);
+    // Assemblage final
+    mainLayout->addLayout(leftLayout, 60);
     mainLayout->addLayout(rightLayout, 40);
+
     // Configuration du panier (caché par défaut)
     cartTableView = new QTableView(this);
     cartTableView->setStyleSheet(ui->bookListView->styleSheet());
     cartTableView->hide();
+}
+
+void studentLibrary::setupConnections()
+{
     connect(ui->searchButton, &QPushButton::clicked, this, &studentLibrary::on_searchButton_clicked);
     connect(ui->backButton, &QPushButton::clicked, this, &studentLibrary::on_backButton_clicked);
     connect(ui->bookListView, &QTableView::clicked, this, &studentLibrary::on_bookListView_clicked);
+    connect(ui->borrowButton, &QPushButton::clicked, this, &studentLibrary::on_borrowButton_clicked);
+    connect(ui->addToCartButton, &QPushButton::clicked, this, &studentLibrary::on_addToCartButton_clicked);
+   // connect(ui->btnCart, &QPushButton::clicked, this, &studentLibrary::on_btnCart_clicked);
+   // connect(ui->btnHistorique, &QPushButton::clicked, this, &studentLibrary::on_btnHistorique_clicked);
+
+    // Recherche en temps réel
+    connect(ui->searchLineEdit, &QLineEdit::returnPressed, this, &studentLibrary::on_searchButton_clicked);
 }
+
+// Amélioration de la fonction showBookDetails avec un design moderne
+void studentLibrary::showBookDetails(int bookId)
+{
+    QSqlQuery query(db);
+    query.prepare("SELECT name, author, genre, publisher, description, price, quantity, resume FROM books WHERE ID = :bookId");
+    query.bindValue(":bookId", bookId);
+
+    if (query.exec() && query.next()) {
+        QString name = query.value("name").toString();
+        QString author = query.value("author").toString();
+        QString genre = query.value("genre").toString();
+        QString publisher = query.value("publisher").toString();
+        QString description = query.value("description").toString();
+        double price = query.value("price").toDouble();
+        int quantity = query.value("quantity").toInt();
+        QString resume = query.value("resume").toString();
+
+        // Statut de disponibilité avec couleur
+        QString availability = quantity > 0 ?
+                                   QString("<span style='color: #4CAF50; font-weight: bold;'>✅ %1 exemplaire(s) disponible(s)</span>").arg(quantity) :
+                                   "<span style='color: #F44336; font-weight: bold;'>❌ Non disponible</span>";
+
+        QString details = QString(R"(
+    <div style='line-height: 1.8;'>
+        <div style='background: rgba(161,140,209,0.08); padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #a18cd1;'>
+            <h2 style='color: #a18cd1; margin: 0 0 10px 0; font-size: 20px;'>📚 %1</h2>
+            <p style='margin: 5px 0; font-size: 14px;'><strong style='color: #fbc2eb;'>👤 Auteur:</strong> %2</p>
+            <p style='margin: 5px 0; font-size: 14px;'><strong style='color: #fbc2eb;'>🏷️ Genre:</strong> %3</p>
+            <p style='margin: 5px 0; font-size: 14px;'><strong style='color: #fbc2eb;'>🏢 Éditeur:</strong> %4</p>
+        </div>
+        <div style='display: flex; justify-content: space-between; margin-bottom: 15px;'>
+            <div style='background: rgba(251,194,235,0.12); padding: 10px; border-radius: 8px; flex: 1; margin-right: 10px;'>
+                <p style='margin: 0; text-align: center;'><strong style='color: #a18cd1;'>💰 Prix</strong></p>
+                <p style='margin: 5px 0 0 0; text-align: center; font-size: 18px; font-weight: bold; color: #a18cd1;'>%5 €</p>
+            </div>
+            <div style='background: rgba(161,140,209,0.08); padding: 10px; border-radius: 8px; flex: 1;'>
+                <p style='margin: 0; text-align: center;'><strong style='color: #a18cd1;'>📦 Disponibilité</strong></p>
+                <p style='margin: 5px 0 0 0; text-align: center;'>%6</p>
+            </div>
+        </div>
+        <div style='background: rgba(251,194,235,0.08); padding: 15px; border-radius: 10px; margin-bottom: 15px;'>
+            <h3 style='color: #a18cd1; margin: 0 0 10px 0; font-size: 16px;'>📝 Description</h3>
+            <p style='margin: 0; font-size: 13px; line-height: 1.6;'>%7</p>
+        </div>
+        <div style='background: rgba(251,194,235,0.08); padding: 15px; border-radius: 10px;'>
+            <h3 style='color: #fbc2eb; margin: 0 0 10px 0; font-size: 16px;'>📖 Résumé</h3>
+            <p style='margin: 0; font-size: 13px; line-height: 1.6;'>%8</p>
+        </div>
+    </div>
+)").arg(
+                                  name.toHtmlEscaped(),
+                                  author.toHtmlEscaped(),
+                                  genre.toHtmlEscaped(),
+                                  publisher.toHtmlEscaped(),
+                                  QString::number(price, 'f', 2),
+                                  availability,
+                                  description.toHtmlEscaped(),
+                                  resume.toHtmlEscaped()
+                                  );
+
+        ui->bookDetailsText->setTextFormat(Qt::RichText);
+        ui->bookDetailsText->setText(details);
+
+        // Afficher les boutons d'action
+        ui->addToCartButton->setVisible(true);
+        ui->borrowButton->setVisible(quantity > 0); // N'afficher le bouton emprunt que si disponible
+    } else {
+        QMessageBox::critical(this, "❌ Erreur", "Impossible d'afficher les détails du livre: " + query.lastError().text());
+    }
+}
+
+// [Garder toutes les autres fonctions existantes inchangées]
 void studentLibrary::on_borrowButton_clicked()
 {
     if (currentBookId == -1) {
-        QMessageBox::warning(this, "Erreur", "Aucun livre sélectionné.");
+        QMessageBox::warning(this, "⚠️ Attention", "Aucun livre sélectionné.");
         return;
     }
+
     QSqlQuery checkQuery(db);
     checkQuery.prepare("SELECT quantity FROM books WHERE ID = :bookId");
     checkQuery.bindValue(":bookId", currentBookId);
 
     if (!checkQuery.exec() || !checkQuery.next()) {
-        QMessageBox::critical(this, "Erreur", "Impossible de vérifier la disponibilité du livre.");
+        QMessageBox::critical(this, "❌ Erreur", "Impossible de vérifier la disponibilité du livre.");
         return;
     }
 
     int quantity = checkQuery.value(0).toInt();
     if (quantity <= 0) {
-        QMessageBox::information(this, "Indisponible", "Ce livre n'est plus disponible pour emprunt.");
+        QMessageBox::information(this, "📵 Indisponible", "Ce livre n'est plus disponible pour emprunt.");
         return;
     }
+
     QSqlQuery checkBorrowedQuery(db);
     checkBorrowedQuery.prepare("SELECT COUNT(*) FROM emprunts WHERE user_id = :userId AND book_id = :bookId AND return_date IS NULL");
     checkBorrowedQuery.bindValue(":userId", userId);
     checkBorrowedQuery.bindValue(":bookId", currentBookId);
 
     if (checkBorrowedQuery.exec() && checkBorrowedQuery.next() && checkBorrowedQuery.value(0).toInt() > 0) {
-        QMessageBox::information(this, "Déjà emprunté", "Vous avez déjà emprunté ce livre et ne l'avez pas encore rendu.");
+        QMessageBox::information(this, "📚 Déjà emprunté", "Vous avez déjà emprunté ce livre et ne l'avez pas encore rendu.");
         return;
     }
 
@@ -273,11 +451,7 @@ void studentLibrary::on_borrowButton_clicked()
         borrowQuery.bindValue(":bookId", currentBookId);
         borrowQuery.bindValue(":borrowDate", borrowDate.toString("yyyy-MM-dd"));
         borrowQuery.bindValue(":returnDate", returnDate.toString("yyyy-MM-dd"));
-        qDebug() << "Requête SQL:" << borrowQuery.lastQuery();
-        qDebug() << "Valeurs liées:"
-                 << userId << currentBookId
-                 << borrowDate.toString("yyyy-MM-dd")
-                 << returnDate.toString("yyyy-MM-dd");
+
         if (!borrowQuery.exec()) {
             throw std::runtime_error("Erreur lors de l'ajout de l'emprunt: " +
                                      borrowQuery.lastError().text().toStdString());
@@ -296,9 +470,9 @@ void studentLibrary::on_borrowButton_clicked()
         // Tout s'est bien passé, valider la transaction
         db.commit();
 
-        QMessageBox::information(this, "Succès",
+        QMessageBox::information(this, "✅ Succès",
                                  QString("Livre emprunté avec succès!\n"
-                                         "Date de retour prévue: %1")
+                                         "📅 Date de retour prévue: %1")
                                      .arg(returnDate.toString("dd/MM/yyyy")));
 
         // Rafraîchir les détails du livre
@@ -306,13 +480,18 @@ void studentLibrary::on_borrowButton_clicked()
 
     } catch (const std::exception& e) {
         db.rollback();
-        QMessageBox::critical(this, "Erreur", e.what());
+        QMessageBox::critical(this, "❌ Erreur", e.what());
     }
 }
+
+// [Garder toutes les autres fonctions existantes...]
+
 studentLibrary::~studentLibrary()
 {
     delete ui;
 }
+
+// [Toutes les autres fonctions restent identiques à l'original]
 void studentLibrary::updateBookLocalisation(int bookId, const QString& localisation)
 {
     QSqlQuery query(db);
@@ -446,21 +625,6 @@ void studentLibrary::on_searchButton_clicked()
 
     if (searchTerm.isEmpty()) {
         QMessageBox::information(this, "Attention", "Veuillez entrer un terme de recherche.");
-
-        // Rendre le fond de la QTableView transparent si aucun terme n'est entré
-        ui->bookListView->setStyleSheet("QTableView {"
-                                        "background: transparent;"
-                                        "color: rgb(85, 0, 127);"
-                                        "font: 600 11pt 'Segoe UI';"
-                                        "border: 1px solid #dda0dd;"
-                                        "border-radius: 10px;"
-                                        "}");
-        // Rendre le fond du QLabel transparent lorsque la recherche est vide
-        ui->bookDetailsText->setStyleSheet("QLabel {"
-                                           "font: 700 italic 9pt 'Segoe UI';"
-                                           "color: black;"
-                                           "background: transparent;"
-                                           "}");
         return;
     }
 
@@ -473,20 +637,6 @@ void studentLibrary::on_searchButton_clicked()
     if (query.exec()) {
         model->setQuery(query);
         ui->bookListView->setModel(model);
-
-        // Rendre le fond de la QTableView visible après la recherche
-        ui->bookListView->setStyleSheet("QTableView {"
-                                        "background: white;"
-                                        "color: #4B0082;"
-                                        "font: 600 11pt 'Segoe UI';"
-                                        "border: 1px solid black;"
-                                        "}");
-        // Rendre le fond du QLabel visible après la recherche
-        ui->bookDetailsText->setStyleSheet("QLabel {"
-                                           "font: 700 italic 9pt 'Segoe UI';"
-                                           "color: black;"
-                                           "background: white;"
-                                           "}");
     } else {
         QMessageBox::critical(this, "Erreur", "Échec de la récupération des données.");
     }
@@ -503,53 +653,6 @@ void studentLibrary::on_bookListView_clicked(const QModelIndex &index)
     ui->borrowButton->setVisible(true);
     ui->backButton->setVisible(true); // Affichez aussi le bouton retour
 }
-void studentLibrary::showBookDetails(int bookId)
-{
-    QSqlQuery query(db);
-    query.prepare("SELECT name, author, genre, publisher, description, price, quantity, resume FROM books WHERE ID = :bookId");
-    query.bindValue(":bookId", bookId);
-
-    if (query.exec() && query.next()) {
-        QString name = query.value("name").toString();
-        QString author = query.value("author").toString();
-        QString genre = query.value("genre").toString();
-        QString publisher = query.value("publisher").toString();
-        QString description = query.value("description").toString();
-        double price = query.value("price").toDouble();
-        int quantity = query.value("quantity").toInt();
-        QString resume = query.value("resume").toString();
-
-        // Formatage du texte avec HTML pour une meilleure présentation
-        QString details = QString(
-                              "<h3 style='color:#3498DB;'>%1</h3>"
-                              "<p><b>Auteur:</b> %2</p>"
-                              "<p><b>Genre:</b> %3</p>"
-                              "<p><b>Éditeur:</b> %4</p>"
-                              "<p><b>Prix:</b> %5 €</p>"
-                              "<p><b>Disponibilité:</b> %6 exemplaire(s)</p>"
-                              "<hr>"
-                              "<h4 style='color:#2ECC71;'>Description:</h4>"
-                              "<p>%7</p>"
-                              "<hr>"
-                              "<h4 style='color:#E74C3C;'>Résumé:</h4>"
-                              "<p>%8</p>"
-                              ).arg(
-                                  name.toHtmlEscaped(),
-                                  author.toHtmlEscaped(),
-                                  genre.toHtmlEscaped(),
-                                  publisher.toHtmlEscaped(),
-                                  QString::number(price, 'f', 2),
-                                  QString::number(quantity),
-                                  description.toHtmlEscaped(),
-                                  resume.toHtmlEscaped()
-                                  );
-
-        ui->bookDetailsText->setTextFormat(Qt::RichText);
-        ui->bookDetailsText->setText(details);
-    } else {
-        QMessageBox::critical(this, "Erreur", "Impossible d'afficher les détails du livre: " + query.lastError().text());
-    }
-}
 
 void studentLibrary::on_addToCartButton_clicked()
 {
@@ -562,10 +665,22 @@ void studentLibrary::on_addToCartButton_clicked()
         QString name = query.value("name").toString();
         QString author = query.value("author").toString();
 
+        // Vérifier si le livre est déjà dans le panier
+        QSqlQuery checkQuery(db);
+        checkQuery.prepare("SELECT COUNT(*) FROM cart WHERE user_id = :user_id AND book_id = :book_id");
+        checkQuery.bindValue(":user_id", userId);
+        checkQuery.bindValue(":book_id", bookId);
+        checkQuery.exec();
+        checkQuery.next();
+        if (checkQuery.value(0).toInt() > 0) {
+            QMessageBox::information(this, "Déjà présent", "Ce livre est déjà dans votre panier.");
+            return;
+        }
+
         QSqlQuery insertQuery(db);
         insertQuery.prepare("INSERT INTO cart (user_id, book_id, name, author) "
                             "VALUES (:user_id, :book_id, :name, :author)");
-        insertQuery.bindValue(":user_id", userId); // L’ID de l’utilisateur connecté
+        insertQuery.bindValue(":user_id", userId);
         insertQuery.bindValue(":book_id", bookId);
         insertQuery.bindValue(":name", name);
         insertQuery.bindValue(":author", author);

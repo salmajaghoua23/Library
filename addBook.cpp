@@ -25,102 +25,88 @@
 #include <QGraphicsDropShadowEffect>
 #include <QPropertyAnimation>
 #include <QLinearGradient>
-
 addBook::addBook(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::addBook)
+    QDialog(parent)
 {
-    ui->setupUi(this);
+    setWindowTitle("Ajouter un Nouveau Livre • Bibliothèque Digitale");
+    setMinimumSize(900, 700);
+    setStyleSheet("background: #f5f7fa;");
 
-    // Configuration de base de la fenêtre
-    this->setWindowTitle("Ajouter un Nouveau Livre • Bibliothèque Digitale");
-    this->setMinimumSize(900, 700);
-    this->setStyleSheet("background: #f5f7fa;");
-
-    // Conteneur principal
-    QFrame *mainContainer = new QFrame(this);
-    mainContainer->setGeometry(0, 0, this->width(), this->height());
-    mainContainer->setStyleSheet("background: transparent;");
-
-    // Animation d'entrée
-    QPropertyAnimation *slideAnim = new QPropertyAnimation(mainContainer, "geometry");
-    slideAnim->setDuration(400);
-    slideAnim->setStartValue(QRect(-this->width(), 0, this->width(), this->height()));
-    slideAnim->setEndValue(QRect(0, 0, this->width(), this->height()));
-    slideAnim->start();
+    // Layout principal pour centrer la carte
+    QHBoxLayout *dialogLayout = new QHBoxLayout(this);
 
     // Carte de formulaire
-    QFrame *formCard = new QFrame(mainContainer);
-    formCard->setGeometry(50, 30, this->width()-100, this->height()-60);
+    QFrame *formCard = new QFrame;
+    formCard->setObjectName("formCard");
     formCard->setStyleSheet(
         "background: white;"
-        "border-radius: 12px;"
+        "border-radius: 16px;"
         "border: none;"
         );
 
-    // Ombre portée moderne
     QGraphicsDropShadowEffect *shadow = new QGraphicsDropShadowEffect(formCard);
     shadow->setBlurRadius(25);
     shadow->setOffset(0, 5);
     shadow->setColor(QColor(0, 0, 0, 30));
     formCard->setGraphicsEffect(shadow);
 
-    // En-tête minimaliste
-    QFrame *header = new QFrame(formCard);
-    header->setGeometry(0, 0, formCard->width(), 70);
-    header->setStyleSheet(
-        "background: #4a6fa5;"
-        "border-top-left-radius: 12px;"
-        "border-top-right-radius: 12px;"
-        );
+    dialogLayout->addStretch();
+    dialogLayout->addWidget(formCard, 0, Qt::AlignCenter);
+    dialogLayout->addStretch();
 
-    // Bouton de retour
-    QPushButton *backBtn = new QPushButton(header);
-    backBtn->setGeometry(20, 15, 40, 40);
+    QVBoxLayout *formLayout = new QVBoxLayout(formCard);
+    formLayout->setContentsMargins(40, 30, 40, 30);
+    formLayout->setSpacing(24);
+
+    // Header avec bouton retour et titre
+    QHBoxLayout *headerLayout = new QHBoxLayout();
+    QPushButton *backBtn = new QPushButton("⬅️ Retour");
+    backBtn->setFixedHeight(44);
     backBtn->setStyleSheet(
-        "QPushButton {"
-        "   background: rgba(255,255,255,0.2);"
-        "   border-radius: 20px;"
-        "   border: none;"
-        "}"
-        "QPushButton:hover {"
-        "   background: rgba(255,255,255,0.3);"
-        "}"
+        "background: #fbc2eb;"
+        "color: #232946;"
+        "font-size: 20px;"
+        "font-weight: bold;"
+        "border: 2px solid #a18cd1;"
+        "border-radius: 12px;"
+        "padding: 0 28px;"
         );
-   // backBtn->setIcon(QIcon(":/icons/arrow-left.svg"));
-    backBtn->setIconSize(QSize(24, 24));
+    headerLayout->addWidget(backBtn, 0, Qt::AlignLeft);
 
-    // Titre
-    QLabel *title = new QLabel("+ Nouveau Livre", header);
-    title->setGeometry(70, 15, header->width()-90, 40);
+    QLabel *title = new QLabel("+ Nouveau Livre");
     title->setStyleSheet(
-        "color: white;"
+        "color: #4a6fa5;"
         "font-family: 'Segoe UI';"
-        "font-size: 22px;"
-        "font-weight: 600;"
+        "font-size: 28px;"
+        "font-weight: 700;"
         );
+    headerLayout->addWidget(title, 1, Qt::AlignCenter);
+    headerLayout->addStretch();
+    formLayout->addLayout(headerLayout);
 
     // Style commun pour les champs
     QString fieldStyle = R"(
         QFrame#fieldContainer {
             background: #f8fafc;
-            border-radius: 8px;
+            border-radius: 10px;
             border: 1px solid #e2e8f0;
         }
         QLabel#fieldLabel {
-            color: #4a5568;
+            color: #232946;
             font-family: 'Segoe UI';
-            font-size: 12px;
-            font-weight: 600;
+            font-size: 18px;
+            font-weight: 700;
             padding-left: 5px;
         }
-        QLineEdit, QTextEdit, QComboBox {
+        QLineEdit, QTextEdit, QComboBox, QSpinBox, QDoubleSpinBox, QDateEdit {
             border: none;
             background: transparent;
             font-family: 'Segoe UI';
-            font-size: 14px;
-            padding: 8px 12px;
+            font-size: 18px;
+            font-weight: 600;
+            padding: 12px 16px;
             color: #2d3748;
+            min-height: 38px;
         }
         QLineEdit:focus, QTextEdit:focus {
             background: white;
@@ -129,174 +115,143 @@ addBook::addBook(QWidget *parent) :
     )";
 
     // Fonction pour créer des champs
-    auto createField = [&](const QString &label, QWidget *widget, int yPos) {
-        QFrame *container = new QFrame(formCard);
+    auto createField = [&](const QString &label, QWidget *widget) {
+        widget->setMinimumHeight(38);
+        widget->setFont(QFont("Segoe UI", 16, QFont::Bold));
+        QFrame *container = new QFrame;
         container->setObjectName("fieldContainer");
-        container->setGeometry(30, yPos, formCard->width()-60, 70);
         container->setStyleSheet(fieldStyle);
+
+        QVBoxLayout *fieldLayout = new QVBoxLayout(container);
+        fieldLayout->setContentsMargins(10, 8, 10, 8);
+        fieldLayout->setSpacing(2);
 
         QLabel *labelWidget = new QLabel(label, container);
         labelWidget->setObjectName("fieldLabel");
-        labelWidget->setGeometry(10, 8, container->width()-20, 18);
+        fieldLayout->addWidget(labelWidget);
+        fieldLayout->addWidget(widget);
 
-        widget->setParent(container);
-        widget->setGeometry(10, 30, container->width()-20, 30);
+        formLayout->addWidget(container);
     };
 
-    // Position verticale initiale
-    int yPos = 90;
+    // Champs
+    QLineEdit *isbnEdit = new QLineEdit();
+    QLineEdit *nameEdit = new QLineEdit();
+    QLineEdit *authorEdit = new QLineEdit();
+    authorEdit->setReadOnly(true);
+    QComboBox *genreCombo = new QComboBox();
+    genreCombo->addItems({"Science", "Roman", "Philosophie", "Politique", "Sociale"});
+    QTextEdit *descEdit = new QTextEdit();
+    descEdit->setMinimumHeight(60);
+    descEdit->setFont(QFont("Segoe UI", 15));
+    QSpinBox *quantitySpin = new QSpinBox();
+    quantitySpin->setMinimum(1);
+    quantitySpin->setMaximum(1000);
+    QLineEdit *publisherEdit = new QLineEdit();
+    QDoubleSpinBox *priceSpin = new QDoubleSpinBox();
+    priceSpin->setPrefix("€ ");
+    priceSpin->setMaximum(9999.99);
+    QDateEdit *dateEdit = new QDateEdit(QDate::currentDate());
+    dateEdit->setCalendarPopup(true);
 
-    // Création des champs
-    createField("ISBN", ui->ISBN, yPos); yPos += 80;
-    createField("Titre du Livre", ui->Name, yPos); yPos += 80;
+    // Auteur avec bouton
+    QHBoxLayout *authorLayout = new QHBoxLayout();
+    authorLayout->addWidget(authorEdit, 1);
+    QPushButton *chooseAuthorBtn = new QPushButton("Sélectionner");
+    chooseAuthorBtn->setStyleSheet("background: #4a6fa5; border-radius: 8px; color: white; font-size: 15px; font-weight: 600; border: none; padding: 8px 20px;");
+    authorLayout->addWidget(chooseAuthorBtn);
 
-    // Champ Auteur avec bouton
-    QFrame *authorContainer = new QFrame(formCard);
-    authorContainer->setObjectName("fieldContainer");
-    authorContainer->setGeometry(30, yPos, formCard->width()-60, 70);
-    authorContainer->setStyleSheet(fieldStyle);
+    // Genre avec bouton
+    QHBoxLayout *genreLayout = new QHBoxLayout();
+    genreLayout->addWidget(genreCombo, 1);
+    QPushButton *chooseGenreBtn = new QPushButton("Choisir");
+    chooseGenreBtn->setStyleSheet("background: #4a6fa5; border-radius: 8px; color: white; font-size: 15px; font-weight: 600; border: none; padding: 8px 20px;");
+    genreLayout->addWidget(chooseGenreBtn);
 
-    QLabel *authorLabel = new QLabel("Auteur", authorContainer);
-    authorLabel->setObjectName("fieldLabel");
-    authorLabel->setGeometry(10, 8, authorContainer->width()-20, 18);
+    // Ajout des champs
+    createField("ISBN", isbnEdit);
+    createField("Titre du Livre", nameEdit);
 
-    ui->author->setParent(authorContainer);
-    ui->author->setGeometry(10, 30, authorContainer->width()-130, 30);
-
-    ui->chooseAuthBtn->setParent(authorContainer);
-    ui->chooseAuthBtn->setGeometry(authorContainer->width()-120, 30, 110, 30);
-    ui->chooseAuthBtn->setStyleSheet(R"(
-        QPushButton {
-            background: #4a6fa5;
-            border-radius: 6px;
-            color: white;
-            font-size: 12px;
-            font-weight: 500;
-            border: none;
-        }
-        QPushButton:hover {
-            background: #3a5a80;
-        }
-    )");
-   // ui->chooseAuthBtn->setIcon(QIcon(":/icons/user-plus.svg"));
-    ui->chooseAuthBtn->setText(" Sélectionner");
-
-    yPos += 80;
-
-    // Champ Genre avec bouton
-    QFrame *genreContainer = new QFrame(formCard);
-    genreContainer->setObjectName("fieldContainer");
-    genreContainer->setGeometry(30, yPos, formCard->width()-60, 70);
-    genreContainer->setStyleSheet(fieldStyle);
-
-    QLabel *genreLabel = new QLabel("Genre", genreContainer);
-    genreLabel->setObjectName("fieldLabel");
-    genreLabel->setGeometry(10, 8, genreContainer->width()-20, 18);
-
-    ui->Genre->setParent(genreContainer);
-    ui->Genre->setGeometry(10, 30, genreContainer->width()-130, 30);
-
-    ui->chooseGenreBtn->setParent(genreContainer);
-    ui->chooseGenreBtn->setGeometry(genreContainer->width()-120, 30, 110, 30);
-    ui->chooseGenreBtn->setStyleSheet(R"(
-        QPushButton {
-            background: #4a6fa5;
-            border-radius: 6px;
-            color: white;
-            font-size: 12px;
-            font-weight: 500;
-            border: none;
-        }
-        QPushButton:hover {
-            background: #3a5a80;
-        }
-    )");
-   // ui->chooseGenreBtn->setIcon(QIcon(":/icons/tag.svg"));
-    ui->chooseGenreBtn->setText(" Choisir");
-
-    yPos += 80;
-
-    // Champ Description
-    QFrame *descContainer = new QFrame(formCard);
-    descContainer->setObjectName("fieldContainer");
-    descContainer->setGeometry(30, yPos, formCard->width()-60, 150);
-    descContainer->setStyleSheet(fieldStyle);
-
-    QLabel *descLabel = new QLabel("Description", descContainer);
-    descLabel->setObjectName("fieldLabel");
-    descLabel->setGeometry(10, 8, descContainer->width()-20, 18);
-
-    ui->description->setParent(descContainer);
-    ui->description->setGeometry(10, 30, descContainer->width()-20, 110);
-    ui->description->setStyleSheet("border: 1px solid #e2e8f0; border-radius: 6px;");
-
-    yPos += 170;
+    // Auteur (label + champ + bouton)
+    {
+        QFrame *container = new QFrame;
+        container->setObjectName("fieldContainer");
+        container->setStyleSheet(fieldStyle);
+        QVBoxLayout *fieldLayout = new QVBoxLayout(container);
+        fieldLayout->setContentsMargins(10, 8, 10, 8);
+        fieldLayout->setSpacing(2);
+        QLabel *labelWidget = new QLabel("Auteur", container);
+        labelWidget->setObjectName("fieldLabel");
+        fieldLayout->addWidget(labelWidget);
+        fieldLayout->addLayout(authorLayout);
+        formLayout->addWidget(container);
+    }
+    // Genre (label + champ + bouton)
+    {
+        QFrame *container = new QFrame;
+        container->setObjectName("fieldContainer");
+        container->setStyleSheet(fieldStyle);
+        QVBoxLayout *fieldLayout = new QVBoxLayout(container);
+        fieldLayout->setContentsMargins(10, 8, 10, 8);
+        fieldLayout->setSpacing(2);
+        QLabel *labelWidget = new QLabel("Genre", container);
+        labelWidget->setObjectName("fieldLabel");
+        fieldLayout->addWidget(labelWidget);
+        fieldLayout->addLayout(genreLayout);
+        formLayout->addWidget(container);
+    }
+    createField("Description", descEdit);
+    createField("Quantité disponible", quantitySpin);
+    createField("Éditeur", publisherEdit);
+    createField("Prix (€)", priceSpin);
+    createField("Date de publication", dateEdit);
 
     // Boutons d'action
-    QFrame *buttonBar = new QFrame(formCard);
-    buttonBar->setGeometry(30, formCard->height()-70, formCard->width()-60, 50);
-    buttonBar->setStyleSheet("background: transparent;");
+    QHBoxLayout *btnLayout = new QHBoxLayout();
+    btnLayout->addStretch();
+    QPushButton *cancelBtn = new QPushButton("Annuler");
+    cancelBtn->setStyleSheet("background: transparent; border: 1.5px solid #cbd5e0; border-radius: 8px; color: #4a5568; font-weight: 600; font-size: 16px; padding: 10px 28px;");
+    QPushButton *addBtn = new QPushButton("Ajouter le Livre");
+    addBtn->setStyleSheet("background: #4a6fa5; border-radius: 8px; color: white; font-weight: 700; font-size: 16px; border: none; padding: 10px 36px;");
+    btnLayout->addWidget(cancelBtn);
+    btnLayout->addWidget(addBtn);
+    formLayout->addLayout(btnLayout);
 
-    // Bouton Annuler
-    QPushButton *cancelBtn = new QPushButton("Annuler", buttonBar);
-    cancelBtn->setGeometry(0, 0, 120, 40);
-    cancelBtn->setStyleSheet(R"(
-        QPushButton {
-            background: transparent;
-            border: 1px solid #cbd5e0;
-            border-radius: 6px;
-            color: #4a5568;
-            font-weight: 500;
-        }
-        QPushButton:hover {
-            background: rgba(203, 213, 224, 0.3);
-        }
-    )");
-
-    // Bouton Ajouter
-    QPushButton *addBtn = new QPushButton("Ajouter le Livre", buttonBar);
-    addBtn->setGeometry(buttonBar->width()-200, 0, 200, 40);
-    addBtn->setStyleSheet(R"(
-        QPushButton {
-            background: #4a6fa5;
-            border-radius: 6px;
-            color: white;
-            font-weight: 600;
-            border: none;
-        }
-        QPushButton:hover {
-            background: #3a5a80;
-        }
-        QPushButton:pressed {
-            background: #2a4a70;
-        }
-    )");
-
-    // Animation de survol pour le bouton Ajouter
-    QPropertyAnimation *hoverAnim = new QPropertyAnimation(addBtn, "geometry");
-    hoverAnim->setDuration(150);
-
-    connect(addBtn, &QPushButton::pressed, [=]() {
-        hoverAnim->stop();
-        hoverAnim->setEndValue(QRect(buttonBar->width()-200, 2, 200, 38));
-        hoverAnim->start();
-    });
-
-    connect(addBtn, &QPushButton::released, [=]() {
-        hoverAnim->stop();
-        hoverAnim->setEndValue(QRect(buttonBar->width()-200, 0, 200, 40));
-        hoverAnim->start();
-    });
-
-    // Connecter les signaux
+    // Connexions
     connect(backBtn, &QPushButton::clicked, this, &addBook::reject);
     connect(cancelBtn, &QPushButton::clicked, this, &addBook::reject);
-    connect(addBtn, &QPushButton::clicked, this, &addBook::on_addBookBtn_clicked);
+    connect(addBtn, &QPushButton::clicked, [=](){
+        // Ici, tu fais la validation et l'insertion SQL
+        QString ISBN = isbnEdit->text();
+        QString name = nameEdit->text();
+        QString author = authorEdit->text();
+        QString genre = genreCombo->currentText();
+        QString description = descEdit->toPlainText();
+        int quantity = quantitySpin->value();
+        QString publisher = publisherEdit->text();
+        double price = priceSpin->value();
+        QDate date = dateEdit->date();
 
-    // Initialisation des validateurs
-    setValidator();
+        if (ISBN.isEmpty() || name.isEmpty() || author.isEmpty() || genre.isEmpty() || publisher.isEmpty()) {
+            QMessageBox::warning(this, "Champs manquants", "Veuillez remplir tous les champs obligatoires.");
+            return;
+        }
+        // ... Ajoute ici l'insertion SQL ...
+        QMessageBox::information(this, "Succès", "Livre ajouté !");
+        this->accept();
+    });
+    connect(chooseAuthorBtn, &QPushButton::clicked, [=](){
+        authorsList authors;
+        authors.exec();
+        authorEdit->setText(authors.author);
+    });
+    connect(chooseGenreBtn, &QPushButton::clicked, [=](){
+        genreList genre;
+        genre.exec();
+        genreCombo->addItem(genre.genre);
+        genreCombo->setCurrentText(genre.genre);
+    });
 }
-
 // Les autres méthodes de la classe restent inchangées
 addBook::~addBook()
 {

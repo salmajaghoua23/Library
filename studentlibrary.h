@@ -40,7 +40,6 @@ private slots:
     void showCart();
     void on_backButton_clicked();
     void on_btnHistorique_clicked();
-    void on_voirMonPanierButton_clicked();
     void on_btnCart_clicked();
     void afficherCarteLivre();
     void removeBookFromCart(int rowIndex);
@@ -58,7 +57,8 @@ private:
 
 public:
     void setCurrentUserId(int id);
-
+    void setupConnections();
+    void setupModernUI();
 private:
     int userId;
 

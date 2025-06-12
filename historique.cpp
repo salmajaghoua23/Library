@@ -9,13 +9,11 @@
 #include <QPropertyAnimation>
 #include <QDate>
 #include <QSqlError>
-#include<QSqlQuery>
+#include <QSqlQuery>
 #include <algorithm>
 #include <QStandardPaths>
 #include <QDir>
 #include <QTimer>
-#include <QGraphicsOpacityEffect>
-#include <QPropertyAnimation>
 #include <QDebug>
 #include <QMessageBox>
 #include <QtCharts/QBarSeries>
@@ -27,14 +25,91 @@
 Historique::Historique(int userId, QSqlDatabase database, QWidget *parent)
     : QDialog(parent), currentUserId(userId), db(database)
 {
-    // Configuration de la fenêtre principale avec style moderne
+    // Style général rose/violet pastel
     setWindowTitle("📊 Historique & Statistiques");
     setMinimumSize(800, 650);
-    resize(1000, 800);
-    setStyleSheet("QDialog {"
-                  "background-color: #f5f9f5;"
-                  "border-radius: 12px;"
-                  "}");
+    resize(900, 800);
+    setStyleSheet(R"(
+        QDialog {
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                stop:0 #fbeffb, stop:1 #a18cd1);
+            border-radius: 12px;
+        }
+        QLabel {
+            color: #a21caf;
+            font-size: 16px;
+            font-weight: bold;
+            background: transparent;
+            border: none;
+        }
+        QPushButton {
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                stop:0 #fbc2eb, stop:1 #a18cd1);
+            color: #7c3aed;
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-size: 15px;
+            font-weight: bold;
+            min-width: 100px;
+            border: none;
+        }
+        QPushButton:hover {
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                stop:0 #a18cd1, stop:1 #fbc2eb);
+            color: #a21caf;
+        }
+        QTabWidget::pane {
+            border: none;
+            margin-top: 4px;
+        }
+        QTabBar::tab {
+            background: #fbc2eb;
+            color: #a21caf;
+            padding: 10px 20px;
+            border: none;
+            border-top-left-radius: 6px;
+            border-top-right-radius: 6px;
+            margin-right: 4px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        QTabBar::tab:selected {
+            background: #fff0f6;
+            color: #a18cd1;
+            border-bottom: 3px solid #a18cd1;
+        }
+        QTabBar::tab:hover {
+            background: #fbeffb;
+        }
+        QTableWidget {
+            background-color: #fbeffb;
+            border: 1px solid #d291bc;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #7c3aed;
+            gridline-color: #fbc2eb;
+            alternate-background-color: #fbc2eb;
+            selection-background-color: #a18cd1;
+            selection-color: #a21caf;
+        }
+        QHeaderView::section {
+            background: #a18cd1;
+            color: #fff;
+            padding: 12px 16px;
+            font-weight: 600;
+            border: none;
+            border-bottom: 2px solid #fbc2eb;
+        }
+        QTableWidget::item {
+            padding: 12px 16px;
+            border-bottom: 1px solid #fbc2eb;
+            color: #7c3aed;
+        }
+        QTableWidget::item:selected {
+            background: #a18cd1;
+            color: #fff0f6;
+        }
+    )");
 
     // Effet d'ombre portée pour la fenêtre
     QGraphicsDropShadowEffect *shadowEffect = new QGraphicsDropShadowEffect(this);
@@ -43,15 +118,15 @@ Historique::Historique(int userId, QSqlDatabase database, QWidget *parent)
     shadowEffect->setOffset(0, 4);
     setGraphicsEffect(shadowEffect);
 
-    // Layout principal avec espacement optimal
+    // Layout principal
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(16, 16, 16, 16);
     mainLayout->setSpacing(20);
 
-    /* ------------------- WIDGET DE STATISTIQUES ------------------- */
+    // ------------------- WIDGET DE STATISTIQUES -------------------
     QWidget *statsWidget = new QWidget(this);
     statsWidget->setStyleSheet("background: qlineargradient(x1:0, y1:0, x2:1, y2:0,"
-                               "stop:0 #81C784, stop:1 #66BB6A);"
+                               "stop:0 #fbc2eb, stop:1 #a18cd1);"
                                "border-radius: 10px;"
                                "padding: 16px;");
 
@@ -64,48 +139,18 @@ Historique::Historique(int userId, QSqlDatabase database, QWidget *parent)
     statsIcon->setPixmap(QPixmap(":/icons/stats.png").scaled(48, 48, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     statsLayout->addWidget(statsIcon);
 
-    // Label des statistiques avec style moderne
+    // Label des statistiques
     labelConnexions = new QLabel(this);
     labelConnexions->setFixedHeight(80);
     labelConnexions->setAlignment(Qt::AlignCenter);
-    labelConnexions->setStyleSheet(
-        "QLabel {"
-        "   color: white;"
-        "   font-size: 14px;"
-        "   font-weight: 500;"
-        "}");
     statsLayout->addWidget(labelConnexions);
 
     mainLayout->addWidget(statsWidget);
 
-    /* ------------------- SYSTEME D'ONGLETS MODERNE ------------------- */
+    // ------------------- SYSTEME D'ONGLETS MODERNE -------------------
     QTabWidget *tabWidget = new QTabWidget(this);
-    tabWidget->setStyleSheet(
-        "QTabWidget::pane {"
-        "   border: none;"
-        "   margin-top: 4px;"
-        "}"
-        "QTabBar::tab {"
-        "   background: #e8f5e9;"
-        "   color: #2e7d32;"
-        "   padding: 10px 20px;"
-        "   border: none;"
-        "   border-top-left-radius: 6px;"
-        "   border-top-right-radius: 6px;"
-        "   margin-right: 4px;"
-        "   font-size: 13px;"
-        "   font-weight: 500;"
-        "}"
-        "QTabBar::tab:selected {"
-        "   background: white;"
-        "   color: #1b5e20;"
-        "   border-bottom: 3px solid #4CAF50;"
-        "}"
-        "QTabBar::tab:hover {"
-        "   background: #c8e6c9;"
-        "}");
 
-    /* ------------------- ONGLET EMPRUNTS (AMÉLIORÉ) ------------------- */
+    // ------------------- ONGLET EMPRUNTS -------------------
     QWidget *empruntsTab = new QWidget();
     empruntsTab->setStyleSheet("background: white; border-radius: 6px;");
 
@@ -116,16 +161,14 @@ Historique::Historique(int userId, QSqlDatabase database, QWidget *parent)
     // En-tête du tableau
     QLabel *empruntsHeader = new QLabel("📖 Historique des Emprunts");
     empruntsHeader->setStyleSheet(
-        "QLabel {"
-        "   font-size: 16px;"
-        "   font-weight: bold;"
-        "   color: #212529;"
-        "   padding: 12px 16px;"
-        "   border-bottom: 1px solid #e9ecef;"
-        "}");
+        "font-size: 16px;"
+        "font-weight: bold;"
+        "color: #a18cd1;"
+        "padding: 12px 16px;"
+        "border-bottom: 1px solid #fbc2eb;");
     empruntsLayout->addWidget(empruntsHeader);
 
-    // Configuration du tableau avec style amélioré
+    // Tableau
     tableReservations = new QTableWidget(this);
     setupReservationsTable();
 
@@ -137,38 +180,30 @@ Historique::Historique(int userId, QSqlDatabase database, QWidget *parent)
 
     tabWidget->addTab(empruntsTab, "📚 Emprunts");
 
-    /* ------------------- ONGLET STATISTIQUES (AMÉLIORÉ) ------------------- */
+    // ------------------- ONGLET STATISTIQUES -------------------
     QWidget *statsTab = new QWidget();
     statsTab->setStyleSheet("background: white; border-radius: 6px;");
-
     QVBoxLayout *statsTabLayout = new QVBoxLayout(statsTab);
     statsTabLayout->setContentsMargins(0, 0, 0, 0);
     statsTabLayout->setSpacing(0);
-
     // En-tête des statistiques
     QLabel *chartsHeader = new QLabel("📈 Statistiques d'Utilisation");
     chartsHeader->setStyleSheet(
-        "QLabel {"
-        "   font-size: 16px;"
-        "   font-weight: bold;"
-        "   color: #212529;"
-        "   padding: 12px 16px;"
-        "   border-bottom: 1px solid #e9ecef;"
-        "}");
+        "font-size: 16px;"
+        "font-weight: bold;"
+        "color: #a18cd1;"
+        "padding: 12px 16px;"
+        "border-bottom: 1px solid #fbc2eb;");
     statsTabLayout->addWidget(chartsHeader);
-
-    // Conteneur scrollable avec style
     QScrollArea *chartsScroll = new QScrollArea();
     chartsScroll->setWidgetResizable(true);
     chartsScroll->setStyleSheet("QScrollArea { border: none; background: transparent; }");
     chartsScroll->setFrameShape(QFrame::NoFrame);
-
     QWidget *chartsContainer = new QWidget();
     QVBoxLayout *chartsLayout = new QVBoxLayout(chartsContainer);
     chartsLayout->setSpacing(25);
     chartsLayout->setContentsMargins(16, 16, 16, 16);
 
-    // Graphiques avec effets
     QChartView *connexionsChart = createConnexionsChart();
     connexionsChart->setMinimumHeight(350);
     connexionsChart->setStyleSheet("background: white; border-radius: 8px;");
@@ -185,27 +220,10 @@ Historique::Historique(int userId, QSqlDatabase database, QWidget *parent)
 
     mainLayout->addWidget(tabWidget);
 
-    /* ------------------- BOUTON DE RETOUR ------------------- */
+    // ------------------- BOUTON DE RETOUR -------------------
     btnRetour = new QPushButton("← Retour", this);
-    btnRetour->setStyleSheet(
-        "QPushButton {"
-        "   background-color: #4CAF50;"
-        "   color: white;"
-        "   border: none;"
-        "   border-radius: 6px;"
-        "   padding: 8px 16px;"
-        "   font-size: 14px;"
-        "   font-weight: bold;"
-        "}"
-        "QPushButton:hover {"
-        "   background-color: #45a049;"
-        "}"
-        "QPushButton:pressed {"
-        "   background-color: #3d8b40;"
-        "}");
     btnRetour->setCursor(Qt::PointingHandCursor);
     connect(btnRetour, &QPushButton::clicked, this, &Historique::retourArriere);
-
     mainLayout->insertWidget(0, btnRetour, 0, Qt::AlignLeft);
 
     // Initialisation avec animation
@@ -230,34 +248,6 @@ void Historique::setupReservationsTable()
     tableReservations->setColumnCount(5);
     tableReservations->setHorizontalHeaderLabels(
         QStringList() << "📅 Date emprunt" << "📚 Livre" << "👤 Utilisateur" << "🔄 Date retour" << "✅ Retour effectif");
-
-    // Style moderne pour le tableau
-    tableReservations->setStyleSheet(
-        "QTableWidget {"
-        "   background-color: white;"
-        "   border: none;"
-        "   font-size: 13px;"
-        "   gridline-color: #e8f5e9;"
-        "   selection-background-color: #c8e6c9;"
-        "   selection-color: #1b5e20;"
-        "}"
-        "QHeaderView::section {"
-        "   background-color: #e8f5e9;"
-        "   color: #2e7d32;"
-        "   padding: 12px 16px;"
-        "   font-weight: 600;"
-        "   border: none;"
-        "   border-bottom: 2px solid #c8e6c9;"
-        "}"
-        "QTableWidget::item {"
-        "   padding: 12px 16px;"
-        "   border-bottom: 1px solid #e9ecef;"
-        "   color: #212529;"
-        "}"
-        "QTableWidget::item:selected {"
-        "   background: #e3f2fd;"
-        "   color: #1976d2;"
-        "}");
 
     tableReservations->setEditTriggers(QAbstractItemView::NoEditTriggers);
     tableReservations->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -286,7 +276,7 @@ QChartView* Historique::createConnexionsChart()
 {
     QBarSeries *series = new QBarSeries();
     QBarSet *set = new QBarSet("Connexions");
-    set->setColor(QColor("#66BB6A"));
+    set->setColor(QColor("#a18cd1"));
 
     QMap<QString, int> data = getConnexionsDataLast7Days();
     QStringList categories;
@@ -306,7 +296,7 @@ QChartView* Historique::createConnexionsChart()
     chart->setBackgroundBrush(QBrush(Qt::white));
     chart->setMargins(QMargins(10, 10, 10, 10));
 
-    // Configuration des axes
+    // Axes
     QBarCategoryAxis *axisX = new QBarCategoryAxis();
     axisX->append(categories);
     axisX->setLabelsFont(QFont("Arial", 9));
@@ -318,7 +308,6 @@ QChartView* Historique::createConnexionsChart()
     axisY->setTitleText("Nombre");
     axisY->setLabelsFont(QFont("Arial", 9));
 
-    // Calcul du maximum avec marge
     int maxValue = 0;
     for (int i = 0; i < set->count(); ++i) {
         if (set->at(i) > maxValue) maxValue = set->at(i);
@@ -338,13 +327,11 @@ QChartView* Historique::createEmpruntsChart()
 {
     QBarSeries *series = new QBarSeries();
 
-    // Emprunts
     QBarSet *empruntsSet = new QBarSet("Emprunts");
-    empruntsSet->setColor(QColor("#81C784"));
+    empruntsSet->setColor(QColor("#fbc2eb"));
 
-    // Retours
     QBarSet *retoursSet = new QBarSet("Retours");
-    retoursSet->setColor(QColor("#4CAF50"));
+    retoursSet->setColor(QColor("#a18cd1"));
 
     QMap<QString, int> empruntsData = getEmpruntsDataLast7Days();
     QMap<QString, int> retoursData = getRetoursDataLast7Days();
@@ -372,7 +359,6 @@ QChartView* Historique::createEmpruntsChart()
     chart->setBackgroundBrush(QBrush(Qt::white));
     chart->setMargins(QMargins(10, 10, 10, 10));
 
-    // Configuration des axes
     QBarCategoryAxis *axisX = new QBarCategoryAxis();
     axisX->append(categories);
     axisX->setLabelsFont(QFont("Arial", 9));
@@ -416,12 +402,10 @@ void Historique::chargerEmpruntsFromDB()
                   "JOIN accounts a ON e.user_id = a.ID "
                   "WHERE e.user_id = :userId "
                   "ORDER BY e.borrow_date DESC");
-    query.bindValue(":userId", currentUserId);  // Liaison de la valeur
+    query.bindValue(":userId", currentUserId);
 
     if (!query.exec()) {
-        qDebug() << "Erreur lors de l a récupération des emprunts:" << query.lastError().text();
-        qDebug() << "Requête exécutée:" << query.lastQuery(); // Affiche la requête finale
-        qDebug() << "Valeur de userId:" << currentUserId; // Vérifie la valeur du paramètre
+        qDebug() << "Erreur lors de la récupération des emprunts:" << query.lastError().text();
         tableReservations->setRowCount(1);
         tableReservations->setItem(0, 0, new QTableWidgetItem("Erreur de chargement des données"));
         return;
@@ -431,7 +415,7 @@ void Historique::chargerEmpruntsFromDB()
         tableReservations->setItem(0, 0, new QTableWidgetItem("Aucun emprunt trouvé"));
         return;
     }
-    while (query.next()) {
+    do {
         int row = tableReservations->rowCount();
         tableReservations->insertRow(row);
 
@@ -448,10 +432,10 @@ void Historique::chargerEmpruntsFromDB()
 
         // Style pour les retards
         if (actualReturnDate.isNull() && QDate::currentDate() > returnDate) {
-            returnItem->setBackground(QColor("#FFF3CD"));
-            actualReturnItem->setBackground(QColor("#FFF3CD"));
+            returnItem->setBackground(QColor("#fbc2eb"));
+            actualReturnItem->setBackground(QColor("#fbc2eb"));
         } else if (actualReturnDate.isValid() && actualReturnDate > returnDate) {
-            actualReturnItem->setBackground(QColor("#F8D7DA"));
+            actualReturnItem->setBackground(QColor("#a18cd1"));
         }
 
         borrowItem->setTextAlignment(Qt::AlignCenter);
@@ -465,7 +449,7 @@ void Historique::chargerEmpruntsFromDB()
         tableReservations->setItem(row, 2, userItem);
         tableReservations->setItem(row, 3, returnItem);
         tableReservations->setItem(row, 4, actualReturnItem);
-    }
+    } while (query.next());
 }
 
 QMap<QString, int> Historique::getConnexionsDataLast7Days()
@@ -473,12 +457,10 @@ QMap<QString, int> Historique::getConnexionsDataLast7Days()
     QMap<QString, int> data;
     QDate currentDate = QDate::currentDate();
 
-    // Initialiser les 7 derniers jours
     for (int i = 0; i < 7; ++i) {
         data[currentDate.addDays(-i).toString("yyyy-MM-dd")] = 0;
     }
 
-    // Requête SQL pour récupérer les connexions de l'utilisateur
     QSqlQuery query(db);
     query.prepare("SELECT DATE(date_connexion), COUNT(*) "
                   "FROM historique_connexions "
@@ -499,6 +481,7 @@ QMap<QString, int> Historique::getConnexionsDataLast7Days()
 
     return data;
 }
+
 void Historique::enregistrerConnexion(int userId, QSqlDatabase db)
 {
     QSqlQuery query(db);
@@ -510,6 +493,7 @@ void Historique::enregistrerConnexion(int userId, QSqlDatabase db)
         qDebug() << "Erreur lors de l'enregistrement de la connexion:" << query.lastError().text();
     }
 }
+
 QMap<QString, int> Historique::getEmpruntsDataLast7Days()
 {
     QMap<QString, int> data;
@@ -523,7 +507,7 @@ QMap<QString, int> Historique::getEmpruntsDataLast7Days()
     query.prepare("SELECT DATE(borrow_date), COUNT(*) "
                   "FROM emprunts "
                   "WHERE DATE(borrow_date) >= DATE('now', '-6 days') "
-                  "AND user_id = :userId "  // Ajout de cette condition
+                  "AND user_id = :userId "
                   "GROUP BY DATE(borrow_date)");
 
     query.bindValue(":userId", currentUserId);
@@ -555,7 +539,7 @@ QMap<QString, int> Historique::getRetoursDataLast7Days()
                   "FROM emprunts "
                   "WHERE actual_return_date IS NOT NULL "
                   "AND DATE(actual_return_date) >= DATE('now', '-6 days') "
-                  "AND user_id = :userId "  // Ajout de cette condition
+                  "AND user_id = :userId "
                   "GROUP BY DATE(actual_return_date)");
 
     query.bindValue(":userId", currentUserId);
@@ -589,7 +573,7 @@ void Historique::chargerStatsConnexions()
 
     QString statsText = QString(
                             "<div style='text-align: center;'>"
-                            "<div style='font-size: 16px; color: #4e73df; font-weight: bold; margin-bottom: 8px;'>"
+                            "<div style='font-size: 16px; color: #a18cd1; font-weight: bold; margin-bottom: 8px;'>"
                             "📊 Statistiques de Connexion"
                             "</div>"
                             "<table style='width: 100%; border-collapse: collapse;'>"
@@ -643,7 +627,7 @@ void Historique::chargerStatsEmprunts()
 
     QString statsText = QString(
                             "<div style='text-align: center;'>"
-                            "<div style='font-size: 16px; color: #4e73df; font-weight: bold; margin-bottom: 8px;'>"
+                            "<div style='font-size: 16px; color: #a18cd1; font-weight: bold; margin-bottom: 8px;'>"
                             "📊 Statistiques des Emprunts"
                             "</div>"
                             "<table style='width: 100%; border-collapse: collapse;'>"

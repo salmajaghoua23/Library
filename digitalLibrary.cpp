@@ -21,6 +21,10 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QtCharts/QChartView>
+#include <QtCharts/QLineSeries>
+#include <QtCharts/QCategoryAxis>
+//using namespace QtCharts;
 #include <QFrame>
 #include <QPushButton>
 #include <QSpacerItem>
@@ -28,8 +32,9 @@
 #include <QFontDatabase>
 #include <QStackedWidget>
 QSqlDatabase digitalLibrary::db;
-digitalLibrary::digitalLibrary(QWidget *parent) :
+digitalLibrary::digitalLibrary(QWidget *parent, int userId) :
     QDialog(parent),
+    m_userId(userId),
     m_usernameLabel(new QLabel(this)),
     booksBtn(nullptr),
     membersBtn(nullptr)
@@ -95,16 +100,6 @@ digitalLibrary::digitalLibrary(QWidget *parent) :
         "QPushButton:hover { background-color: rgba(255,255,255,0.1); }"
         "QPushButton:checked { background-color: rgba(255,255,255,0.2); }";
 
-    QString subButtonStyle =
-        "QPushButton {"
-        " text-align: left; padding: 13px 40px; border-radius: 4px;"
-        " font-size: 13px; color: black; background-color: transparent;"
-        "background-color:white"
-        "}"
-        "QPushButton:hover { background-color: rgba(255,255,255,0.15); }";
-
-    // === Boutons principaux ===
-
     // Tableau de bord (sans sous-menu)
     QPushButton *dashboardBtn = new QPushButton("📊 Tableau de bord");
     dashboardBtn->setStyleSheet(buttonStyle);
@@ -120,15 +115,16 @@ digitalLibrary::digitalLibrary(QWidget *parent) :
     booksSubLayout->setSpacing(5);
     booksSubMenu->setVisible(false);
 
-    QPushButton *addBookSubBtn = new QPushButton("➕ Ajouter livre");
-    QPushButton *editBookSubBtn = new QPushButton("✏ Modifier livre");
-    QPushButton *deleteBookSubBtn = new QPushButton("🗑 Supprimer livre");
-    QPushButton *listBooksSubBtn = new QPushButton("📋 Liste des livres");
-    QPushButton *issueBookSubBtn = new QPushButton("📥 Emprunter livre");
-    QPushButton *returnBookSubBtn = new QPushButton("📤 Retourner livre");
+    QPushButton *addBookSubBtn = new QPushButton("➕ Ajouter ");
+    QPushButton *editBookSubBtn = new QPushButton("✏ Modifier");
+    QPushButton *deleteBookSubBtn = new QPushButton("🗑 Supprimer ");
+    QPushButton *listBooksSubBtn = new QPushButton("📋 Liste ");
+    QPushButton *issueBookSubBtn = new QPushButton("📥 Emprunter");
+    QPushButton *returnBookSubBtn = new QPushButton("📤 Retourner ");
 
     for (auto btn : {addBookSubBtn, editBookSubBtn, deleteBookSubBtn, listBooksSubBtn}) {
-        btn->setStyleSheet(subButtonStyle);
+        btn->setStyleSheet(buttonStyle);
+       //  btn->setMinimumWidth(200); // Optionnel
         booksSubLayout->addWidget(btn);
     }
 
@@ -149,7 +145,8 @@ digitalLibrary::digitalLibrary(QWidget *parent) :
     QPushButton *listMembersSubBtn = new QPushButton("📋 Liste des membres");
 
     for (auto btn : {addMemberSubBtn, editMemberSubBtn, deleteMemberSubBtn, listMembersSubBtn}) {
-        btn->setStyleSheet(subButtonStyle);
+        btn->setStyleSheet(buttonStyle);
+      //   btn->setMinimumWidth(200); // Optionnel
         membersSubLayout->addWidget(btn);
     }
 
@@ -208,35 +205,96 @@ digitalLibrary::digitalLibrary(QWidget *parent) :
 
     QHBoxLayout *statsLayout = new QHBoxLayout();
     statsLayout->setSpacing(20);
+    QSqlQuery query(db);
 
-    QFrame *bookCard = createStatCard("📚", "Livres", "0", primaryColor);
-    QFrame *memberCard = createStatCard("👥", "Membres", "0", secondaryColor);
-    QFrame *authorCard = createStatCard("✍", "Auteurs", "0", "#8a2be2");
-    QFrame *loanCard = createStatCard("🔄", "Emprunts", "0", "#4169e1");
+    // Crée les cartes et récupère les pointeurs vers les labels
+    bookCard = createStatCard("📚", "Livres", "0", primaryColor, &bookCountLabel);
+    memberCard = createStatCard("👥", "Membres", "0", secondaryColor, &memberCountLabel);
+    authorCard = createStatCard("✍", "Auteurs", "0", "#8a2be2", &authorCountLabel);
+    loanCard = createStatCard("🔄", "Emprunts", "0", "#4169e1", &loanCountLabel);
+
+    // Mets à jour les valeurs dynamiquement
+    //QSqlQuery query(db);
+
+    query.exec("SELECT COUNT(*) FROM books");
+    if (query.next() && bookCountLabel) bookCountLabel->setText(query.value(0).toString());
+
+    query.exec("SELECT COUNT(*) FROM members");
+    if (query.next() && memberCountLabel) memberCountLabel->setText(query.value(0).toString());
+
+    query.exec("SELECT COUNT(*) FROM authors");
+    if (query.next() && authorCountLabel) authorCountLabel->setText(query.value(0).toString());
+
+    query.exec("SELECT COUNT(*) FROM emprunts ");
+    if (query.next() && loanCountLabel) loanCountLabel->setText(query.value(0).toString());
 
     statsLayout->addWidget(bookCard);
     statsLayout->addWidget(memberCard);
     statsLayout->addWidget(authorCard);
     statsLayout->addWidget(loanCard);
     contentLayout->addLayout(statsLayout);
+    QMap<QString, int> connexionsParJour;
+    //QSqlQuery query(db);
+    query.prepare("SELECT date(date_connexion) AS jour, COUNT(*) FROM historique_connexions WHERE user_id = ? GROUP BY jour ORDER BY jour ASC");
+    query.addBindValue(userId);
+    query.exec();
+    while (query.next()) {
+        QString jour = query.value(0).toString();
+        int count = query.value(1).toInt();
+        connexionsParJour[jour] = count;
+    }
 
-    QLabel *activityTitle = new QLabel("Activités Récentes");
-    activityTitle->setFont(headerFont);
-    activityTitle->setStyleSheet(QString("color: %1; margin-top: 20px;").arg(darkColor));
-    contentLayout->addWidget(activityTitle);
+    QLineSeries *series = new QLineSeries();
+    QStringList joursLabels;
+    int i = 0;
+    for (auto it = connexionsParJour.begin(); it != connexionsParJour.end(); ++it, ++i) {
+        series->append(i, it.value());
+        joursLabels << it.key();
+    }
+    series->setColor(QColor("#6a5acd")); // Violet moderne
+    series->setPen(QPen(QColor("#6a5acd"), 3)); // Épaisseur 3px
 
-    QFrame *activityFrame = new QFrame();
-    activityFrame->setStyleSheet(
-        "QFrame { background-color: white; border-radius: 10px; "
-        "border: 1px solid #e0e0e0; }"
-        );
-    activityFrame->setFixedHeight(200);
-    contentLayout->addWidget(activityFrame);
 
-    QLabel *quickActionsTitle = new QLabel("Actions Rapides");
-    quickActionsTitle->setFont(headerFont);
-    quickActionsTitle->setStyleSheet(QString("color: %1; margin-top: 20px;").arg(darkColor));
-    contentLayout->addWidget(quickActionsTitle);
+    QChart *chart = new QChart();
+    chart->addSeries(series);
+    chart->setTitle("Historique des accès (admin)");
+    chart->setBackgroundBrush(QBrush(Qt::white));
+    chart->setBackgroundPen(Qt::NoPen);
+    QFont chartTitleFont("Segoe UI", 16, QFont::Bold);
+    chart->setTitleFont(chartTitleFont);
+    chart->setTitleBrush(QBrush(QColor("#6a5acd")));
+    chart->legend()->hide();
+
+    QCategoryAxis *axisX = new QCategoryAxis();
+    for (int j = 0; j < joursLabels.size(); ++j)
+        axisX->append(joursLabels[j], j);
+    axisX->setLabelsAngle(-45);
+    chart->setAxisX(axisX, series);
+
+    QChartView *chartView = new QChartView(chart);
+    chartView->setMinimumHeight(220);
+    chartView->setRenderHint(QPainter::Antialiasing);
+
+    contentLayout->addWidget(chartView);
+    // // 3. Ajouter le graphique au layout principal
+    // contentLayout->addWidget(chartView);
+    // QLabel *activityTitle = new QLabel("Activités Récentes");
+    // activityTitle->setFont(headerFont);
+    // activityTitle->setStyleSheet(QString("color: %1; margin-top: 20px;").arg(darkColor));
+    // contentLayout->addWidget(activityTitle);
+
+    // QFrame *activityFrame = new QFrame();
+    // activityFrame->setStyleSheet(
+    //     "QFrame { background-color: white; border-radius: 10px; "
+    //     "border: 1px solid #e0e0e0; }"
+    //     );
+    // activityFrame->setFixedHeight(200);
+    // contentLayout->addWidget(activityFrame);
+
+    // QLabel *quickActionsTitle = new QLabel("Actions Rapides");
+    // quickActionsTitle->setFont(headerFont);
+    // quickActionsTitle->setStyleSheet(QString("color: %1; margin-top: 20px;").arg(darkColor));
+    // contentLayout->addWidget(quickActionsTitle);
 
     QHBoxLayout *quickActionsLayout = new QHBoxLayout();
     quickActionsLayout->setSpacing(15);
@@ -269,11 +327,19 @@ digitalLibrary::digitalLibrary(QWidget *parent) :
     connect(addMemberBtn, &QPushButton::clicked, this, &digitalLibrary::on_addMemberBtn_clicked);
     connect(addAuthorBtn, &QPushButton::clicked, this, &digitalLibrary::on_manageAuthorButton_clicked);
     // ========== CONNEXIONS ==========
-    connect(booksBtn, &QPushButton::toggled, booksSubMenu, &QWidget::setVisible);
-    connect(membersBtn, &QPushButton::toggled, membersSubMenu, &QWidget::setVisible);
+   // connect(booksBtn, &QPushButton::toggled, booksSubMenu, &QWidget::setVisible);
+    //connect(membersBtn, &QPushButton::toggled, membersSubMenu, &QWidget::setVisible);
     connect(logoutBtn, &QPushButton::clicked, this, &digitalLibrary::close);
     connect(viewAllBtn, &QPushButton::clicked, this, &digitalLibrary::on_booksListBtn_clicked);
-
+    // ...après les connect(booksBtn, ...) et connect(membersBtn, ...)...
+    connect(booksBtn, &QPushButton::toggled, [=](bool checked){
+        booksSubMenu->setVisible(checked);
+        if (checked) membersBtn->setChecked(false); // Ferme l'autre sous-menu
+    });
+    connect(membersBtn, &QPushButton::toggled, [=](bool checked){
+        membersSubMenu->setVisible(checked);
+        if (checked) booksBtn->setChecked(false); // Ferme l'autre sous-menu
+    });
     // Connexions des sous-menus
     connect(addBookSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_addBookBtn_clicked);
     connect(editBookSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_editBookBtn_clicked);
@@ -281,7 +347,6 @@ digitalLibrary::digitalLibrary(QWidget *parent) :
     connect(listBooksSubBtn, &QPushButton::clicked, this, &digitalLibrary::on_booksListBtn_clicked);
 
 }
-
 QPushButton* digitalLibrary::createSidebarButton(const QString &text, const QString &style)
 {
     QPushButton *btn = new QPushButton(text);
@@ -301,7 +366,7 @@ QPushButton* digitalLibrary::createSubMenuButton(const QString &text)
         );
     return btn;
 }
-QFrame* digitalLibrary::createStatCard(const QString &icon, const QString &title, const QString &value, const QString &color)
+QFrame* digitalLibrary::createStatCard(const QString &icon, const QString &title, const QString &value, const QString &color, QLabel **valueLabelPtr)
 {
     QFrame *card = new QFrame();
     card->setMinimumHeight(120);
@@ -320,6 +385,7 @@ QFrame* digitalLibrary::createStatCard(const QString &icon, const QString &title
 
     QLabel *valueLabel = new QLabel(value);
     valueLabel->setStyleSheet("font-size: 28px; font-weight: bold; margin-top: 10px;");
+    if (valueLabelPtr) *valueLabelPtr = valueLabel;
 
     cardLayout->addWidget(iconLabel);
     cardLayout->addWidget(titleLabel);
@@ -328,7 +394,6 @@ QFrame* digitalLibrary::createStatCard(const QString &icon, const QString &title
 
     return card;
 }
-
 QPushButton* digitalLibrary::createQuickActionButton(const QString &text, const QString &color)
 {
     QPushButton *btn = new QPushButton(text);

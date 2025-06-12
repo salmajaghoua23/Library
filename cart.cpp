@@ -8,13 +8,6 @@
 #include <QTextStream>
 #include <QVBoxLayout>
 #include <QSqlError>
-#include <QSqlQuery>
-#include <QSqlQueryModel>
-#include <QMessageBox>
-#include <QDateTime>
-#include <QFile>
-#include <QTextStream>
-#include <QVBoxLayout>
 #include <QHeaderView>
 #include <QScreen>
 #include <QApplication>
@@ -27,171 +20,133 @@ Cart::Cart(QWidget *parent, QSqlDatabase db, int userId) :
 {
     ui->setupUi(this);
 
-    // Créer un layout principal si nécessaire
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
-    mainLayout->setContentsMargins(20, 20, 20, 20);
-    mainLayout->setSpacing(15);
-
-    // Style général de la fenêtre avec dégradé de couleur
+    // Style général rose/violet pastel
     this->setStyleSheet(R"(
         QDialog {
             background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
-                stop:0 #E0F7FA, stop:1 #B2EBF2);
+                stop:0 #fbeffb, stop:1 #a18cd1);
         }
-    )");
-    this->setWindowTitle("🛒 Mon Panier de Livres");
-    this->resize(600, 400); // Taille initiale réduite
-  //  this->setMinimumSize(500, 500); // Taille minimale
-
-    // Titre stylisé avec icône et ombre
-    QLabel *titleLabel = new QLabel("🛒 Mon Panier de Livres", this);
-    titleLabel->setStyleSheet(R"(
         QLabel {
-            color: #00796B;
-            font-size: 28px;
+            color: #a21caf;
+            font-size: 17px;
             font-weight: bold;
-            padding: 20px;
-            background-color: rgba(255, 255, 255, 0.8);
-            border-radius: 15px;
-            margin: 10px;
-            qproperty-alignment: AlignCenter;
-        }
-    )");
-    mainLayout->addWidget(titleLabel);
-    QLabel *subtitleLabel = new QLabel("✨ Prêt à emprunter ? Voici votre sélection ✨", this);
-    subtitleLabel->setStyleSheet(R"(
-        QLabel {
-            color: #00897B;
-            font-size: 16px;
-            font-style: italic;
             padding: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            margin: 5px;
             qproperty-alignment: AlignCenter;
         }
+        QPushButton {
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                stop:0 #fbc2eb, stop:1 #a18cd1);
+            color: #7c3aed;
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-size: 15px;
+            font-weight: bold;
+            min-width: 100px;
+            max-width: 140px;
+            border: none;
+        }
+        QPushButton:hover {
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                stop:0 #a18cd1, stop:1 #fbc2eb);
+            color: #a21caf;
+        }
+        QPushButton#btnRemoveSelected {
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                stop:0 #fbc2eb, stop:1 #d291bc);
+            color: #a21caf;
+        }
+        QPushButton#btnBorrowAll {
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                stop:0 #a18cd1, stop:1 #fbc2eb);
+            color: #fff;
+        }
+        QTableView {
+            background-color: #fbeffb;
+            border: 1px solid #d291bc;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #7c3aed;
+            gridline-color: #fbc2eb;
+            alternate-background-color: #fbc2eb;
+            selection-background-color: #a18cd1;
+            selection-color: #a21caf;
+        }
+        QHeaderView::section {
+            background: #a18cd1;
+            color: #fff;
+            padding: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            border-right: 1px solid #fbc2eb;
+        }
+        QTableView::item {
+            padding: 5px;
+            border-bottom: 1px solid #fbc2eb;
+        }
+        QTableView::item:hover {
+            background: #fbc2eb;
+        }
+        QTableView::item:selected {
+            background: #a18cd1;
+            color: #fff0f6;
+        }
     )");
+
+    this->setWindowTitle("🛒 Mon Panier de Livres");
+    this->resize(800, 600);
+
+    // Titre
+    QLabel *titleLabel = new QLabel("🛒 Mon Panier", this);
+    QLabel *subtitleLabel = new QLabel("Votre sélection de livres", this);
+
+    // Layout principal
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    mainLayout->setContentsMargins(15, 15, 15, 15);
+    mainLayout->setSpacing(10);
+
+    mainLayout->addWidget(titleLabel);
     mainLayout->addWidget(subtitleLabel);
 
-    // Ajouter le tableau existant de l'UI au layout
+    // Configuration du tableau
+    ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
+    ui->tableView->setMinimumHeight(250);
+    ui->tableView->setMaximumHeight(350);
+    ui->tableView->horizontalHeader()->setDefaultSectionSize(200);
+    ui->tableView->verticalHeader()->setDefaultSectionSize(40);
+    ui->tableView->verticalHeader()->setVisible(false);
+    ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+
     mainLayout->addWidget(ui->tableView);
-    // Créer un layout horizontal pour les boutons
+
+    // Boutons
     QHBoxLayout *buttonLayout = new QHBoxLayout();
+    buttonLayout->setSpacing(8);
+
     buttonLayout->addWidget(ui->btnRemoveSelected);
     buttonLayout->addWidget(ui->borrowButton);
     buttonLayout->addWidget(ui->btnBorrowAll);
     buttonLayout->addWidget(ui->btnClearCart);
     buttonLayout->addWidget(ui->voirMonPanierButton);
-    buttonLayout->setSpacing(10);
+
+    QPushButton *btnRetour = new QPushButton("Retour", this);
+    buttonLayout->addWidget(btnRetour);
 
     mainLayout->addLayout(buttonLayout);
 
-    // Style moderne pour les boutons avec effets
-    QString buttonStyle = R"(
-        QPushButton {
-            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                stop:0 #26A69A, stop:1 #00897B);
-            color: white;
-            border-radius: 10px;
-            padding: 12px 20px;
-            font-size: 14px;
-            font-weight: bold;
-            min-width: 150px;
-            border: 2px solid #00796B;
-        }
-        QPushButton:hover {
-            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                stop:0 #4DB6AC, stop:1 #26A69A);
-            border: 2px solid #00695C;
-        }
-        QPushButton:pressed {
-            background: #00897B;
-        }
-        QPushButton#btnRemoveSelected {
-            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                stop:0 #EF5350, stop:1 #E53935);
-            border: 2px solid #C62828;
-        }
-        QPushButton#btnRemoveSelected:hover {
-            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                stop:0 #E57373, stop:1 #EF5350);
-        }
-        QPushButton#btnBorrowAll {
-            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                stop:0 #66BB6A, stop:1 #43A047);
-            border: 2px solid #2E7D32;
-        }
-        QPushButton#btnBorrowAll:hover {
-            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                stop:0 #81C784, stop:1 #66BB6A);
-        }
-    )";
-
-    ui->btnRemoveSelected->setStyleSheet(buttonStyle);
-    ui->btnClearCart->setStyleSheet(buttonStyle);
-    ui->btnBorrowAll->setStyleSheet(buttonStyle);
-    ui->borrowButton->setStyleSheet(buttonStyle);
-    ui->voirMonPanierButton->setStyleSheet(buttonStyle);
-    QPushButton *btnRetour = new QPushButton("🔙 Retour", this);
-    btnRetour->setObjectName("btnRetour");
-    btnRetour->setStyleSheet(buttonStyle);
-   buttonLayout->addWidget(btnRetour);
-    // Style moderne pour le tableau (prend plus d'espace)
-    QString tableStyle = R"(
-        QTableView {
-            background-color: white;
-            border: 2px solid #B2DFDB;
-            border-radius: 10px;
-            alternate-background-color: #E0F2F1;
-            selection-background-color: #4DB6AC;
-            selection-color: white;
-            font-size: 14px;
-            gridline-color: #B2DFDB;color:black;
-        }
-        QTableView QTableCornerButton::section {
-            background: #00897B;
-            border: 1px solid #B2DFDB;
-        }
-        QHeaderView::section {
-            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                stop:0 #00897B, stop:1 #00796B);
-            color: white;
-            padding: 12px;
-            font-size: 14px;
-            font-weight: bold;
-            border: none;
-            border-radius: 0px;
-        }
-        QTableView::item {
-            padding: 10px;
-            border-bottom: 1px solid #B2DFDB;
-        }
-        QTableView::item:hover {
-            background: #B2EBF2;
-            color:black;
-        }
-    )";
-
-    ui->tableView->setStyleSheet(tableStyle);
-    ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
-    ui->tableView->horizontalHeader()->setDefaultSectionSize(300);
-    ui->tableView->verticalHeader()->setDefaultSectionSize(60);
-    ui->tableView->verticalHeader()->setVisible(false);
-    ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
-    ui->tableView->setMinimumHeight(200);
-    // Redimensionner pour occuper plus d'espace
-    QSize screenSize = QApplication::primaryScreen()->availableSize();
-    ui->tableView->setMinimumHeight(screenSize.height() * 0.6);
-    buttonLayout->addWidget(btnRetour);
-    // Connexions des boutons
+    // Connexions
     connect(ui->btnRemoveSelected, &QPushButton::clicked, this, &Cart::on_btnRemoveSelected_clicked);
     connect(ui->btnClearCart, &QPushButton::clicked, this, &Cart::on_btnClearCart_clicked);
     connect(ui->btnBorrowAll, &QPushButton::clicked, this, &Cart::on_btnBorrowAll_clicked);
     connect(ui->borrowButton, &QPushButton::clicked, this, &Cart::on_borrowButton_clicked);
     connect(ui->voirMonPanierButton, &QPushButton::clicked, this, &Cart::on_voirMonPanierButton_clicked);
     connect(btnRetour, &QPushButton::clicked, this, &Cart::on_btnRetour_clicked);
-    // Charger le panier initial
-    //chargerPanier();
-}
 
+    chargerPanier();
+}
 Cart::~Cart()
 {
     delete ui;
@@ -319,7 +274,7 @@ void Cart::showCart()
 
         cartModel->setHeaderData(0, Qt::Horizontal, "id");
         cartModel->setHeaderData(1, Qt::Horizontal, "Auteur");
-        cartModel->setHeaderData(2, Qt::Horizontal, "Date ajoutée");
+       // cartModel->setHeaderData(2, Qt::Horizontal, "Date ajoutée");
         cartModel->setHeaderData(3, Qt::Horizontal, "Titre");
 
     } else {

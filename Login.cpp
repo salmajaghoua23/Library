@@ -214,6 +214,8 @@ void Login::on_loginButton_clicked()
                 this->hide();
 
                 if (role == "admin") {
+                    digitalLibrary lib(nullptr, userId); // Ajoute userId comme paramètre
+                    lib.setUsername(username);
                     lib.exec();
                 } else if (role == "student") {
                     studentLibrary *studentPage = new studentLibrary(this, db);
