@@ -15,71 +15,20 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <widget class="QFrame" name="frame">
+    <widget class="QLineEdit" name="ID">
      <property name="styleSheet">
-      <string notr="true">background-color:rgb(255, 239, 242)</string>
+      <string notr="true"/>
      </property>
-     <property name="frameShape">
-      <enum>QFrame::Shape::StyledPanel</enum>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="deleteBookBtn">
+     <property name="styleSheet">
+      <string notr="true"/>
      </property>
-     <property name="frameShadow">
-      <enum>QFrame::Shadow::Raised</enum>
+     <property name="text">
+      <string>Delete Book</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QLabel" name="label">
-          <property name="styleSheet">
-           <string notr="true">font: 14pt &quot;georgia&quot;;
-color: #e0777d;</string>
-          </property>
-          <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt; font-weight:700; color:#aa55ff;&quot;&gt;Book ID :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="ID">
-          <property name="styleSheet">
-           <string notr="true">QLineEdit{
-	background-color: rgb(255, 255, 255);
-	 border: 2px  solid;
-     border-radius: 10px;
-	font: 24px;color:rgb(85, 0, 127);
-}</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="deleteBookBtn">
-          <property name="styleSheet">
-           <string notr="true">QPushButton
-{ 
-	border-radius:15px;
-	font: 16pt &quot;georgia&quot;;
-	background-color:#6a5acd;
-	padding : 0 4px;
-	border-radius:20px;
-	color:rgb(255, 255, 0)
-}
-
-
-QPushButton:hover:!pressed
-
-{
-background:rgb(243, 196, 255);
-}
-</string>
-          </property>
-          <property name="text">
-           <string>Delete Book</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
     </widget>
    </item>
   </layout>

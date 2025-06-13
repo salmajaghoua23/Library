@@ -1,5 +1,5 @@
 #include "digitalLibrary.h"
-#include "ui_digitalLibrary.h"
+// #include "ui_digitalLibrary.h"
 #include "Login.h"
 #include "statistic.h"
 #include "manageBooks.h"
@@ -115,16 +115,12 @@ digitalLibrary::digitalLibrary(QWidget *parent, int userId) :
     booksSubLayout->setSpacing(5);
     booksSubMenu->setVisible(false);
 
-    QPushButton *addBookSubBtn = new QPushButton("➕ Ajouter ");
-    QPushButton *editBookSubBtn = new QPushButton("✏ Modifier");
-    QPushButton *deleteBookSubBtn = new QPushButton("🗑 Supprimer ");
-    QPushButton *listBooksSubBtn = new QPushButton("📋 Liste ");
-    QPushButton *issueBookSubBtn = new QPushButton("📥 Emprunter");
-    QPushButton *returnBookSubBtn = new QPushButton("📤 Retourner ");
-
+    QPushButton *addBookSubBtn = createSubMenuButton("➕ Ajouter ");
+    QPushButton *editBookSubBtn = createSubMenuButton("✏ Modifier");
+    QPushButton *deleteBookSubBtn = createSubMenuButton("🗑 Supprimer ");
+    QPushButton *listBooksSubBtn = createSubMenuButton("📋 Liste ");
     for (auto btn : {addBookSubBtn, editBookSubBtn, deleteBookSubBtn, listBooksSubBtn}) {
         btn->setStyleSheet(buttonStyle);
-       //  btn->setMinimumWidth(200); // Optionnel
         booksSubLayout->addWidget(btn);
     }
 
@@ -146,7 +142,6 @@ digitalLibrary::digitalLibrary(QWidget *parent, int userId) :
 
     for (auto btn : {addMemberSubBtn, editMemberSubBtn, deleteMemberSubBtn, listMembersSubBtn}) {
         btn->setStyleSheet(buttonStyle);
-      //   btn->setMinimumWidth(200); // Optionnel
         membersSubLayout->addWidget(btn);
     }
 
@@ -212,10 +207,6 @@ digitalLibrary::digitalLibrary(QWidget *parent, int userId) :
     memberCard = createStatCard("👥", "Membres", "0", secondaryColor, &memberCountLabel);
     authorCard = createStatCard("✍", "Auteurs", "0", "#8a2be2", &authorCountLabel);
     loanCard = createStatCard("🔄", "Emprunts", "0", "#4169e1", &loanCountLabel);
-
-    // Mets à jour les valeurs dynamiquement
-    //QSqlQuery query(db);
-
     query.exec("SELECT COUNT(*) FROM books");
     if (query.next() && bookCountLabel) bookCountLabel->setText(query.value(0).toString());
 
@@ -276,26 +267,6 @@ digitalLibrary::digitalLibrary(QWidget *parent, int userId) :
     chartView->setRenderHint(QPainter::Antialiasing);
 
     contentLayout->addWidget(chartView);
-    // // 3. Ajouter le graphique au layout principal
-    // contentLayout->addWidget(chartView);
-    // QLabel *activityTitle = new QLabel("Activités Récentes");
-    // activityTitle->setFont(headerFont);
-    // activityTitle->setStyleSheet(QString("color: %1; margin-top: 20px;").arg(darkColor));
-    // contentLayout->addWidget(activityTitle);
-
-    // QFrame *activityFrame = new QFrame();
-    // activityFrame->setStyleSheet(
-    //     "QFrame { background-color: white; border-radius: 10px; "
-    //     "border: 1px solid #e0e0e0; }"
-    //     );
-    // activityFrame->setFixedHeight(200);
-    // contentLayout->addWidget(activityFrame);
-
-    // QLabel *quickActionsTitle = new QLabel("Actions Rapides");
-    // quickActionsTitle->setFont(headerFont);
-    // quickActionsTitle->setStyleSheet(QString("color: %1; margin-top: 20px;").arg(darkColor));
-    // contentLayout->addWidget(quickActionsTitle);
-
     QHBoxLayout *quickActionsLayout = new QHBoxLayout();
     quickActionsLayout->setSpacing(15);
 
@@ -328,10 +299,9 @@ digitalLibrary::digitalLibrary(QWidget *parent, int userId) :
     connect(addAuthorBtn, &QPushButton::clicked, this, &digitalLibrary::on_manageAuthorButton_clicked);
     // ========== CONNEXIONS ==========
    // connect(booksBtn, &QPushButton::toggled, booksSubMenu, &QWidget::setVisible);
-    //connect(membersBtn, &QPushButton::toggled, membersSubMenu, &QWidget::setVisible);
+   //  connect(membersBtn, &QPushButton::toggled, membersSubMenu, &QWidget::setVisible);
     connect(logoutBtn, &QPushButton::clicked, this, &digitalLibrary::close);
     connect(viewAllBtn, &QPushButton::clicked, this, &digitalLibrary::on_booksListBtn_clicked);
-    // ...après les connect(booksBtn, ...) et connect(membersBtn, ...)...
     connect(booksBtn, &QPushButton::toggled, [=](bool checked){
         booksSubMenu->setVisible(checked);
         if (checked) membersBtn->setChecked(false); // Ferme l'autre sous-menu
@@ -359,10 +329,11 @@ QPushButton* digitalLibrary::createSubMenuButton(const QString &text)
     btn->setStyleSheet(
         "QPushButton { "
         "text-align: left; padding: 10px 15px 10px 30px; border-radius: 5px; "
-        "font-size: 13px; color: #f0f0f0; background-color: transparent; "
+        "font-size: 14px; color: #6a5acd; background-color: transparent; "
         "border: none;"
         "}"
-        "QPushButton:hover { background-color: rgba(255,255,255,0.1); }"
+        "QPushButton:hover { background-color: #ede7f6; color: #483d8b; }"
+        "QPushButton:pressed { background-color: #d1c4e9; color: #2c3e50; }"
         );
     return btn;
 }
@@ -578,19 +549,19 @@ void digitalLibrary::connectDB()
 
 digitalLibrary::~digitalLibrary()
 {
-    delete ui;
+
 }
 
-// void digitalLibrary::on_statsButton_clicked() {
-//     if (!statWindow) {
-//         statWindow = new Statistic(db, this); // 'this' pour parentage
-//         connect(statWindow, &QObject::destroyed, [this]() {
-//             statWindow = nullptr;
-//         });
-//     }
-//     statWindow->loadAndShowStats(); // Charge et affiche
-//     //statWindow->show();
-// }
+void digitalLibrary::on_statsButton_clicked() {
+    if (!statWindow) {
+        statWindow = new Statistic(db, this); // 'this' pour parentage
+        connect(statWindow, &QObject::destroyed, [this]() {
+            statWindow = nullptr;
+        });
+    }
+    statWindow->loadAndShowStats(); // Charge et affiche
+    //statWindow->show();
+}
 // void digitalLibrary::on_manageGenre_clicked()
 // {
 //     manageBooks manage;
@@ -718,7 +689,7 @@ void digitalLibrary::showMemberNum(){
     while(query.next())
         count++;
 
-    ui->memberNum->setText(QString::number(count));
+   // ui->memberNum->setText(QString::number(count));
 }
 
 void digitalLibrary::showAuthorNum(){
@@ -735,7 +706,7 @@ void digitalLibrary::showAuthorNum(){
     while(query.next())
         count++;
 
-    ui->authorNum->setText(QString::number(count));
+    //ui->authorNum->setText(QString::number(count));
 }
 void digitalLibrary::insertTestData()
 {

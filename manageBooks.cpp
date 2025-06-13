@@ -5,15 +5,107 @@
 #include "editBook.h"
 #include <QMessageBox>
 #include <QDebug>
-
 manageBooks::manageBooks(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::manageBooks)
 {
     ui->setupUi(this);
-    this->setWindowTitle("Manage Genres");
 
-    //call the mail Database
+    // Style général pastel/violet moderne appliqué à tous les widgets
+    this->setStyleSheet(R"(
+        QDialog {
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                stop:0 #fbeffb, stop:1 #a18cd1);
+        }
+        QLabel {
+            color: #7c3aed;
+            font-size: 18px;
+            font-weight: bold;
+            background: transparent;
+            border: none;
+        }
+        QLineEdit {
+            background: #fff;
+            border: 2px solid #d291bc;
+            border-radius: 10px;
+            padding: 10px 16px;
+            font-size: 16px;
+            color: #7c3aed;
+            font-weight: 600;
+        }
+        QLineEdit:focus {
+            border: 2px solid #a18cd1;
+            background: #fff0f6;
+            color: #a21caf;
+        }
+        QPushButton {
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                stop:0 #fbc2eb, stop:1 #a18cd1);
+            color: #fff;
+            border: none;
+            border-radius: 15px;
+            padding: 10px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 0 8px;
+            min-width: 100px;
+        }
+        QPushButton:hover {
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                stop:0 #ede7f6, stop:1 #a18cd1);
+            color: #7c3aed;
+        }
+        QTableView {
+            background: #fbeffb;
+            border: 1px solid #d291bc;
+            border-radius: 10px;
+            font-size: 14px;
+            color: #7c3aed;
+            gridline-color: #fbc2eb;
+            alternate-background-color: #fbc2eb;
+            selection-background-color: #a18cd1;
+            selection-color: #fff;
+        }
+        QHeaderView::section {
+            background: #a18cd1;
+            color: #fff;
+            padding: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-right: 1px solid #fbc2eb;
+        }
+    )");
+
+    // Ajoute un bouton de retour en haut à gauche (emoji ←)
+    QPushButton *btnRetour = new QPushButton("← Retour", this);
+    btnRetour->setStyleSheet(
+        "QPushButton {"
+        " background: transparent;"
+        " color: #a18cd1;"
+        " font-size: 18px;"
+        " font-weight: bold;"
+        " border: none;"
+        " padding: 6px 18px;"
+        " border-radius: 10px;"
+        " min-width: 90px;"
+        "}"
+        "QPushButton:hover {"
+        " background: #ede7f6;"
+        " color: #7c3aed;"
+        "}"
+        );
+    btnRetour->setCursor(Qt::PointingHandCursor);
+
+    // Place le bouton de retour dans le layout principal (horizontalLayout_6)
+    if (QHBoxLayout *mainLayout = qobject_cast<QHBoxLayout*>(this->layout())) {
+        mainLayout->insertWidget(0, btnRetour, 0, Qt::AlignLeft | Qt::AlignTop);
+    } else {
+        this->layout()->addWidget(btnRetour);
+    }
+    connect(btnRetour, &QPushButton::clicked, this, &manageBooks::close);
+
+    // --- Le reste de ton code (modèle, validators, etc.) ---
     digitalLibrary lib;
     auto db = lib.db;
     model = new QSqlQueryModel;
@@ -35,7 +127,6 @@ manageBooks::manageBooks(QWidget *parent) :
     QRegularExpressionValidator *valName = new QRegularExpressionValidator(Name, this);
     ui->Name->setValidator(valName);
 }
-
 manageBooks::~manageBooks()
 {
     delete ui;

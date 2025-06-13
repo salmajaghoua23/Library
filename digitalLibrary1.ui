@@ -35,17 +35,7 @@
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">QPushButton{
-font: 63 14pt &quot;georgia&quot;;
-color: white;
-padding : 0 8px;
-
-}
-QPushButton:hover:!pressed
-{
-background:rgb(255, 168, 110);
-border-radius:5px;
-}</string>
+       <string notr="true"/>
       </property>
       <property name="text">
        <string>Manage Authors</string>
@@ -70,17 +60,7 @@ border-radius:5px;
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">QPushButton{
-font: 63 14pt &quot;georgia&quot;;
-color: white;
-padding : 0 8px;
-
-}
-QPushButton:hover:!pressed
-{
-background:rgb(255, 168, 110);
-border-radius:5px;
-}</string>
+       <string notr="true"/>
       </property>
       <property name="text">
        <string>Delete Member</string>
@@ -121,17 +101,7 @@ border-radius:5px;
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">QPushButton{
-font: 63 14pt &quot;georgia&quot;;
-color: white;
-padding : 0 8px;
-
-}
-QPushButton:hover:!pressed
-{
-background:rgb(255, 168, 110);
-border-radius:5px;
-}</string>
+       <string notr="true"/>
       </property>
       <property name="text">
        <string>Add Book</string>
@@ -156,17 +126,7 @@ border-radius:5px;
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">QPushButton{
-font: 63 14pt &quot;georgia&quot;;
-color: white;
-padding : 0 8px;
-
-}
-QPushButton:hover:!pressed
-{
-background:rgb(255, 168, 110);
-border-radius:5px;
-}</string>
+       <string notr="true"/>
       </property>
       <property name="text">
        <string>Edit Member</string>
@@ -191,17 +151,7 @@ border-radius:5px;
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">QPushButton{
-font: 63 14pt &quot;georgia&quot;;
-color: white;
-padding : 0 8px;
-
-}
-QPushButton:hover:!pressed
-{
-background:rgb(255, 168, 110);
-border-radius:5px;
-}</string>
+       <string notr="true"/>
       </property>
       <property name="text">
        <string>Add Member</string>
@@ -226,17 +176,7 @@ border-radius:5px;
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">QPushButton{
-font: 63 14pt &quot;georgia&quot;;
-color: white;
-padding : 0 8px;
-
-}
-QPushButton:hover:!pressed
-{
-background:rgb(255, 168, 110);
-border-radius:5px;
-}</string>
+       <string notr="true"/>
       </property>
       <property name="text">
        <string>Statistic</string>
@@ -261,17 +201,7 @@ border-radius:5px;
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">QPushButton{
-font: 63 14pt &quot;georgia&quot;;
-color: white;
-padding : 0 8px;
-
-}
-QPushButton:hover:!pressed
-{
-background:rgb(255, 168, 110);
-border-radius:5px;
-}</string>
+       <string notr="true"/>
       </property>
       <property name="text">
        <string>Members List</string>
@@ -296,17 +226,7 @@ border-radius:5px;
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">QPushButton{
-font: 63 14pt &quot;georgia&quot;;
-color: white;
-padding : 0 8px;
-
-}
-QPushButton:hover:!pressed
-{
-background:rgb(255, 168, 110);
-border-radius:5px;
-}</string>
+       <string notr="true"/>
       </property>
       <property name="text">
        <string>Delete Book</string>
@@ -331,17 +251,7 @@ border-radius:5px;
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">QPushButton{
-font: 63 14pt &quot;georgia&quot;;
-color: white;
-padding : 0 8px;
-
-}
-QPushButton:hover:!pressed
-{
-background:rgb(255, 168, 110);
-border-radius:5px;
-}</string>
+       <string notr="true"/>
       </property>
       <property name="text">
        <string>Books List</string>
@@ -410,8 +320,8 @@ border-radius:5px;
      <widget class="QLabel" name="label">
       <property name="geometry">
        <rect>
-        <x>-250</x>
-        <y>0</y>
+        <x>110</x>
+        <y>10</y>
         <width>565</width>
         <height>61</height>
        </rect>
@@ -472,17 +382,7 @@ font-weight: bold;</string>
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">QPushButton{
-font: 63 14pt &quot;georgia&quot;;
-color: white;
-padding : 0 8px;
-
-}
-QPushButton:hover:!pressed
-{
-background:rgb(255, 168, 110);
-border-radius:5px;
-}</string>
+       <string notr="true"/>
       </property>
       <property name="text">
        <string>Edit Book</string>

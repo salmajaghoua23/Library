@@ -6,6 +6,9 @@
 #include<QSqlQueryModel>
 #include <QDir>
 #include <QObject>
+// ...existing code...
+#include <QTableWidget> // Ajoute cette ligne en haut si tu utilises QTableWidget
+
 
 namespace Ui {
 class deleteBook;
@@ -21,7 +24,11 @@ public:
 
 private slots:
     void on_deleteBookBtn_clicked();
-
+private:
+    QTableWidget *booksTable; // Nouvelle table pour afficher les livres
+    QPushButton *deleteBtn;   // Bouton supprimer
+    int selectedBookId = -1;  // ID du livre sélectionné
+// ...existing code...
 private:
     Ui::deleteBook *ui;
 };

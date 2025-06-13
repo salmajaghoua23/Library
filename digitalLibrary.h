@@ -52,7 +52,7 @@ public:
      void  updateStatsCards();
 
 public slots:
-    //void on_manageGenre_clicked();
+    void on_manageGenre_clicked();
 
     void on_manageAuthorButton_clicked();
 
@@ -74,7 +74,7 @@ public slots:
 
    // void on_issueBookBtn_clicked();
 
-    //void on_statsButton_clicked();
+    void on_statsButton_clicked();
    // void on_returnBookBtn_clicked();
 private:
     QString m_username;  // Variable membre pour stocker le nom d'utilisateur

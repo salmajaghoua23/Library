@@ -11,6 +11,7 @@
 #include <QGraphicsDropShadowEffect>
 #include <QPropertyAnimation>
 #include<QSqlError>
+// ...existing includes...
 bookList::bookList(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::bookList)
@@ -18,26 +19,26 @@ bookList::bookList(QWidget *parent) :
     ui->setupUi(this);
     this->setWindowTitle("Bibliothèque • Liste des Livres");
     this->setMinimumSize(1200, 800);
-    this->setStyleSheet("background: #f5f7fa;");
+    this->setStyleSheet("background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #ede7f6, stop:1 #a18cd1);");
 
-    // Créer le titre principal
+    // Titre principal
     QLabel *headerTitle = new QLabel("📚 Livres disponibles dans la bibliothèque", this);
     headerTitle->setAlignment(Qt::AlignCenter);
-    headerTitle->setStyleSheet("font-size: 24px; font-weight: bold; color: #2d3748; margin-top: 20px;");
+    headerTitle->setStyleSheet("font-size: 26px; font-weight: bold; color: #6c3eb6; margin-top: 20px;");
 
     // Bouton retour
     QPushButton *returnButton = new QPushButton("⬅️ Retour", this);
     returnButton->setFixedSize(120, 40);
     returnButton->setStyleSheet(
         "QPushButton {"
-        " background-color: #ff944d;"
+        " background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #a18cd1, stop:1 #6c3eb6);"
         " color: white;"
-        " border-radius: 8px;"
-        " font-size: 14px;"
+        " border-radius: 10px;"
+        " font-size: 15px;"
         " font-weight: bold;"
         "}"
-        "QPushButton:hover { background-color: #e68a00; }"
-        );
+        "QPushButton:hover { background: #7c3aed; color: #fff; }"
+    );
     connect(returnButton, &QPushButton::clicked, this, &bookList::close);
 
     // Conteneur principal
@@ -60,28 +61,27 @@ bookList::bookList(QWidget *parent) :
     gridLayout->setSpacing(20);
     gridLayout->setContentsMargins(30, 30, 30, 30);
 
-    // Requête BDD
+    // Dégradés de violet pour les cartes
+    QStringList colorThemes = {
+        "qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #a18cd1, stop:1 #fbc2eb)", // violet-rose
+        "qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #7c3aed, stop:1 #a18cd1)", // violet
+        "qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #c084fc, stop:1 #a78bfa)"  // violet clair
+    };
+
+    int row = 0, col = 0, colorIndex = 0;
     digitalLibrary lib;
     auto db = lib.db;
     QSqlQuery query(db);
     if (!query.exec("SELECT * FROM books"))
         qDebug() << "Erreur de requête : " << query.lastError();
 
-    // Couleurs cycliques
-    QStringList colorThemes = {
-        "#ff9966", // orange
-        "#6a5acd", // violet
-        "#4a6fa5"  // bleu
-    };
-
-    int row = 0, col = 0, colorIndex = 0;
     while (query.next()) {
         QString title = query.value(2).toString();
         QString author = query.value(3).toString();
         QString genre = query.value(4).toString();
         QString id = query.value(0).toString();
 
-        QString emoji = "📖";  // Emoji livre
+        QString emoji = "📖";
 
         // Carte
         QFrame *card = new QFrame(cardsContainer);
@@ -90,66 +90,71 @@ bookList::bookList(QWidget *parent) :
         card->setStyleSheet(QString(
             "QFrame {"
             " background: white;"
-            " border-radius: 12px;"
-            " border: none;"
-            " box-shadow: 0px 0px 10px rgba(0,0,0,0.1);"
+            " border-radius: 14px;"
+            " border: 2px solid #a18cd1;"
+            " box-shadow: 0px 0px 16px rgba(124,62,237,0.10);"
             "}"
-            ));
+            "QFrame:hover {"
+            " border: 2px solid #7c3aed;"
+            " box-shadow: 0px 0px 24px #a18cd1;"
+            "}"
+        ));
 
         QGraphicsDropShadowEffect *shadow = new QGraphicsDropShadowEffect(card);
-        shadow->setBlurRadius(15);
-        shadow->setOffset(0, 5);
-        shadow->setColor(QColor(0, 0, 0, 60));
+        shadow->setBlurRadius(18);
+        shadow->setOffset(0, 6);
+        shadow->setColor(QColor(161, 140, 209, 80));
         card->setGraphicsEffect(shadow);
 
         QVBoxLayout *cardLayout = new QVBoxLayout(card);
         cardLayout->setContentsMargins(0, 0, 0, 0);
         cardLayout->setSpacing(0);
 
-        // En-tête coloré
+        // En-tête coloré (dégradé violet)
         QLabel *emojiLabel = new QLabel(emoji, card);
         emojiLabel->setAlignment(Qt::AlignCenter);
         emojiLabel->setMinimumHeight(180);
         emojiLabel->setStyleSheet(QString(
-                                      "background-color: %1;"
-                                      "font-size: 64px;"
-                                      "border-top-left-radius: 12px;"
-                                      "border-top-right-radius: 12px;"
-                                      ).arg(colorThemes[colorIndex % colorThemes.size()]));
+            "background: %1;"
+            "font-size: 64px;"
+            "border-top-left-radius: 14px;"
+            "border-top-right-radius: 14px;"
+        ).arg(colorThemes[colorIndex % colorThemes.size()]));
         cardLayout->addWidget(emojiLabel);
 
         // Contenu
         QFrame *textFrame = new QFrame(card);
         textFrame->setStyleSheet(
             "background: white;"
-            "padding: 15px;"
-            "border-bottom-left-radius: 12px;"
-            "border-bottom-right-radius: 12px;"
-            );
+            "padding: 18px;"
+            "border-bottom-left-radius: 14px;"
+            "border-bottom-right-radius: 14px;"
+        );
         QVBoxLayout *textLayout = new QVBoxLayout(textFrame);
 
         QLabel *titleLabel = new QLabel(title, textFrame);
-        titleLabel->setStyleSheet("font-size: 16px; font-weight: bold; color: #2d3748;");
+        titleLabel->setStyleSheet("font-size: 17px; font-weight: bold; color: #7c3aed;");
         titleLabel->setWordWrap(true);
 
         QLabel *authorLabel = new QLabel(author, textFrame);
-        authorLabel->setStyleSheet("font-size: 13px; color: #555;");
+        authorLabel->setStyleSheet("font-size: 14px; color: #a18cd1;");
         authorLabel->setWordWrap(true);
 
         QLabel *genreLabel = new QLabel("Genre : " + genre, textFrame);
-        genreLabel->setStyleSheet("font-size: 12px; color: #888;");
+        genreLabel->setStyleSheet("font-size: 13px; color: #c084fc;");
 
         QPushButton *detailsBtn = new QPushButton("📘 Voir détails", textFrame);
         detailsBtn->setStyleSheet(
             "QPushButton {"
-            " background-color: #4a6fa5;"
+            " background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #a18cd1, stop:1 #7c3aed);"
             " color: white;"
-            " padding: 5px 10px;"
-            " border-radius: 6px;"
-            " font-size: 12px;"
+            " padding: 6px 14px;"
+            " border-radius: 8px;"
+            " font-size: 13px;"
+            " font-weight: bold;"
             "}"
-            "QPushButton:hover { background-color: #5a7fb5; }"
-            );
+            "QPushButton:hover { background: #c084fc; color: #fff; }"
+        );
 
         textLayout->addWidget(titleLabel);
         textLayout->addWidget(authorLabel);
@@ -168,14 +173,15 @@ bookList::bookList(QWidget *parent) :
             col = 0;
             row++;
         }
-
-        colorIndex++; // Changer de couleur
+        colorIndex++;
     }
 
     // Ajouter le layout principal à la boîte de dialogue
     QVBoxLayout *finalLayout = new QVBoxLayout(this);
     finalLayout->addWidget(mainWidget);
 }
+
+// ...showBookDetails et autres fonctions inchangées...
 
 void bookList::showBookDetails(const QString &bookId)
 {
